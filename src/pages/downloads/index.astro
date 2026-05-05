@@ -1,0 +1,32 @@
+﻿---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ContentCard from '../../components/ContentCard.astro';
+import { downloadRecords } from '../../data/content';
+
+---
+
+<BaseLayout title="Downloads" description="Leitfäden und Formulare für den praktischen Aloy-Einsatz.">
+  <Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Downloads', href: '/downloads' }]} />
+
+  <section class="surface">
+    <p class="kicker">Assets</p>
+    <h1>Downloads</h1>
+    <p>
+      Alle relevanten Unterlagen mit klarer Versionierung und Einsatzkontext. Im MVP werden die meistgenutzten Dokumente priorisiert.
+    </p>
+  </section>
+
+  <section class="surface">
+    <div class="grid">
+      {downloadRecords.map((entry) => (
+        <ContentCard
+          title={entry.title}
+          summary={entry.summary}
+          href={`/downloads/${entry.slug}`}
+          meta={`${entry.fileType} | ${entry.fileSize}`}
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

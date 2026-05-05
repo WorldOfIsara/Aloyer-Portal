@@ -1,0 +1,91 @@
+﻿---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { searchIndex } from '../data/content';
+
+const serialized = JSON.stringify(searchIndex);
+---
+
+<BaseLayout title="Suche" description="Suche über Portal, Lore, Chronik und Downloads.">
+  <Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Suche', href: '/suche' }]} />
+
+  <section class="surface">
+    <p class="kicker">Portal-Suche</p>
+    <h1>Inhalte schnell finden</h1>
+    <input id="search" type="search" placeholder="Suche nach Thema, Rolle, Stadt..." aria-label="Suche" />
+    <p class="muted" id="resultCount"></p>
+    <ul id="resultList"></ul>
+  </section>
+</BaseLayout>
+
+<script is:inline define:vars={{ serialized }}>
+  const items = JSON.parse(serialized);
+  const input = document.getElementById('search');
+  const resultList = document.getElementById('resultList');
+  const resultCount = document.getElementById('resultCount');
+
+  const render = (query) => {
+    const normalized = query.trim().toLowerCase();
+    const matches = !normalized
+      ? items
+      : items.filter((entry) => {
+          return (
+            entry.title.toLowerCase().includes(normalized) ||
+            entry.summary.toLowerCase().includes(normalized) ||
+            entry.group.toLowerCase().includes(normalized)
+          );
+        });
+
+    resultList.innerHTML = '';
+    matches.slice(0, 30).forEach((entry) => {
+      const li = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = entry.href;
+      link.textContent = `${entry.title} (${entry.group})`;
+      li.appendChild(link);
+      const p = document.createElement('p');
+      p.textContent = entry.summary;
+      li.appendChild(p);
+      resultList.appendChild(li);
+    });
+
+    resultCount.textContent = `${matches.length} Treffer`;
+  };
+
+  input.addEventListener('input', (event) => render(event.target.value));
+  render('');
+</script>
+
+<style>
+  input[type='search'] {
+    width: 100%;
+    border: 1px solid rgba(177, 146, 104, 0.8);
+    border-radius: 12px;
+    min-height: 44px;
+    padding: 0.6rem 0.8rem;
+    font: inherit;
+    margin-bottom: 0.8rem;
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  #resultList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  #resultList li {
+    padding: 0.7rem;
+    border-radius: 10px;
+    border: 1px solid rgba(177, 146, 104, 0.6);
+    background: rgba(255, 255, 255, 0.45);
+  }
+
+  #resultList p {
+    margin: 0.2rem 0 0;
+    color: var(--ink-2);
+    font-size: 0.97rem;
+  }
+</style>

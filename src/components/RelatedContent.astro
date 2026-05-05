@@ -1,0 +1,40 @@
+﻿---
+interface LinkItem {
+  title: string;
+  href: string;
+}
+
+interface Props {
+  title?: string;
+  items: LinkItem[];
+}
+
+const { title = 'Verwandte Inhalte', items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <section class="surface">
+    <p class="kicker">Querlinks</p>
+    <h3>{title}</h3>
+    <div class="related-grid">
+      {items.map((item) => <a class="related-item" href={item.href}>{item.title}</a>)}
+    </div>
+  </section>
+)}
+
+<style>
+  .related-grid {
+    display: grid;
+    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .related-item {
+    border: 1px solid rgba(177, 146, 104, 0.6);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem;
+    background: rgba(255, 255, 255, 0.45);
+    font-family: var(--font-ui);
+    font-weight: 600;
+  }
+</style>

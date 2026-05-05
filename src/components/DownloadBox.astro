@@ -1,0 +1,38 @@
+﻿---
+interface Props {
+  title: string;
+  filename: string;
+  fileType: string;
+  fileSize: string;
+  note: string;
+}
+
+const { title, filename, fileType, fileSize, note } = Astro.props;
+---
+
+<section class="download-box surface">
+  <p class="kicker">Download</p>
+  <h3>{title}</h3>
+  <div class="meta-row">
+    <span class="pill">Typ: {fileType}</span>
+    <span class="pill">Groesse: {fileSize}</span>
+    <span class="pill">Datei: {filename}</span>
+  </div>
+  <p>{note}</p>
+  <a href="/kontakt" class="btn">Datei anfragen</a>
+</section>
+
+<style>
+  .download-box {
+    display: grid;
+    gap: 0.7rem;
+  }
+
+  h3 {
+    margin: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+</style>

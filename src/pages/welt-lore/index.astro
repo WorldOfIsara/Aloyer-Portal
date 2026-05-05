@@ -1,0 +1,33 @@
+﻿---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Hero from '../../components/Hero.astro';
+import ContentCard from '../../components/ContentCard.astro';
+import { loreRecords } from '../../data/content';
+import { formatMeta } from '../../lib/content';
+---
+
+<BaseLayout title="Welt & Lore" description="Städte, Fraktionen und Götterwelt von Aloy kompakt erklärt.">
+  <Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Welt & Lore', href: '/welt-lore' }]} />
+
+  <Hero
+    eyebrow="Portal + Wiki"
+    title="Welt & Lore"
+    intro="Alle Kernartikel für den Einstieg in die Spielwelt. Die Einträge sind bewusst kurz und miteinander vernetzt, damit du schnell in spielbare Szenen kommst."
+    primaryCta={{ label: 'Mitspielen', href: '/mitspielen' }}
+    secondaryCta={{ label: 'Chronik lesen', href: '/chronik' }}
+  />
+
+  <section class="surface">
+    <div class="grid">
+      {loreRecords.map((entry) => (
+        <ContentCard
+          title={entry.title}
+          summary={entry.summary}
+          href={`/welt-lore/${entry.slug}`}
+          meta={formatMeta(entry)}
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

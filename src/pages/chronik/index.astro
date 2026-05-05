@@ -1,0 +1,32 @@
+﻿---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ContentCard from '../../components/ContentCard.astro';
+import { chronikRecords } from '../../data/content';
+import { formatDate } from '../../lib/content';
+---
+
+<BaseLayout title="Chronik" description="Ratssitzungen und Ereignisse von Aloy in chronologischer Form.">
+  <Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Chronik', href: '/chronik' }]} />
+
+  <section class="surface">
+    <p class="kicker">Ereignisarchiv</p>
+    <h1>Chronik</h1>
+    <p>
+      Die Chronik fasst spielrelevante Beschlüsse und Ereignisse in kurzer Form zusammen. Dadurch bleiben Entscheidungen nachvollziehbar und für neue Spieler anschlussfähig.
+    </p>
+  </section>
+
+  <section class="surface">
+    <div class="grid">
+      {chronikRecords.map((entry) => (
+        <ContentCard
+          title={entry.title}
+          summary={entry.summary}
+          href={`/chronik/${entry.slug}`}
+          meta={`${formatDate(entry.date)} | ${entry.location}`}
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>

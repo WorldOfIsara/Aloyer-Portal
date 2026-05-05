@@ -1,0 +1,59 @@
+﻿---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Hero from '../components/Hero.astro';
+import RelatedContent from '../components/RelatedContent.astro';
+import { getRelatedLinks } from '../lib/content';
+
+const related = getRelatedLinks(['mitspielen', 'kernregeln', 'welt-lore']);
+---
+
+<BaseLayout title="Über Aloy" description="Grundlagen zu Stil, Weltbild und Spielkultur von Aloy.">
+  <Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Über Aloy', href: '/ueber-aloy' }]} />
+
+  <Hero
+    eyebrow="Grundlagen"
+    title="Was Aloy ausmacht"
+    intro="Aloy verbindet soldatische Ordnung, republikanische Politik und alltagsnahe Lore. Das Portal priorisiert dabei klare Orientierung für neue Spieler, ohne die Tiefe für Langzeitspiel zu verlieren."
+    primaryCta={{ label: 'Mitspielen', href: '/mitspielen' }}
+    secondaryCta={{ label: 'Welt erkunden', href: '/welt-lore' }}
+  />
+
+  <section class="surface">
+    <h2>Profil der Spielwelt</h2>
+    <div class="grid">
+      <article>
+        <h3>Ton und Stil</h3>
+        <p>
+          Historisch geerdete Low-Fantasy mit roter Fadenfarbe: Verantwortung, Gemeinschaft, Entscheidung unter Druck.
+        </p>
+      </article>
+      <article>
+        <h3>Politik und Alltag</h3>
+        <p>
+          Der Rote Rat, Städte und Gilden erzeugen nachvollziehbare Machtlinien und bieten viele Einstiegspunkte für Konfliktspiel.
+        </p>
+      </article>
+      <article>
+        <h3>Lore im Dienst des Spiels</h3>
+        <p>
+          Inhalte sind auf Spielbarkeit kuratiert: kurze Erklärungen, direkte Verknüpfungen und klare Folgeschritte.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="surface">
+    <h2>Warum dieses Redesign</h2>
+    <p>
+      Die alte Seite war zu schmal und schwer pflegbar. Das neue Portal führt Inhalte aus PDF-Sammlung, bestehender Website und WorldAnvil in einer strukturierten Wissensplattform zusammen.
+    </p>
+    <div class="meta-row">
+      <span class="pill">Zielgruppe: Neue Interessenten</span>
+      <span class="pill">Sprache: Deutsch-first</span>
+      <span class="pill">Zugriff: Vollständig öffentlich</span>
+    </div>
+  </section>
+
+  <RelatedContent items={related} />
+</BaseLayout>

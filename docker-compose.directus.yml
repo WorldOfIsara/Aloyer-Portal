@@ -1,0 +1,36 @@
+﻿services:
+  db:
+    image: postgres:16
+    container_name: aloy_directus_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: directus
+      POSTGRES_DB: directus
+    volumes:
+      - directus_db_data:/var/lib/postgresql/data
+
+  directus:
+    image: directus/directus:11
+    container_name: aloy_directus
+    restart: unless-stopped
+    ports:
+      - "8055:8055"
+    environment:
+      KEY: replace-me-with-32-chars-minimum-key
+      SECRET: replace-me-with-32-chars-minimum-secret
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: change-me
+      DB_CLIENT: pg
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: directus
+      DB_USER: directus
+      DB_PASSWORD: directus
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "*"
+    depends_on:
+      - db
+
+volumes:
+  directus_db_data:

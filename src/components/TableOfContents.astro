@@ -1,0 +1,42 @@
+﻿---
+interface Entry {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  title?: string;
+  entries: Entry[];
+}
+
+const { title = 'Inhaltsverzeichnis', entries } = Astro.props;
+---
+
+{entries.length > 0 && (
+  <aside class="toc surface">
+    <p class="kicker">Navigation</p>
+    <h3>{title}</h3>
+    <ul>
+      {entries.map((entry) => <li><a href={`#${entry.id}`}>{entry.label}</a></li>)}
+    </ul>
+  </aside>
+)}
+
+<style>
+  .toc {
+    padding: 1.2rem;
+  }
+
+  .toc h3 {
+    margin-bottom: 0.55rem;
+  }
+
+  .toc ul {
+    margin: 0;
+    padding-left: 1rem;
+  }
+
+  .toc li + li {
+    margin-top: 0.4rem;
+  }
+</style>

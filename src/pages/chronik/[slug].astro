@@ -1,0 +1,50 @@
+﻿---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import RelatedContent from '../../components/RelatedContent.astro';
+import { chronikRecords } from '../../data/content';
+import { formatDate, getRelatedLinks, formatMeta } from '../../lib/content';
+
+export function getStaticPaths() {
+  return chronikRecords.map((record) => ({
+    params: { slug: record.slug },
+    props: { record },
+  }));
+}
+
+const { record } = Astro.props;
+const related = getRelatedLinks(record.related);
+---
+
+<BaseLayout title={record.title} description={record.summary}>
+  <Breadcrumbs
+    items={[
+      { label: 'Start', href: '/' },
+      { label: 'Chronik', href: '/chronik' },
+      { label: record.title, href: `/chronik/${record.slug}` },
+    ]}
+  />
+
+  <section class="surface">
+    <p class="kicker">EventLog</p>
+    <h1>{record.title}</h1>
+    <p>{record.summary}</p>
+    <div class="meta-row">
+      <span class="pill">Datum: {formatDate(record.date)}</span>
+      <span class="pill">Ort: {record.location}</span>
+      <span class="pill">{formatMeta(record)}</span>
+    </div>
+  </section>
+
+  <section class="surface">
+    {record.sections.map((section) => (
+      <article id={section.id}>
+        <h2>{section.heading}</h2>
+        {section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </article>
+    ))}
+    <p class="muted">Quellen: {record.source.join(' | ')}</p>
+  </section>
+
+  <RelatedContent items={related} />
+</BaseLayout>

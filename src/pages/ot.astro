@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+---
+
+<BaseLayout title="OT-Bereich" description="Off-Time Infos zu Gruppe, Spiel und Regeln.">
+  <Breadcrumbs items={[{ label: 'Start', href: '/portal' }, { label: 'OT-Bereich', href: '/ot' }]} />
+
+  <section class="surface">
+    <p class="kicker">Off Time</p>
+    <h1>Wer wir sind und was wir machen</h1>
+    <p>
+      Wir sind eine LARP-Gruppe rund um das Setting „Aloy“. In unseren Veranstaltungen verbinden
+      wir Ambiente, Rollen- und Konfliktspiel mit einer klaren Orga-Struktur.
+    </p>
+  </section>
+
+  <section class="grid">
+    <article class="surface">
+      <h2>Was wir machen</h2>
+      <ul>
+        <li>Con- und Kampagnen-Spiel im Aloy-Setting</li>
+        <li>Einsteigerfreundliches Gruppen- und Plotspiel</li>
+        <li>Schrittweiser Ausbau von Welt, Rollen und Chronik</li>
+      </ul>
+    </article>
+
+    <article class="surface">
+      <h2>Regelwerk (OT)</h2>
+      <p>
+        Wir nutzen aktuell das Aloy-interne Kernregelwerk plus die jeweils kommunizierten
+        Veranstaltungsregeln der Orga.
+      </p>
+      <p class="muted">
+        Detaillierte Regelmodule werden als Nächstes sukzessive ergänzt.
+      </p>
+    </article>
+  </section>
+
+  <section class="surface">
+    <h2>Mitmachen</h2>
+    <p>
+      Für Einstieg, Fragen oder Rollenabstimmung melde dich über den Kontaktbereich.
+    </p>
+    <a class="btn" href="/kontakt">Zum Kontakt</a>
+  </section>
+</BaseLayout>

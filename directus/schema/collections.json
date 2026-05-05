@@ -1,0 +1,41 @@
+﻿{
+  "collections": [
+    {
+      "name": "landing_pages",
+      "fields": ["slug", "title", "summary", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    },
+    {
+      "name": "standard_pages",
+      "fields": ["slug", "title", "summary", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    },
+    {
+      "name": "lore_articles",
+      "fields": ["slug", "title", "summary", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    },
+    {
+      "name": "cities",
+      "fields": ["slug", "title", "summary", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    },
+    {
+      "name": "factions",
+      "fields": ["slug", "title", "summary", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    },
+    {
+      "name": "deities",
+      "fields": ["slug", "title", "summary", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    },
+    {
+      "name": "characters",
+      "fields": ["slug", "title", "summary", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    },
+    {
+      "name": "event_logs",
+      "fields": ["slug", "date", "location", "title", "summary", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    },
+    {
+      "name": "download_assets",
+      "fields": ["slug", "title", "summary", "file_name", "file_type", "file_size", "content", "tags", "source_notes", "updated_at", "related_content", "status"]
+    }
+  ],
+  "status_values": ["draft", "review", "published"]
+}

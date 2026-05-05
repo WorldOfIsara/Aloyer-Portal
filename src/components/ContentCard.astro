@@ -1,0 +1,49 @@
+﻿---
+interface Props {
+  title: string;
+  summary: string;
+  href: string;
+  meta?: string;
+}
+
+const { title, summary, href, meta } = Astro.props;
+---
+
+<article class="card surface">
+  <h3><a href={href}>{title}</a></h3>
+  {meta && <p class="meta">{meta}</p>}
+  <p>{summary}</p>
+  <a href={href} class="read-more">Mehr lesen</a>
+</article>
+
+<style>
+  .card {
+    padding: 1.15rem;
+    border-radius: var(--radius-md);
+    transition: transform 160ms ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  h3 {
+    margin-bottom: 0.55rem;
+  }
+
+  .meta {
+    margin: 0;
+    font-family: var(--font-ui);
+    color: var(--brand-1);
+    font-size: 0.84rem;
+  }
+
+  p {
+    margin-top: 0.55rem;
+  }
+
+  .read-more {
+    font-family: var(--font-ui);
+    font-weight: 600;
+  }
+</style>

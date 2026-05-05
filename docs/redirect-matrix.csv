@@ -1,0 +1,7 @@
+﻿old_path,new_path,status
+/regelwerk,/kernregeln,301
+/intime,/welt-lore,301
+/intime/aloyer-gotterwelt,/welt-lore/goetterwelt,301
+/intime/aloyer-gotterwelt/,/welt-lore/goetterwelt,301
+/start,/,301
+/?page_id=1368,/kernregeln,manual-host-rule

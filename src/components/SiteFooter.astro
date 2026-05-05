@@ -1,0 +1,154 @@
+---
+const pathname = Astro.url.pathname;
+const isOt = pathname.startsWith('/ot');
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <p class="title">Aloy Portal</p>
+      <p class="muted">Portal + Wiki für Einstieg, Lore, Chronik und Downloads.</p>
+    </div>
+
+    <div class="nav-col">
+      <div class="links">
+        <a href="/">Landingpage</a>
+        <a href="/portal">Start</a>
+        <a href="/it">IT-Bereich</a>
+        <a href="/ot">OT-Bereich</a>
+        <a href="/kontakt">Kontakt</a>
+      </div>
+
+      <div class="mode-switch" role="group" aria-label="Bereich wählen">
+        <span class="mode-label">IT</span>
+        <label class="switch" for="footerModeSwitch">
+          <input id="footerModeSwitch" type="checkbox" checked={isOt} />
+          <span class="slider" aria-hidden="true"></span>
+        </label>
+        <span class="mode-label">OT</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script is:inline>
+  const footerModeSwitch = document.getElementById('footerModeSwitch');
+  if (footerModeSwitch) {
+    footerModeSwitch.addEventListener('change', () => {
+      window.location.href = footerModeSwitch.checked ? '/ot' : '/it';
+    });
+  }
+</script>
+
+<style>
+  .site-footer {
+    margin-top: 3.5rem;
+    border-top: 1px solid rgba(177, 146, 104, 0.5);
+    background: rgba(242, 233, 215, 0.68);
+  }
+
+  .wrap {
+    width: min(1120px, 96vw);
+    margin: 0 auto;
+    padding: 1.4rem 0 1.8rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+  }
+
+  .muted {
+    margin: 0.35rem 0 0;
+  }
+
+  .nav-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.55rem;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 0.7rem;
+    font-family: var(--font-ui);
+  }
+
+  .mode-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.42rem;
+    opacity: 0.75;
+  }
+
+  .mode-label {
+    font-family: var(--font-ui);
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-2);
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.34);
+    border: 1px solid rgba(177, 146, 104, 0.62);
+    border-radius: 999px;
+    transition: background-color 160ms ease;
+  }
+
+  .slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    border-radius: 999px;
+    background: linear-gradient(120deg, var(--brand-0), var(--brand-1));
+    transition: transform 160ms ease;
+    box-shadow: 0 1px 5px rgba(52, 38, 26, 0.24);
+  }
+
+  .switch input:checked + .slider {
+    background: rgba(47, 94, 68, 0.24);
+  }
+
+  .switch input:checked + .slider::before {
+    transform: translateX(24px);
+  }
+
+  @media (max-width: 760px) {
+    .nav-col {
+      align-items: flex-start;
+    }
+
+    .links {
+      justify-content: flex-start;
+    }
+  }
+</style>

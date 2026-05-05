@@ -1,46 +1,53 @@
-# Astro Starter Kit: Basics
+﻿# Aloy Portal (MVP)
 
-```sh
-npm create astro@latest -- --template basics
+Astro-Frontend mit vorbereitetem Headless-CMS-Setup (Directus) fuer das Redesign der Reulos/Aloy-Website.
+
+## Ziele dieser Implementierung
+
+- Oeffentliches, einsteigerfreundliches Portal+Wiki
+- MVP-Informationsarchitektur mit 23 Seiten
+- Kuratierte Migration aus bestehendem Material
+- Designsystem mit wiederverwendbaren Komponenten
+- Vorbereitetes Directus-Content-Modell
+- Redirect-Matrix fuer Altpfade
+
+## Tech Stack
+
+- Astro 6
+- @astrojs/sitemap
+- Directus (vorbereitet via Docker Compose)
+
+## Lokale Entwicklung
+
+```bash
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Dev-URL: http://localhost:4321
 
-## 🚀 Project Structure
+## Build und Checks
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+```bash
+npm run check
+npm run build
+npm run preview
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Wichtige Pfade
 
-## 🧞 Commands
+- `src/pages/*` - Portal-, Lore-, Chronik- und Download-Seiten
+- `src/components/*` - Hero, Breadcrumbs, TOC, DownloadBox, Related Content
+- `src/data/content.ts` - kuratierte MVP-Inhalte
+- `src/data/site.ts` - Navigation und Site-Konfiguration
+- `docs/*` - Audit, Workflow, Backlog, QA, Redirect-Matrix
+- `directus/schema/collections.json` - Content-Modell fuer CMS
+- `docker-compose.directus.yml` - lokaler Directus-Start
 
-All commands are run from the root of the project, from a terminal:
+## Directus lokal starten
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```bash
+docker compose -f docker-compose.directus.yml up -d
+```
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Danach Directus unter http://localhost:8055 aufrufen.

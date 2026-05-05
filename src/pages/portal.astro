@@ -1,0 +1,44 @@
+﻿---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Start" description="Wähle zwischen In Time und Off Time.">
+  <section class="surface intro">
+    <p class="kicker">Aloy Portal</p>
+    <h1>Wähle deinen Bereich</h1>
+    <p>
+      Diese Website ist bewusst in zwei Bereiche geteilt:
+      <strong>IT</strong> für die Welt in der Rolle und
+      <strong>OT</strong> für organisatorische Informationen außerhalb des Spiels.
+    </p>
+  </section>
+
+  <section class="surface chooser">
+    <p class="kicker">Bereichsauswahl</p>
+    <h2>IT oder OT</h2>
+    <p>
+      Den Schieberegler für die Bereichsauswahl findest du unten rechts
+      <strong>direkt unter der Linkliste im Footer</strong>.
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro {
+    text-align: center;
+  }
+
+  .intro p {
+    max-width: 74ch;
+    margin-inline: auto;
+  }
+
+  .chooser {
+    text-align: center;
+  }
+
+  .chooser p {
+    max-width: 66ch;
+    margin-inline: auto;
+  }
+</style>
