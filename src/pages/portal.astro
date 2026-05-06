@@ -1,44 +1,50 @@
-﻿---
+---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  portalNav,
+  portalBrandText,
+  portalBrandAlt,
+  portalFooterTitle,
+  portalFooterDescription,
+} from '../data/portal';
+
+const portalDescription = 'W\u00e4hle zwischen In Time und Off Time.';
 ---
 
-<BaseLayout title="Start" description="Wähle zwischen In Time und Off Time.">
-  <section class="surface intro">
-    <p class="kicker">Aloy Portal</p>
-    <h1>Wähle deinen Bereich</h1>
+<BaseLayout
+  title="Start"
+  description={portalDescription}
+  nav={portalNav}
+  headerBrandText={portalBrandText}
+  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
+  headerBrandLogoAlt={portalBrandAlt}
+  headerBrandLogoFreestanding={true}
+  footerTitle={portalFooterTitle}
+  footerDescription={portalFooterDescription}
+  bodyClass="portal-welcome"
+>
+  <section class="surface about">
+    <p class="kicker">Wer wir sind</p>
+    <h2>Die Aloyer S&ouml;ldner</h2>
     <p>
-      Diese Website ist bewusst in zwei Bereiche geteilt:
-      <strong>IT</strong> für die Welt in der Rolle und
-      <strong>OT</strong> für organisatorische Informationen außerhalb des Spiels.
+      Die Aloyer S&ouml;ldner sind eine LARP-Gruppe mit einer historisch geerdeten Low-Fantasy-Welt, in der soldatische
+      Ordnung, republikanische Politik und alltagsnahes Spiel zusammenkommen. Zwischen Grenzdienst, Lagerleben,
+      Ratspolitik und pers&ouml;nlichen Geschichten bietet Aloy Raum f&uuml;r Einsteiger ebenso wie f&uuml;r langfristiges
+      Charakterspiel.
     </p>
   </section>
 
-  <section class="surface chooser">
-    <p class="kicker">Bereichsauswahl</p>
-    <h2>IT oder OT</h2>
-    <p>
-      Den Schieberegler für die Bereichsauswahl findest du unten rechts
-      <strong>direkt unter der Linkliste im Footer</strong>.
-    </p>
-  </section>
 </BaseLayout>
 
 <style>
-  .intro {
+  .about {
     text-align: center;
-  }
-
-  .intro p {
-    max-width: 74ch;
+    max-width: 980px;
     margin-inline: auto;
   }
 
-  .chooser {
-    text-align: center;
-  }
-
-  .chooser p {
-    max-width: 66ch;
+  .about p:last-child {
+    max-width: 70ch;
     margin-inline: auto;
   }
 </style>

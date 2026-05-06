@@ -1,13 +1,23 @@
 ---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Aloy Portal',
+  description = 'Portal + Wiki f\u00fcr Einstieg, Lore, Chronik und Downloads.',
+} = Astro.props;
 const pathname = Astro.url.pathname;
 const isOt = pathname.startsWith('/ot');
+const modeSwitchLabel = 'Bereich w\u00e4hlen';
 ---
 
 <footer class="site-footer">
   <div class="wrap">
     <div>
-      <p class="title">Aloy Portal</p>
-      <p class="muted">Portal + Wiki für Einstieg, Lore, Chronik und Downloads.</p>
+      <p class="title">{title}</p>
+      <p class="muted">{description}</p>
     </div>
 
     <div class="nav-col">
@@ -19,7 +29,7 @@ const isOt = pathname.startsWith('/ot');
         <a href="/kontakt">Kontakt</a>
       </div>
 
-      <div class="mode-switch" role="group" aria-label="Bereich wählen">
+      <div class="mode-switch" role="group" aria-label={modeSwitchLabel}>
         <span class="mode-label">IT</span>
         <label class="switch" for="footerModeSwitch">
           <input id="footerModeSwitch" type="checkbox" checked={isOt} />

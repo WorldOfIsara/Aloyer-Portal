@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  portalNav,
+  portalBrandText,
+  portalBrandAlt,
+  portalFooterTitle,
+  portalFooterDescription,
+} from '../data/portal';
+
+const pageDescription = 'Was die Aloyer S\u00f6ldner tun: Spiel zwischen Lager, S\u00f6ldnerdienst, Diplomatie und Rat.';
+---
+
+<BaseLayout
+  title="Was wir tun"
+  description={pageDescription}
+  nav={portalNav}
+  headerBrandText={portalBrandText}
+  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
+  headerBrandLogoAlt={portalBrandAlt}
+  headerBrandLogoFreestanding={true}
+  footerTitle={portalFooterTitle}
+  footerDescription={portalFooterDescription}
+  bodyClass="portal-welcome"
+>
+  <section class="surface action-intro">
+    <p class="kicker">Was wir tun</p>
+    <h1>Spiel zwischen Lager, Rat und Dienst</h1>
+    <p>
+      Die Aloyer S&ouml;ldner bespielen auf Veranstaltungen nicht nur einen bewaffneten Trupp aus Aloy, sondern ein
+      St&uuml;ck aloyischer Gesellschaft unterwegs. Unser Spiel entsteht aus Lagerleben, S&ouml;ldnerdienst, Diplomatie,
+      Handwerk, Glauben, Gelehrsamkeit und politischem Austausch.
+    </p>
+  </section>
+
+  <section class="surface action-block">
+    <h2>Lager- und Ambientespiel</h2>
+    <p>
+      Ein wichtiger Teil unseres Spiels ist das gemeinsame Lager- und Ambientespiel. Wir m&ouml;chten einen Ort
+      schaffen, an dem man nicht nur vorbeigeht, sondern h&auml;ngen bleibt: f&uuml;r Gespr&auml;che, Handel, Auftr&auml;ge,
+      Verhandlungen, gemeinsames Essen, Geschichten, kleine Szenen und allt&auml;gliches Spiel. Dabei ist uns wichtig,
+      dass auch ruhige Momente ihren Platz haben und nicht jede Szene auf Kampf oder gro&szlig;e Bedrohung hinauslaufen
+      muss.
+    </p>
+  </section>
+
+  <section class="surface action-block">
+    <h2>S&ouml;ldnerdienst und milit&auml;risches Spiel</h2>
+    <p>
+      Als S&ouml;ldnergruppe k&ouml;nnen wir nat&uuml;rlich auch milit&auml;risches Spiel anbieten. Dazu geh&ouml;ren
+      Wachdienste, Begleitschutz, kleinere Gefechte, Schlachten, &Uuml;bungen und das Auftreten als organisierter
+      Trupp. Der Kampf ist f&uuml;r uns aber kein Selbstzweck. Wir k&auml;mpfen, wenn es zum Spiel passt, und legen Wert
+      auf Sicherheit, Fairness und saubere Darstellung.
+    </p>
+  </section>
+
+  <section class="surface action-block">
+    <h2>Aloy in den Splitterlanden</h2>
+    <p>
+      Da wir unser Spiel im Umfeld der Splitterlande verorten, ist der Austausch mit anderen L&auml;ndern, Gruppen und
+      Charakteren ein wichtiger Bestandteil unseres Konzepts. Aloy soll nicht isoliert neben anderen Spielangeboten
+      stehen, sondern aktiv Beziehungen kn&uuml;pfen: durch diplomatische Gespr&auml;che, S&ouml;ldnervertr&auml;ge,
+      Handel, gemeinsame Unternehmungen, politische Reibung und gelegentlich auch durch sehr aloyische
+      Missverst&auml;ndnisse.
+    </p>
+  </section>
+
+  <section class="surface action-block">
+    <h2>Diplomatie und Verhandlung</h2>
+    <p>
+      Daneben spielt bei uns Diplomatie eine gro&szlig;e Rolle. Aloy ist ein freies Land ohne Adel, vertreten durch
+      eine R&auml;terepublik. Unsere Charaktere treten deshalb nicht nur als K&auml;mpfer auf, sondern auch als
+      Gesandte, Vermittler, Verhandler oder neugierige Beobachter fremder L&auml;nder. Vertr&auml;ge, B&uuml;ndnisse,
+      Streitfragen, Handelskontakte und politische Gespr&auml;che sind f&uuml;r uns ausdr&uuml;cklich Teil des Spiels.
+    </p>
+  </section>
+
+  <section class="surface action-block">
+    <h2>R&auml;tespiel</h2>
+    <p>
+      Ein besonderer Schwerpunkt ist unser R&auml;tespiel. Der Aloyer Rat ist die politische Grundlage unseres Landes
+      und bietet uns die M&ouml;glichkeit, interne Entscheidungen, Streitfragen und Entwicklungen im Spiel
+      auszuhandeln. Dabei geht es nicht darum, m&ouml;glichst schnell eine perfekte L&ouml;sung zu finden, sondern
+      darum, unterschiedliche Interessen, Meinungen und Eigenheiten Aloys sichtbar zu machen. St&auml;dte, Z&uuml;nfte,
+      Akademie, Glaube, Milit&auml;r und verschiedene gesellschaftliche Gruppen k&ouml;nnen dabei eigene Positionen
+      vertreten und miteinander ringen.
+    </p>
+    <p>
+      Das R&auml;tespiel kann sowohl ernsthafte als auch humorvolle Seiten haben. Es bietet Raum f&uuml;r Antr&auml;ge,
+      Abstimmungen, hitzige Debatten, b&uuml;rokratische Absurdit&auml;ten, politische Intrigen im kleinen Rahmen und
+      aloyische Eigenheiten. Dadurch entsteht Spiel f&uuml;r Ratsmitglieder, S&ouml;ldner, Schreiber, Boten,
+      Beobachter, G&auml;ste und alle, die mit Aloy verhandeln oder sich &uuml;ber die Entscheidungen dieser Republik
+      wundern m&ouml;chten.
+    </p>
+  </section>
+
+  <section class="surface action-block">
+    <h2>Handwerk, Bildung und Glaube</h2>
+    <p>
+      Auch Handwerk, Bildung und Glaube sind feste Bestandteile unseres Hintergrunds. Die Akademie Aloys, die
+      Drei-G&ouml;tter-Kirche, die Z&uuml;nfte und die verschiedenen St&auml;dte des Landes geben viele
+      Ankn&uuml;pfungspunkte f&uuml;r Charaktere abseits des klassischen Soldaten. Wer bei uns spielt, muss also nicht
+      zwingend k&auml;mpfen wollen. Auch Tross, Gelehrte, Handwerker, Schreiber, Priester, H&auml;ndler, Feldscher
+      oder Diplomaten k&ouml;nnen sinnvolle und aktive Rollen innerhalb der Gruppe einnehmen.
+    </p>
+  </section>
+
+  <section class="surface action-block">
+    <h2>Unser Ziel</h2>
+    <p>
+      Unser Ziel ist es, mit Aloy ein geschlossenes, aber offenes Spielangebot zu schaffen: geschlossen genug, um
+      wiedererkennbar und stimmig aufzutreten; offen genug, damit neue Mitspielende, andere Gruppen und Orgas leicht
+      Ankn&uuml;pfungspunkte finden. Wir m&ouml;chten Spiel erzeugen, nicht blockieren. Wer mit Aloy in Kontakt kommt,
+      soll schnell merken: Hier gibt es etwas zu verhandeln, zu lachen, zu diskutieren, zu erleben und manchmal auch zu
+      bezahlen.
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .action-intro,
+  .action-block {
+    text-align: center;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+
+  .action-intro p,
+  .action-block p {
+    max-width: 72ch;
+    margin-inline: auto;
+  }
+
+  .action-intro p + p,
+  .action-block p + p {
+    margin-top: 1rem;
+  }
+</style>

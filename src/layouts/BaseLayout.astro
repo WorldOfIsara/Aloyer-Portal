@@ -2,14 +2,34 @@
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { siteConfig } from '../data/site';
+import type { NavItem } from '../data/site';
 import '../styles/global.css';
 
 interface Props {
   title: string;
   description?: string;
+  nav?: NavItem[];
+  headerBrandText?: string;
+  headerBrandLogoSrc?: string;
+  headerBrandLogoAlt?: string;
+  headerBrandLogoFreestanding?: boolean;
+  footerTitle?: string;
+  footerDescription?: string;
+  bodyClass?: string;
 }
 
-const { title, description = siteConfig.description } = Astro.props;
+const {
+  title,
+  description = siteConfig.description,
+  nav = siteConfig.nav,
+  headerBrandText,
+  headerBrandLogoSrc,
+  headerBrandLogoAlt,
+  headerBrandLogoFreestanding = false,
+  footerTitle,
+  footerDescription,
+  bodyClass,
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -36,11 +56,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     />
     <title>{title} | {siteConfig.titleSuffix}</title>
   </head>
-  <body>
-    <SiteHeader nav={siteConfig.nav} />
+  <body class={bodyClass}>
+    <SiteHeader
+      nav={nav}
+      brandText={headerBrandText}
+      brandLogoSrc={headerBrandLogoSrc}
+      brandLogoAlt={headerBrandLogoAlt}
+      brandLogoFreestanding={headerBrandLogoFreestanding}
+    />
     <main>
       <slot />
     </main>
-    <SiteFooter />
+    <SiteFooter title={footerTitle} description={footerDescription} />
   </body>
 </html>
