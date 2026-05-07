@@ -9,7 +9,7 @@ const {
   description = 'Portal + Wiki f\u00fcr Einstieg, Lore, Chronik und Downloads.',
 } = Astro.props;
 const pathname = Astro.url.pathname;
-const isOt = pathname.startsWith('/ot');
+const isOt = !pathname.startsWith('/it');
 const modeSwitchLabel = 'Bereich w\u00e4hlen';
 ---
 
@@ -23,9 +23,9 @@ const modeSwitchLabel = 'Bereich w\u00e4hlen';
     <div class="nav-col">
       <div class="links">
         <a href="/">Landingpage</a>
-        <a href="/portal">Start</a>
-        <a href="/it">IT-Bereich</a>
-        <a href="/ot">OT-Bereich</a>
+        <a href="/ot/willkommen">Start</a>
+        <a href="/it/vorrede">IT-Bereich</a>
+        <a href="/ot/willkommen">OT-Bereich</a>
         <a href="/kontakt">Kontakt</a>
       </div>
 
@@ -45,22 +45,31 @@ const modeSwitchLabel = 'Bereich w\u00e4hlen';
   const footerModeSwitch = document.getElementById('footerModeSwitch');
   if (footerModeSwitch) {
     footerModeSwitch.addEventListener('change', () => {
-      window.location.href = footerModeSwitch.checked ? '/ot' : '/it';
+      window.location.href = footerModeSwitch.checked ? '/ot/willkommen' : '/it/vorrede';
     });
   }
 </script>
 
 <style>
   .site-footer {
-    margin-top: 3.5rem;
-    border-top: 1px solid rgba(177, 146, 104, 0.5);
-    background: rgba(242, 233, 215, 0.68);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: none;
+    width: 100%;
+    z-index: 40;
+    border: 0;
+    border-radius: 0;
+    background: rgba(10, 7, 5, 0.96);
+    backdrop-filter: none;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
   }
 
   .wrap {
-    width: min(1120px, 96vw);
-    margin: 0 auto;
-    padding: 1.4rem 0 1.8rem;
+    width: 100%;
+    margin: 0;
+    padding: 1rem 1.2rem 1.15rem;
     display: flex;
     justify-content: space-between;
     gap: 1rem;
@@ -153,6 +162,10 @@ const modeSwitchLabel = 'Bereich w\u00e4hlen';
   }
 
   @media (max-width: 760px) {
+    .wrap {
+      padding: 0.9rem 0.9rem 1rem;
+    }
+
     .nav-col {
       align-items: flex-start;
     }
@@ -160,5 +173,9 @@ const modeSwitchLabel = 'Bereich w\u00e4hlen';
     .links {
       justify-content: flex-start;
     }
+  }
+
+  :global(body.portal-welcome main) {
+    padding-bottom: 12rem;
   }
 </style>

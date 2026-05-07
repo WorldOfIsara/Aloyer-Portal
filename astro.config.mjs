@@ -9,5 +9,6 @@ export default defineConfig({
     '/intime/aloyer-gotterwelt': '/welt-lore/goetterwelt',
     '/intime': '/welt-lore',
     '/start': '/portal',
+    '/ot': '/ot/willkommen',
   },
 });

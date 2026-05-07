@@ -10,7 +10,7 @@ export const siteConfig = {
     'Offizielle Einstiegs- und Wissensplattform für die Aloyer Söldner: Mitspielen, Kernregeln, Welt und Chronik.',
   nav: [
     { label: 'Start', href: '/portal' },
-    { label: 'IT-Bereich', href: '/it' },
+    { label: 'IT-Bereich', href: '/it/vorrede' },
     { label: 'OT-Bereich', href: '/ot' },
     { label: 'Kontakt', href: '/kontakt' },
   ] satisfies NavItem[],

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PhotoSlideshow from '../components/PhotoSlideshow.astro';
 import {
   portalNav,
   portalBrandText,
@@ -24,8 +25,7 @@ const portalDescription = 'W\u00e4hle zwischen In Time und Off Time.';
   bodyClass="portal-welcome"
 >
   <section class="surface about">
-    <p class="kicker">Wer wir sind</p>
-    <h2>Die Aloyer S&ouml;ldner</h2>
+    <h2>Drei zum Gru&szlig;e</h2>
     <p>
       Die Aloyer S&ouml;ldner sind eine LARP-Gruppe mit einer historisch geerdeten Low-Fantasy-Welt, in der soldatische
       Ordnung, republikanische Politik und alltagsnahes Spiel zusammenkommen. Zwischen Grenzdienst, Lagerleben,
@@ -33,6 +33,8 @@ const portalDescription = 'W\u00e4hle zwischen In Time und Off Time.';
       Charakterspiel.
     </p>
   </section>
+
+  <PhotoSlideshow autoplayMs={4000} />
 
 </BaseLayout>
 

@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PhotoSlideshow from '../../components/PhotoSlideshow.astro';
+import { itNav, itFooterDescription } from '../../data/it';
+import {
+  portalBrandText,
+  portalBrandAlt,
+  portalFooterTitle,
+} from '../../data/portal';
+
+const pageDescription = 'In-Time Bereich im Aloyer Stil.';
+---
+
+<BaseLayout
+  title="IT-Bereich"
+  description={pageDescription}
+  nav={itNav}
+  headerBrandText={portalBrandText}
+  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
+  headerBrandLogoAlt={portalBrandAlt}
+  headerBrandLogoFreestanding={true}
+  footerTitle={portalFooterTitle}
+  footerDescription={itFooterDescription}
+  bodyClass="portal-welcome"
+>
+  <section class="surface about" aria-hidden="true">
+    <div class="about-empty"></div>
+  </section>
+
+  <PhotoSlideshow autoplayMs={4000} />
+</BaseLayout>
+
+<style>
+  .about {
+    text-align: center;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+
+  .about-empty {
+    min-height: 15.5rem;
+  }
+</style>
