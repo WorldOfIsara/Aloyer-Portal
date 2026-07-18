@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  portalNav,
+  portalBrandText,
+  portalBrandAlt,
+  portalFooterTitle,
+  portalFooterDescription,
+} from '../../data/portal';
+
+const pageDescription = 'Neuigkeiten und organisatorische Hinweise der Aloyer Söldner.';
+---
+
+<BaseLayout
+  title="Aktuelles"
+  description={pageDescription}
+  nav={portalNav}
+  headerBrandText={portalBrandText}
+  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
+  headerBrandLogoAlt={portalBrandAlt}
+  headerBrandLogoFreestanding={true}
+  footerTitle={portalFooterTitle}
+  footerDescription={portalFooterDescription}
+  bodyClass="portal-welcome"
+>
+  <section class="surface updates-intro">
+    <h1>Aktuelles</h1>
+    <p>Hier sammeln wir künftige Neuigkeiten, Termine und kurzfristige Hinweise rund um die Aloyer Söldner.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .updates-intro {
+    text-align: center;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+
+  .updates-intro p {
+    max-width: 72ch;
+    margin-inline: auto;
+  }
+</style>

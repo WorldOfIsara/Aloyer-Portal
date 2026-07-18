@@ -2,6 +2,7 @@ import type { NavItem } from './site';
 
 export const portalNav: NavItem[] = [
   { label: 'Willkommen', href: '/ot/willkommen' },
+  { label: 'Aktuelles', href: '/ot/aktuelles' },
   { label: 'Wer wir sind', href: '/ot/wir' },
   { label: 'Was wir tun', href: '/ot/tun' },
   { label: 'Hintergrund', href: '/ot/hintergrund' },

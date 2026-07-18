@@ -10,5 +10,6 @@ export default defineConfig({
     '/intime': '/welt-lore',
     '/start': '/portal',
     '/ot': '/ot/willkommen',
+    '/it/aloy/umseck-weitfurth': '/it/aloy/umseck-waidfuath',
   },
 });

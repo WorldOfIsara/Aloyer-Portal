@@ -1,0 +1,53 @@
+---
+import ItContentPage from '../../../components/ItContentPage.astro';
+---
+
+<ItContentPage
+  title="Ignaz Rothschild braucht dich!"
+  description="Ratsherr Ignaz Rothschild ruft zur Mitarbeit an den Aloyer Registern und Chroniken auf."
+>
+  <figure class="rothschild-appeal">
+    <img
+      src="/images/rat/rothschild.png"
+      alt="Ratsherr Ignaz Rothschild weist auf den Betrachter und verlangt unentgeltliche Mitarbeit für Aloy."
+      width="1024"
+      height="1536"
+      loading="eager"
+      decoding="async"
+    />
+  </figure>
+
+  <p class="appeal-text">
+    Bürger Aloys, kundiger Schreiber oder Freund mit brauchbarem Köpfchen: Ratsherr Ignaz
+    Rothschild legt dir mit der gebotenen Deutlichkeit nahe, deine Arbeitskraft und Kenntnisse
+    ohne weiteren Aufschub in den Dienst der Aloyer Register und Chroniken zu stellen. Berichte
+    wollen geprüft, Lücken geschlossen und neue Kunde ordentlich verzeichnet werden. Eine
+    Vergütung ist dafür weder vorgesehen noch erforderlich, schließlich geschieht die Arbeit
+    zum Wohle Aloys. Der Rat geht davon aus, dass diese ehrenvolle Selbstverständlichkeit keiner
+    weiteren Erklärung bedarf.
+  </p>
+</ItContentPage>
+
+<style>
+  .rothschild-appeal {
+    width: min(100%, 700px);
+    margin: 0 auto 2rem;
+  }
+
+  .rothschild-appeal img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid rgba(79, 47, 25, 0.7);
+    box-shadow:
+      0 1.25rem 2.75rem rgba(52, 30, 14, 0.24),
+      0 0 0 0.35rem rgba(116, 75, 39, 0.1);
+  }
+
+  .appeal-text {
+    max-width: 72ch !important;
+    margin: 0 auto !important;
+    text-align: center;
+    font-size: clamp(1.05rem, 1.5vw, 1.22rem);
+  }
+</style>

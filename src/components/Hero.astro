@@ -66,4 +66,19 @@ const { eyebrow, title, intro, primaryCta, secondaryCta } = Astro.props;
     gap: 0.8rem;
     flex-wrap: wrap;
   }
+
+  @media (max-width: 480px) {
+    .hero {
+      border-radius: var(--radius-md);
+    }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .cta-row .btn {
+      width: 100%;
+    }
+  }
 </style>

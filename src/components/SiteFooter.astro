@@ -125,9 +125,13 @@ const modeSwitchLabel = 'Bereich w\u00e4hlen';
   }
 
   .switch input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
     opacity: 0;
-    width: 0;
-    height: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
   }
 
   .slider {
@@ -161,21 +165,66 @@ const modeSwitchLabel = 'Bereich w\u00e4hlen';
     transform: translateX(24px);
   }
 
+  .switch input:focus-visible + .slider {
+    outline: 3px solid rgba(255, 255, 255, 0.7);
+    outline-offset: 3px;
+  }
+
   @media (max-width: 760px) {
+    .site-footer {
+      position: static;
+      margin-top: auto;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.2);
+    }
+
     .wrap {
-      padding: 0.9rem 0.9rem 1rem;
+      padding:
+        1.1rem max(0.9rem, env(safe-area-inset-right))
+        calc(1rem + env(safe-area-inset-bottom))
+        max(0.9rem, env(safe-area-inset-left));
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1rem;
     }
 
     .nav-col {
+      width: 100%;
       align-items: flex-start;
     }
 
     .links {
-      justify-content: flex-start;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      width: 100%;
+      gap: 0.2rem 0.75rem;
+    }
+
+    .links a {
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding-block: 0.35rem;
+    }
+
+    .mode-switch {
+      min-height: 44px;
+      opacity: 0.92;
+    }
+
+    :global(body.portal-welcome main) {
+      padding-bottom: var(--space-5);
     }
   }
 
-  :global(body.portal-welcome main) {
-    padding-bottom: 12rem;
+  @media (max-width: 380px) {
+    .links {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (min-width: 761px) {
+    :global(body.portal-welcome main) {
+      padding-bottom: 12rem;
+    }
   }
 </style>

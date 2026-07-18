@@ -1,0 +1,42 @@
+---
+import ItIllustration from './ItIllustration.astro';
+
+interface Illustration {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+  portrait?: boolean;
+}
+
+interface Props {
+  items: Illustration[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="it-illustration-grid">
+  {items.map((item) => <ItIllustration {...item} />)}
+</div>
+
+<style>
+  .it-illustration-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 1.5rem);
+    margin: 1.7rem 0 2.15rem;
+    align-items: start;
+  }
+
+  .it-illustration-grid :global(.it-illustration) {
+    margin: 0;
+  }
+
+  @media (max-width: 720px) {
+    .it-illustration-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
