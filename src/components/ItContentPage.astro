@@ -14,9 +14,14 @@ import {
 interface Props {
   title: string;
   description?: string;
+  wide?: boolean;
 }
 
-const { title, description = `${title} im IT-Bereich von Aloy.` } = Astro.props;
+const {
+  title,
+  description = `${title} im IT-Bereich von Aloy.`,
+  wide = false,
+} = Astro.props;
 ---
 
 <BaseLayout
@@ -31,7 +36,7 @@ const { title, description = `${title} im IT-Bereich von Aloy.` } = Astro.props;
   footerDescription={itFooterDescription}
   bodyClass="portal-welcome portal-it"
 >
-  <section class="surface it-page">
+  <section class:list={['surface', 'it-page', { 'it-page--wide': wide }]}>
     <h1>{title}</h1>
     <slot />
   </section>
@@ -42,6 +47,10 @@ const { title, description = `${title} im IT-Bereich von Aloy.` } = Astro.props;
     text-align: left;
     max-width: 980px;
     margin-inline: auto;
+  }
+
+  .it-page--wide {
+    max-width: 1240px;
   }
 
   .it-page::after {

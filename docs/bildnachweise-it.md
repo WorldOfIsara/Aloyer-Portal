@@ -46,6 +46,19 @@ Diese Liste dokumentiert die derzeit eingebundenen Bilder. Noch offene Angaben s
 | `/it/soeldner/kriegsbrauch-feld` | `Arzt.jpg` | `feldscher.webp` | offen | offen | offen | offen | offen | offen | offen |
 | `/it/soeldner/reisen-heerlager` | `Heeres Musiker.jpg` | `heeresmusiker.webp` | offen | offen | offen | offen | offen | offen | offen |
 
+## Die Akademie
+
+| Website-Seite | Originaldatei | Website-Datei | Originaltitel | Urheber | Jahr | Institution | Original-URL | Lizenz | Download |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `/it/akademie` | `Akademie.jpg` | `akademie-gesamtansicht.webp` | offen | offen | offen | offen | offen | offen | offen |
+| `/it/akademie/geschichte` | `Innenhof.jpg` | `akademie-innenhof.webp` | offen | offen | offen | offen | offen | offen | offen |
+| `/it/akademie/vier-zweige` | `Gelehrter, Priester, Soldat und Handwerker - Historischer Holzschnitt.jpg` | `vier-zweige.webp` | offen | offen | offen | offen | offen | offen | offen |
+| `/it/akademie/wissenschaft-magie` | `Leersaal.jpg` | `wissenschaft-lehrsaal.webp` | offen | offen | offen | offen | offen | offen | offen |
+| `/it/akademie/wissenschaft-magie` | `Leerbuch.jpg` | `wissenschaft-lehrbuch.webp` | offen | offen | offen | offen | offen | offen | offen |
+| `/it/akademie/gelehrte-schreiber-meister` | `Gelehrte.jpg` | `gelehrte-handschrift.webp` | offen | offen | offen | offen | offen | offen | offen |
+| `/it/akademie/gelehrte-schreiber-meister` | `Gelehrte Schreiber.jpg` | `gelehrte-schreiber.webp` | offen | offen | offen | offen | offen | offen | offen |
+| `/it/akademie/rote-akademie-ohm` | `Befestigter Übungshof - Historischer Holzschnitt.jpg` | `rote-akademie-uebungshof.webp` | offen | offen | offen | offen | offen | offen | offen |
+
 ## Noch nicht belegt
 
 - `/it/aloy/handel`: Gesucht wird ein gemeinfreies Motiv mit Markt, Kaufleuten, Münzprägung, Waage oder Warenhandel.

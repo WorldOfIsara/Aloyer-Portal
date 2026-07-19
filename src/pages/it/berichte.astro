@@ -1,21 +1,1016 @@
 ---
 import ItContentPage from '../../components/ItContentPage.astro';
+import { itReportEntries } from '../../data/itReports';
+
+const reportYears = [...new Set(itReportEntries.map((entry) => entry.year))];
+const latestYear = reportYears.at(-1) ?? '';
+const initialEntry = itReportEntries.find((entry) => entry.year === latestYear) ?? itReportEntries[0];
+
+const typeLabels = [
+  'Originalbericht',
+  'Originalmeldung',
+  'Originalausschreibung',
+  'Bestätigte Kurzmeldung',
+] as const;
+
+const typeKey = (type: string) => {
+  if (type === 'Originalbericht') return 'bericht';
+  if (type === 'Originalmeldung') return 'meldung';
+  if (type === 'Originalausschreibung') return 'ausschreibung';
+  return 'kurzmeldung';
+};
+
+const yearNumber = (year: string) => year.split(' ')[0];
 ---
 
-<ItContentPage title="Berichte">
-  <p>Diese Sammlung bündelt öffentliche Verlautbarungen, Feldberichte und bestätigte Nachrichten aus den Botenblättern, Ratsunterlagen und Chroniken der Banner. Ein Bericht soll nach Möglichkeit Zeit, Ort, Beteiligte, Anlass und Ergebnis nennen; Gerücht, redaktioneller Spott und gesicherte Kunde sind voneinander zu trennen.</p>
+<ItContentPage
+  title="Berichte"
+  description="Originalberichte, Botenmeldungen und bestätigte Chronikeinträge aus den Registern Aloys."
+  wide
+>
+  <div class="chronicle-intro">
+    <p>Die Register der Akademie bewahren Feldberichte, öffentliche Botenmeldungen, Ausschreibungen und bestätigte Ereignisse. Wählet ein Jahr und folgt den Verbindungen durch die Chronik. Persönliche Berichte zeigen die Sicht ihrer Verfasser und gelten nicht als allwissende Staatschronik.</p>
+    <p class="transmission-note">Originaltexte bleiben in ihrer überlieferten Schreibweise erhalten. Ältere Zeitkürzel, Ortsnamen und sprachliche Eigenheiten wurden nicht nachträglich geglättet.</p>
+  </div>
 
-  <h2>121 n.B.A. - Manövertage und Reise nach Drachengard</h2>
-  <p>Das 84. Banner sammelte sich zur Vorbereitung einer Reise über Ohm und Alfalter nach Drachengard. Aus dem südlichen Alfalter wurden hohe Wegzölle und der Aufbau eines neuen Heeres gemeldet. Zugleich warnte der Rat vor Überfällen auf Höfe im Umland von Ohm und riet Reisenden, die bewachten Landesstraßen nicht zu verlassen.</p>
+  <section class="chronicle" data-chronicle data-initial-year={latestYear}>
+    <header class="chronicle-controls">
+      <div>
+        <p class="control-kicker">Das Band der Jahre</p>
+        <h2 class="control-title">Wählet ein Registerjahr</h2>
+      </div>
+      <button class="show-all" type="button" data-year-filter="all" aria-pressed="false">
+        Ganze Chronik
+        <span>{itReportEntries.length} Einträge</span>
+      </button>
+    </header>
 
-  <h2>122 n.B.A. - Aloyer Freiheitsfest</h2>
-  <p>Das 84. Banner lud Freunde und Verbündete aus den Splitterlanden zu Marktständen, Schänken und Spielen. Wettkämpfe stellten Ereignisse der Republik nach; jeder Gast durfte sich um den Hut der Freiheit bewerben. Das Fest erinnerte an die Gründung der Republik und die Gleichstellung aller Aloyer.</p>
+    <nav class="year-track" aria-label="Berichtsjahre">
+      <div class="year-line" aria-hidden="true"></div>
+      {reportYears.map((year) => {
+        const count = itReportEntries.filter((entry) => entry.year === year).length;
+        const isCurrent = year === latestYear;
 
-  <h2>123 n.B.A. - Heinrichsfest</h2>
-  <p>Das Banner lagerte gemeinsam mit Neu-Boffeld und Cherubin. Eine kleine Gruppe Otzländer erklärte nach ihrer Abweisung mehreren Ländern den Krieg. Aloyer übernahmen Schutzdienste für Händler, nahmen an Manövern teil und vermittelten in Streitfällen. Beim Admiralitätstisch wurde Neu-Boffeld für eine nördliche Expedition bestimmt; Aloy sagte die Beteiligung von höchstens zwei bis drei Bannern und den Landmarsch zur Einschiffung in der Windmark zu. Mit Anruhn wurden Handelskontakte über einen geplanten Hafen besprochen.</p>
+        return (
+          <button
+            class:list={['year-node', { 'is-active': isCurrent }]}
+            type="button"
+            data-year-filter={year}
+            aria-pressed={isCurrent ? 'true' : 'false'}
+          >
+            <span class="year-seal">{yearNumber(year)}</span>
+            <span class="year-era">n.B.A.</span>
+            <span class="year-count">{count} {count === 1 ? 'Eintrag' : 'Einträge'}</span>
+          </button>
+        );
+      })}
+    </nav>
 
-  <h2>123 n.B.A. - Expedition in die Otzlande</h2>
-  <p>Ein Extrablatt meldet die Rückkehr des 84. Banners aus den Otzlanden. Der Bericht nennt beschwerliche Märsche durch Wald und Sumpf, Angriffe durch Otzländer und Orks sowie die Rückgewinnung einer Geisel und geraubten Gutes. Nach schweren Nachhutkämpfen erreichte der Trupp die Schiffe und kehrte rechtzeitig vor dem Freiheitsfest zurück.</p>
+    <div class="type-controls" aria-label="Quellenarten">
+      <span>Siegel und Quellenart</span>
+      <button class="type-filter is-active" type="button" data-type-filter="all" aria-pressed="true">
+        Alle
+      </button>
+      {typeLabels.map((type) => (
+        <button
+          class={`type-filter type-${typeKey(type)}`}
+          type="button"
+          data-type-filter={type}
+          aria-pressed="false"
+        >
+          <i aria-hidden="true"></i>
+          {type}
+        </button>
+      ))}
+    </div>
 
-  <p>Weitere Rats-, Fest- und Lagerberichte werden in die Chronik aufgenommen, sobald ihre Fassung für das öffentliche Register geprüft ist.</p>
+    <p class="result-status" data-result-status aria-live="polite"></p>
+
+    <div class="chronicle-workspace">
+      <section class="chronicle-map" aria-label="Ereignispfad">
+        <div class="path-spine" aria-hidden="true"></div>
+        <div class="event-nodes">
+          {itReportEntries.map((entry, index) => {
+            const isInitial = entry.id === initialEntry?.id;
+            const entryType = typeKey(entry.type);
+
+            return (
+              <button
+                class:list={[
+                  'event-node',
+                  `type-${entryType}`,
+                  { 'is-selected': isInitial },
+                ]}
+                type="button"
+                data-entry-node={entry.id}
+                data-entry-year={entry.year}
+                data-entry-type={entry.type}
+                data-lane={index % 2 === 0 ? 'left' : 'right'}
+                aria-controls={`bericht-${entry.id}`}
+                aria-pressed={isInitial ? 'true' : 'false'}
+                hidden={entry.year !== latestYear}
+              >
+                <span class="event-connector" aria-hidden="true"></span>
+                <span class="event-pin" aria-hidden="true"></span>
+                <span class="event-index">{String(index + 1).padStart(2, '0')}</span>
+                <span class="event-year">{entry.year}</span>
+                <strong>{entry.title}</strong>
+                <span class="event-type">{entry.type}</span>
+                <span class="open-hint">Akte öffnen</span>
+              </button>
+            );
+          })}
+        </div>
+        <p class="no-results" data-no-results hidden>Für diese Auswahl ist noch keine Akte im Register verzeichnet.</p>
+      </section>
+
+      <aside class="reading-desk" aria-label="Geöffnete Berichtsakte">
+        <div class="desk-top">
+          <span class="desk-label">Geöffnete Akte</span>
+          <span class="desk-flourish" aria-hidden="true">◆</span>
+        </div>
+
+        {itReportEntries.map((entry) => {
+          const isInitial = entry.id === initialEntry?.id;
+          const originalParagraphs = entry.original?.trim().split(/\n\s*\n/) ?? [];
+
+          return (
+            <article
+              class={`report-panel type-${typeKey(entry.type)}`}
+              id={`bericht-${entry.id}`}
+              data-report-panel={entry.id}
+              hidden={!isInitial}
+              tabindex="-1"
+            >
+              <p class="panel-meta">
+                <span>{entry.year}</span>
+                <span>{entry.type}</span>
+              </p>
+              <h2 class="panel-title">{entry.title}</h2>
+
+              {entry.facts && (
+                <ul class="confirmed-facts">
+                  {entry.facts.map((fact) => <li>{fact}</li>)}
+                </ul>
+              )}
+
+              {entry.original && (
+                <details class="original-report">
+                  <summary>{entry.originalLabel ?? 'Originaltext lesen'}</summary>
+                  <div class="original-copy">
+                    {originalParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+                  </div>
+                </details>
+              )}
+            </article>
+          );
+        })}
+      </aside>
+    </div>
+  </section>
+
+  <p class="reports-closing">Weitere bestätigte Rats-, Fest- und Lagerberichte werden aufgenommen, sobald ein belastbarer Eintrag oder ein veröffentlichungsfähiger Originaltext vorliegt. Planungen, unbestätigte Gerüchte und bloße Absichtserklärungen gelten nicht als geschehen.</p>
 </ItContentPage>
+
+<script>
+  const chronicle = document.querySelector<HTMLElement>('[data-chronicle]');
+
+  if (chronicle) {
+    const yearButtons = [...chronicle.querySelectorAll<HTMLButtonElement>('[data-year-filter]')];
+    const typeButtons = [...chronicle.querySelectorAll<HTMLButtonElement>('[data-type-filter]')];
+    const eventNodes = [...chronicle.querySelectorAll<HTMLButtonElement>('[data-entry-node]')];
+    const reportPanels = [...chronicle.querySelectorAll<HTMLElement>('[data-report-panel]')];
+    const resultStatus = chronicle.querySelector<HTMLElement>('[data-result-status]');
+    const noResults = chronicle.querySelector<HTMLElement>('[data-no-results]');
+
+    let selectedYear = chronicle.dataset.initialYear ?? 'all';
+    let selectedType = 'all';
+    let selectedEntry = eventNodes.find((node) => node.classList.contains('is-selected'))?.dataset.entryNode ?? '';
+
+    const showPanel = (entryId: string, moveFocus = false) => {
+      selectedEntry = entryId;
+
+      eventNodes.forEach((node) => {
+        const selected = node.dataset.entryNode === entryId;
+        node.classList.toggle('is-selected', selected);
+        node.setAttribute('aria-pressed', String(selected));
+      });
+
+      reportPanels.forEach((panel) => {
+        const selected = panel.dataset.reportPanel === entryId;
+        panel.hidden = !selected;
+        if (selected && moveFocus && window.matchMedia('(max-width: 820px)').matches) {
+          panel.focus({ preventScroll: true });
+          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    };
+
+    const applyFilters = () => {
+      const visibleNodes = eventNodes.filter((node) => {
+        const matchesYear = selectedYear === 'all' || node.dataset.entryYear === selectedYear;
+        const matchesType = selectedType === 'all' || node.dataset.entryType === selectedType;
+        const visible = matchesYear && matchesType;
+        node.hidden = !visible;
+        return visible;
+      });
+
+      noResults?.toggleAttribute('hidden', visibleNodes.length > 0);
+
+      if (resultStatus) {
+        const yearText = selectedYear === 'all' ? 'der ganzen Chronik' : selectedYear;
+        const typeText = selectedType === 'all' ? '' : ` · ${selectedType}`;
+        resultStatus.textContent = `${visibleNodes.length} ${visibleNodes.length === 1 ? 'Akte' : 'Akten'} aus ${yearText}${typeText}`;
+      }
+
+      const selectedStillVisible = visibleNodes.some((node) => node.dataset.entryNode === selectedEntry);
+      if (!selectedStillVisible && visibleNodes[0]?.dataset.entryNode) {
+        showPanel(visibleNodes[0].dataset.entryNode);
+      }
+    };
+
+    yearButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        selectedYear = button.dataset.yearFilter ?? 'all';
+        yearButtons.forEach((candidate) => {
+          const active = candidate === button;
+          candidate.classList.toggle('is-active', active);
+          candidate.setAttribute('aria-pressed', String(active));
+        });
+        applyFilters();
+      });
+    });
+
+    typeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        selectedType = button.dataset.typeFilter ?? 'all';
+        typeButtons.forEach((candidate) => {
+          const active = candidate === button;
+          candidate.classList.toggle('is-active', active);
+          candidate.setAttribute('aria-pressed', String(active));
+        });
+        applyFilters();
+      });
+    });
+
+    eventNodes.forEach((node) => {
+      node.addEventListener('click', () => {
+        const entryId = node.dataset.entryNode;
+        if (entryId) showPanel(entryId, true);
+      });
+    });
+
+    const hashEntry = window.location.hash.replace('#bericht-', '');
+    if (hashEntry && eventNodes.some((node) => node.dataset.entryNode === hashEntry)) {
+      selectedYear = 'all';
+      const allYearsButton = yearButtons.find((button) => button.dataset.yearFilter === 'all');
+      allYearsButton?.click();
+      showPanel(hashEntry);
+    } else {
+      applyFilters();
+    }
+  }
+</script>
+
+<style>
+  .chronicle-intro {
+    display: grid;
+    grid-template-columns: 1.4fr 0.8fr;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 2rem;
+  }
+
+  .chronicle-intro p {
+    margin: 0;
+  }
+
+  .transmission-note {
+    padding: 0.85rem 1rem;
+    border-left: 3px double rgba(79, 47, 26, 0.72);
+    font-size: 0.92rem;
+    font-style: italic;
+  }
+
+  .chronicle {
+    --ink: #21150d;
+    --muted-ink: #6b4932;
+    --line: rgba(76, 45, 25, 0.46);
+    --paper: rgba(241, 220, 181, 0.72);
+    --paper-strong: rgba(248, 231, 199, 0.94);
+    --seal: #8f1f18;
+    margin-top: 1.5rem;
+    padding: 1.35rem;
+    border: 1px solid rgba(83, 50, 29, 0.5);
+    background:
+      linear-gradient(90deg, transparent 49.8%, rgba(93, 58, 34, 0.035) 50%, transparent 50.2%),
+      radial-gradient(circle at 20% 10%, rgba(255, 246, 221, 0.5), transparent 24%),
+      rgba(225, 201, 161, 0.22);
+    box-shadow:
+      inset 0 0 0 4px rgba(238, 219, 183, 0.2),
+      0 14px 34px rgba(49, 29, 17, 0.12);
+  }
+
+  .chronicle-controls {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0.25rem 1rem;
+  }
+
+  .control-kicker,
+  .control-title {
+    margin: 0;
+  }
+
+  .control-kicker {
+    color: var(--muted-ink);
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  .control-title {
+    padding: 0 !important;
+    font-size: clamp(1.55rem, 3vw, 2.25rem);
+    text-align: left !important;
+  }
+
+  .control-title::after,
+  .panel-title::after {
+    display: none !important;
+  }
+
+  .show-all {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 148px;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid rgba(78, 46, 26, 0.65);
+    color: var(--ink);
+    background: rgba(245, 227, 194, 0.55);
+    font: 700 1rem var(--font-ui);
+    cursor: pointer;
+  }
+
+  .show-all span {
+    color: var(--muted-ink);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .show-all:hover,
+  .show-all:focus-visible,
+  .show-all.is-active {
+    background: rgba(255, 241, 210, 0.9);
+    outline: 2px solid rgba(91, 49, 24, 0.22);
+    outline-offset: 2px;
+  }
+
+  .year-track {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(100px, 1fr));
+    gap: 0.6rem;
+    padding: 1rem 0 1.4rem;
+    overflow-x: auto;
+    scrollbar-color: rgba(82, 49, 28, 0.55) transparent;
+  }
+
+  .year-line {
+    position: absolute;
+    top: 3.35rem;
+    left: 7%;
+    right: 7%;
+    height: 3px;
+    background:
+      repeating-linear-gradient(90deg, rgba(83, 49, 27, 0.62) 0 8px, transparent 8px 13px);
+  }
+
+  .year-node {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    min-width: 100px;
+    border: 0;
+    color: var(--ink);
+    background: transparent;
+    font-family: var(--font-ui);
+    cursor: pointer;
+  }
+
+  .year-seal {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    aspect-ratio: 1;
+    border: 3px double rgba(74, 42, 23, 0.78);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 34% 28%, rgba(255, 238, 199, 0.9), transparent 26%),
+      #c9a879;
+    box-shadow: 0 3px 0 rgba(71, 42, 24, 0.26);
+    font: 700 1.18rem var(--font-heading);
+    transition:
+      transform 180ms ease,
+      color 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .year-era {
+    margin-top: 0.3rem;
+    font-weight: 700;
+  }
+
+  .year-count {
+    color: var(--muted-ink);
+    font-size: 0.72rem;
+  }
+
+  .year-node:hover .year-seal,
+  .year-node:focus-visible .year-seal {
+    transform: translateY(-3px) rotate(-3deg);
+  }
+
+  .year-node.is-active .year-seal {
+    border-color: #54120f;
+    color: #fff1d7;
+    background:
+      radial-gradient(circle at 34% 28%, rgba(255, 205, 166, 0.35), transparent 24%),
+      var(--seal);
+    box-shadow:
+      0 0 0 4px rgba(143, 31, 24, 0.13),
+      0 4px 0 rgba(71, 42, 24, 0.3);
+    transform: translateY(-4px);
+  }
+
+  .type-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0.75rem 0;
+    border-block: 1px solid rgba(79, 47, 27, 0.34);
+  }
+
+  .type-controls > span {
+    margin-right: 0.35rem;
+    color: var(--muted-ink);
+    font: 700 0.78rem var(--font-ui);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .type-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.58rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--ink);
+    background: transparent;
+    font: 700 0.78rem var(--font-ui);
+    cursor: pointer;
+  }
+
+  .type-filter i {
+    display: block;
+    width: 0.65rem;
+    aspect-ratio: 1;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: inset 0 0 0 2px rgba(245, 226, 191, 0.8);
+  }
+
+  .type-filter:hover,
+  .type-filter:focus-visible,
+  .type-filter.is-active {
+    border-color: rgba(74, 43, 24, 0.45);
+    background: rgba(249, 231, 198, 0.75);
+  }
+
+  .type-bericht {
+    --type-color: #8b2019;
+  }
+
+  .type-meldung {
+    --type-color: #274f55;
+  }
+
+  .type-ausschreibung {
+    --type-color: #7b5b17;
+  }
+
+  .type-kurzmeldung {
+    --type-color: #5c4b6b;
+  }
+
+  .type-filter i,
+  .event-node .event-pin {
+    color: var(--type-color);
+  }
+
+  .result-status {
+    margin: 0.65rem 0 0 !important;
+    color: var(--muted-ink) !important;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    text-align: right;
+  }
+
+  .chronicle-workspace {
+    display: grid;
+    grid-template-columns: minmax(460px, 1.16fr) minmax(340px, 0.84fr);
+    gap: 1.5rem;
+    align-items: start;
+    margin-top: 0.6rem;
+  }
+
+  .chronicle-map {
+    position: relative;
+    min-height: 520px;
+    padding: 1.5rem 0.8rem 2rem;
+    border-right: 1px solid rgba(78, 46, 26, 0.26);
+  }
+
+  .path-spine {
+    position: absolute;
+    top: 1.8rem;
+    bottom: 2rem;
+    left: 50%;
+    width: 3px;
+    translate: -50% 0;
+    background:
+      repeating-linear-gradient(180deg, rgba(79, 47, 27, 0.58) 0 9px, transparent 9px 15px);
+  }
+
+  .path-spine::before,
+  .path-spine::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 12px;
+    aspect-ratio: 1;
+    border: 2px solid rgba(75, 43, 24, 0.65);
+    border-radius: 50%;
+    background: #d7bc8e;
+    translate: -50% 0;
+  }
+
+  .path-spine::before {
+    top: -4px;
+  }
+
+  .path-spine::after {
+    bottom: -4px;
+  }
+
+  .event-nodes {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .event-node {
+    position: relative;
+    display: grid;
+    gap: 0.18rem;
+    width: calc(50% - 1.65rem);
+    min-height: 118px;
+    padding: 0.78rem 0.9rem 0.72rem;
+    border: 1px solid rgba(70, 40, 22, 0.55);
+    border-radius: 2px 12px 3px 9px;
+    color: var(--ink);
+    background:
+      linear-gradient(135deg, rgba(255, 247, 224, 0.62), transparent 35%),
+      var(--paper);
+    box-shadow:
+      3px 5px 0 rgba(79, 45, 24, 0.1),
+      inset 0 0 18px rgba(109, 69, 38, 0.08);
+    font-family: var(--font-body);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      background-color 180ms ease;
+  }
+
+  .event-node[data-lane='left'] {
+    align-self: flex-start;
+    rotate: -0.35deg;
+  }
+
+  .event-node[data-lane='right'] {
+    align-self: flex-end;
+    rotate: 0.35deg;
+  }
+
+  .event-node:hover,
+  .event-node:focus-visible {
+    z-index: 2;
+    transform: translateY(-3px);
+    outline: 2px solid rgba(83, 46, 24, 0.24);
+    outline-offset: 3px;
+    box-shadow:
+      5px 8px 0 rgba(79, 45, 24, 0.13),
+      inset 0 0 18px rgba(109, 69, 38, 0.08);
+  }
+
+  .event-node.is-selected {
+    border-color: var(--type-color);
+    background:
+      linear-gradient(135deg, rgba(255, 250, 232, 0.84), transparent 35%),
+      var(--paper-strong);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--type-color) 18%, transparent),
+      5px 7px 0 rgba(79, 45, 24, 0.12);
+  }
+
+  .event-connector {
+    position: absolute;
+    top: 50%;
+    width: 1.75rem;
+    height: 1px;
+    border-top: 1px dashed rgba(73, 42, 24, 0.7);
+  }
+
+  [data-lane='left'] .event-connector {
+    left: 100%;
+  }
+
+  [data-lane='right'] .event-connector {
+    right: 100%;
+  }
+
+  .event-pin {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    width: 12px;
+    aspect-ratio: 1;
+    border: 2px solid #ead3a8;
+    border-radius: 50%;
+    background: var(--type-color);
+    box-shadow: 0 0 0 1px var(--type-color);
+    translate: 0 -50%;
+  }
+
+  [data-lane='left'] .event-pin {
+    left: calc(100% + 1.75rem - 6px);
+  }
+
+  [data-lane='right'] .event-pin {
+    right: calc(100% + 1.75rem - 6px);
+  }
+
+  .event-index {
+    position: absolute;
+    top: 0.45rem;
+    right: 0.55rem;
+    color: rgba(83, 49, 28, 0.34);
+    font: 700 0.72rem var(--font-ui);
+  }
+
+  .event-year {
+    color: var(--type-color);
+    font: 700 0.74rem var(--font-ui);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .event-node strong {
+    padding-right: 1rem;
+    font-size: 1.02rem;
+    line-height: 1.18;
+  }
+
+  .event-type {
+    color: var(--muted-ink);
+    font: 600 0.72rem var(--font-ui);
+  }
+
+  .open-hint {
+    margin-top: 0.3rem;
+    color: var(--type-color);
+    font: 700 0.72rem var(--font-ui);
+    text-align: right;
+  }
+
+  .no-results {
+    position: relative;
+    margin: 3rem 1rem !important;
+    padding: 1rem;
+    border: 1px dashed var(--line);
+    background: rgba(245, 226, 191, 0.55);
+    text-align: center;
+  }
+
+  .reading-desk {
+    position: sticky;
+    top: 5.7rem;
+    min-height: 480px;
+    padding: 1rem 1.2rem 1.25rem;
+    border: 1px solid rgba(70, 40, 22, 0.58);
+    background:
+      linear-gradient(90deg, transparent 0 94%, rgba(78, 43, 23, 0.06) 94% 95%, transparent 95%),
+      radial-gradient(circle at 18% 12%, rgba(255, 248, 225, 0.72), transparent 28%),
+      rgba(242, 221, 184, 0.9);
+    box-shadow:
+      8px 10px 0 rgba(69, 39, 22, 0.12),
+      inset 0 0 30px rgba(103, 63, 34, 0.12);
+  }
+
+  .reading-desk::before,
+  .reading-desk::after {
+    content: '';
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: rgba(78, 45, 24, 0.32);
+  }
+
+  .reading-desk::before {
+    top: 7px;
+  }
+
+  .reading-desk::after {
+    bottom: 7px;
+  }
+
+  .desk-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.55rem;
+    border-bottom: 3px double rgba(79, 47, 26, 0.5);
+  }
+
+  .desk-label {
+    color: var(--muted-ink);
+    font: 700 0.76rem var(--font-ui);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .desk-flourish {
+    color: var(--seal);
+    font-size: 0.72rem;
+  }
+
+  .report-panel {
+    scroll-margin-top: 6rem;
+    outline: none;
+  }
+
+  .panel-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0.9rem 0 0.45rem !important;
+    color: var(--muted-ink) !important;
+    font: 700 0.78rem var(--font-ui);
+  }
+
+  .panel-meta span:last-child {
+    color: var(--type-color);
+    text-align: right;
+  }
+
+  .panel-title {
+    margin: 0 0 1rem !important;
+    padding: 0 0 0.8rem !important;
+    border-bottom: 1px solid rgba(76, 43, 24, 0.4);
+    font-size: clamp(1.45rem, 2.4vw, 2rem);
+    line-height: 1.05;
+    text-align: left !important;
+  }
+
+  .confirmed-facts {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .confirmed-facts li + li {
+    margin-top: 0.55rem;
+  }
+
+  .confirmed-facts li::marker {
+    color: var(--seal);
+  }
+
+  .original-report {
+    margin-top: 1rem;
+    border-block: 1px solid rgba(78, 45, 24, 0.48);
+  }
+
+  .original-report summary {
+    position: relative;
+    padding: 0.78rem 2rem 0.78rem 0;
+    color: #4b2c19;
+    cursor: pointer;
+    font-weight: 700;
+    list-style: none;
+  }
+
+  .original-report summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .original-report summary::after {
+    content: '+';
+    position: absolute;
+    top: 50%;
+    right: 0.3rem;
+    translate: 0 -50%;
+    font: 400 1.35rem Georgia, serif;
+  }
+
+  .original-report[open] summary::after {
+    content: '−';
+  }
+
+  .original-copy {
+    padding: 0.4rem 0.25rem 1rem;
+    border-top: 1px solid rgba(78, 45, 24, 0.24);
+  }
+
+  .original-copy p {
+    white-space: pre-line;
+  }
+
+  .original-copy p:first-child {
+    font-weight: 700;
+  }
+
+  .reports-closing {
+    margin-top: 2.2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(92, 55, 31, 0.45);
+    font-style: italic;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .event-node:not([hidden]) {
+      animation: reveal-node 360ms both;
+    }
+
+    .event-node:not([hidden]):nth-child(2n) {
+      animation-delay: 45ms;
+    }
+
+    .report-panel:not([hidden]) {
+      animation: reveal-panel 260ms both;
+    }
+  }
+
+  @keyframes reveal-node {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  @keyframes reveal-panel {
+    from {
+      opacity: 0;
+      transform: translateX(8px);
+    }
+  }
+
+  @media (max-width: 980px) {
+    .chronicle-workspace {
+      grid-template-columns: minmax(360px, 1fr) minmax(300px, 0.8fr);
+      gap: 1rem;
+    }
+
+    .chronicle-map {
+      padding-inline: 0.4rem;
+    }
+
+    .event-node {
+      width: calc(50% - 1.25rem);
+    }
+
+    .event-connector {
+      width: 1.35rem;
+    }
+
+    [data-lane='left'] .event-pin {
+      left: calc(100% + 1.35rem - 6px);
+    }
+
+    [data-lane='right'] .event-pin {
+      right: calc(100% + 1.35rem - 6px);
+    }
+  }
+
+  @media (max-width: 820px) {
+    .chronicle-intro {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .chronicle {
+      padding: 1rem;
+    }
+
+    .chronicle-workspace {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chronicle-map {
+      width: 100%;
+      min-height: 0;
+      border-right: 0;
+      border-bottom: 1px solid rgba(78, 46, 26, 0.28);
+    }
+
+    .reading-desk {
+      position: relative;
+      top: auto;
+      width: 100%;
+      min-height: 0;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .chronicle-controls {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .show-all {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .year-track {
+      grid-template-columns: repeat(6, 86px);
+      margin-inline: -0.25rem;
+      padding-inline: 0.25rem;
+    }
+
+    .year-line {
+      left: 44px;
+      right: 44px;
+    }
+
+    .type-controls > span {
+      width: 100%;
+    }
+
+    .result-status {
+      text-align: left;
+    }
+
+    .chronicle-map {
+      padding-left: 1.5rem;
+    }
+
+    .path-spine {
+      left: 0.55rem;
+    }
+
+    .event-node,
+    .event-node[data-lane='left'],
+    .event-node[data-lane='right'] {
+      align-self: stretch;
+      width: calc(100% - 1.5rem);
+      margin-left: 1.5rem;
+      rotate: 0deg;
+    }
+
+    .event-connector,
+    [data-lane='left'] .event-connector,
+    [data-lane='right'] .event-connector {
+      top: 50%;
+      right: 100%;
+      left: auto;
+      width: 1.55rem;
+    }
+
+    [data-lane='left'] .event-pin,
+    [data-lane='right'] .event-pin {
+      right: calc(100% + 1.55rem - 6px);
+      left: auto;
+    }
+
+    .reading-desk {
+      padding-inline: 0.9rem;
+    }
+  }
+</style>
