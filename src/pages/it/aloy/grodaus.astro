@@ -1,32 +1,67 @@
-﻿---
+---
 import ItContentPage from '../../../components/ItContentPage.astro';
-import ItIllustration from '../../../components/ItIllustration.astro';
+import ItCityArticle from '../../../components/ItCityArticle.astro';
+import TextDivider from '../../../components/TextDivider.astro';
 ---
 
 <ItContentPage title="Grodaus, Hauptstadt der Republik">
-  <ItIllustration
-    src="/images/it/das-land-aloy/grodaus.webp"
-    alt="Historische Stadtansicht einer großen befestigten Stadt mit Türmen, Mauern und Zufahrtsstraße"
-    caption="Grodaus, Sitz des Rates und Hauptstadt der freien Republik."
-    width={1500}
-    height={845}
-    priority={true}
-  />
-  <p>Grodaus ist die Hauptstadt der freien Republik Aloy und gilt als politisches, gelehrtes und verwaltendes Herz des Landes. Wer von Aloy spricht, spricht früher oder später von Grodaus; und wer in Grodaus spricht, tut gut daran, seine Worte zu wägen, denn irgendwo findet sich stets ein Schreiber, ein Ratsdiener oder ein Bürger, der es genauer wissen will.
-<br><br>
-Die Stadt liegt im Inneren Aloys und nimmt seit der Neuordnung der Republik eine herausragende Stellung ein. Hier sitzt der Aloyer Rat, hier werden Verordnungen beraten, Gesandte empfangen, Anträge gestellt, Stimmen gezählt, Beschlüsse verkündet und, sofern nötig, erneut vertagt. Grodaus ist damit nicht Sitz eines Fürsten, sondern Mittelpunkt einer Ordnung, die sich auf Bürger, Zünfte, Städte, Akademie, Glaube und gewählte Vertreter stützt.
-<br><br>
-Von besonderer Bedeutung ist die Akademie, deren Einfluss in Grodaus an vielen Stellen sichtbar wird. Gelehrte, Schreiber, Priester, angehende Amtsträger, Handwerker, Studenten und Vertreter der verschiedenen Lehrzweige prägen das Bild der Stadt. Wer durch Grodaus geht, begegnet nicht nur Händlern, Wachen und Bürgern, sondern auch Debatten über Recht, Glaube, Münzordnung, Sternkunde, Heilkunst, Kriegswesen und jene Fragen, die nach Ansicht der Akademie dringend geklärt werden müssen, auch wenn das übrige Volk bis dahin gut ohne Antwort gelebt hat.
-<br><br>
-Grodaus ist zugleich ein Ort der Erinnerung. Die Geschichte der Befreiung Aloys, die Abschaffung des Adels und die Entstehung der Republik sind in der Stadt besonders gegenwärtig. Abschriften wichtiger Erklärungen, alte Chroniken, Ratsakten und städtische Überlieferungen werden hier gesammelt und bewahrt. Es ist daher üblich, Grodaus nicht allein als Hauptstadt, sondern auch als Gedächtnis der Republik zu bezeichnen.
-<br><br>
-Die Stadt ist jedoch nicht nur ein Ort für Ratsherren, Schreiber und Gelehrte. In ihren Straßen finden sich Handwerker, Händler, Wirte, Boten, Fuhrleute, Bürgerfamilien, Tempeldiener, Wachen und Reisende aus anderen Teilen Aloys. Grodaus lebt von Verwaltung und Bildung, doch ebenso von Werkstätten, Märkten, Gasthäusern, Höfen und den alltäglichen Mühen seiner Bewohner. Wer die Stadt nur nach ihren Ratsstuben beurteilt, kennt sie schlecht; wer sie nur nach ihren Wirtshäusern beurteilt, kennt sie vermutlich besser, aber nicht zwingend vollständiger.
-<br><br>
-Auch für die Aloyer Söldner besitzt Grodaus Bedeutung. Viele Wege in den Dienst der Republik führen über die dortigen Stellen, über Schriftstücke, Empfehlungen, akademische Ausbildung oder Kontakte zu Rat und Verwaltung. Gesandte und Söldner, die Aloy nach außen vertreten, tragen oft Kunde aus Grodaus mit sich, ob in Form offizieller Aufträge, politischer Weisungen oder ungebetener Ratschläge.
-<br><br>
-Fremden gegenüber zeigt sich Grodaus geordnet, geschäftig und nicht immer leicht zu durchschauen. Wer aus Ländern mit Königen, Herzögen und Grafen kommt, wundert sich bisweilen darüber, dass in Aloy kein einzelner Herrscher über allem steht. In Grodaus wird diese Verwunderung meist mit Geduld, Stolz oder einem längeren Vortrag über die Vorzüge republikanischer Ordnung beantwortet.
-<br><br>
-Im Austausch mit den Splitterlanden nimmt Grodaus eine zentrale Rolle ein. Diplomatische Kontakte, Berichte reisender Söldner, Anfragen fremder Gemeinschaften und politische Entwicklungen werden hier gesammelt, geprüft und in die Arbeit des Rates eingebracht. Was draußen geschieht, erreicht früher oder später Grodaus; was Grodaus beschließt, findet früher oder später seinen Weg nach draußen.
-<br><br>
-So ist Grodaus Hauptstadt, Ratssitz, Akademiestadt, Erinnerungsort und Verwaltungszentrum zugleich. Die Stadt steht für den Anspruch Aloys, frei, geordnet und gelehrt zu sein — auch dann, wenn Ordnung und Gelehrsamkeit im Einzelfall mehrere Sitzungen, drei Abschriften und einen Streit zwischen zwei Zünften erfordern.</p>
+  <ItCityArticle
+    name="Grodaus"
+    subtitle="Hauptstadt der freien Republik Aloy"
+    summary="Grodaus ist politisches, gelehrtes und verwaltendes Herz des Landes. Hier sitzt der Aloyer Rat, hier sammeln sich Akademie, Verwaltung, Erinnerung und republikanische Ordnung."
+    imageSrc="/images/it/das-land-aloy/grodaus.webp"
+    imageAlt="Historische Stadtansicht einer großen befestigten Stadt mit Türmen, Mauern und Zufahrtsstraße"
+    imageCaption="Grodaus, Sitz des Rates und Hauptstadt der freien Republik."
+    imageWidth={1500}
+    imageHeight={845}
+    imagePriority={true}
+    crestSrc="/images/it/das-land-aloy/grodaus_wappen.png"
+    facts={[
+      { label: 'Status', value: 'Hauptstadt der Republik' },
+      { label: 'Bedeutung', value: 'Ratssitz, Verwaltung und Akademie' },
+      { label: 'Lage', value: 'Im Zentrum Aloys' },
+    ]}
+  >
+
+    
+    <p>Grodaus ist die Hauptstadt der freien Republik Aloy und gilt als politisches, gelehrtes und verwaltendes Herz des Landes. 
+    Wer von Aloy spricht, spricht früher oder später von Grodaus; und wer in Grodaus spricht, tut gut daran, seine Worte zu wägen, 
+    denn irgendwo findet sich stets ein Schreiber, ein Ratsdiener oder ein Bürger, der es genauer wissen will.</p>
+
+    <p>Die Stadt liegt im Inneren Aloys und nimmt seit der Neuordnung der Republik eine herausragende Stellung ein. Hier sitzt der Aloyer Rat,
+    hier werden Verordnungen beraten, Gesandte empfangen, Anträge gestellt, Stimmen gezählt, Beschlüsse verkündet und, sofern nötig, erneut vertagt. 
+    Grodaus ist damit nicht Sitz eines Fürsten, sondern Mittelpunkt einer Ordnung, die sich auf Bürger, Zünfte, Städte, Akademie, Glaube und gewählte
+    Vertreter stützt.</p>
+
+    <p>Von besonderer Bedeutung ist die Akademie, deren Einfluss in Grodaus an vielen Stellen sichtbar wird. Gelehrte, Schreiber, Priester, angehende 
+    Amtsträger, Handwerker, Studenten und Vertreter der verschiedenen Lehrzweige prägen das Bild der Stadt. Wer durch Grodaus geht, begegnet nicht
+    nur Händlern, Wachen und Bürgern, sondern auch Debatten über Recht, Glaube, Münzordnung, Sternkunde, Heilkunst, Kriegswesen und jene Fragen, 
+    die nach Ansicht der Akademie dringend geklärt werden müssen, auch wenn das übrige Volk bis dahin gut ohne Antwort gelebt hat.</p>
+
+    <p>Grodaus ist zugleich ein Ort der Erinnerung. Die Geschichte der Befreiung Aloys, die Abschaffung des Adels und die Entstehung der Republik sind
+    in der Stadt besonders gegenwärtig. Abschriften wichtiger Erklärungen, alte Chroniken, Ratsakten und städtische Überlieferungen werden hier
+    gesammelt und bewahrt. Es ist daher üblich, Grodaus nicht allein als Hauptstadt, sondern auch als Gedächtnis der Republik zu bezeichnen.</p>
+
+    <p>Die Stadt ist jedoch nicht nur ein Ort für Ratsherren, Schreiber und Gelehrte. In ihren Straßen finden sich Handwerker, Händler, Wirte, Boten, 
+    Fuhrleute, Bürgerfamilien, Tempeldiener, Wachen und Reisende aus anderen Teilen Aloys. Grodaus lebt von Verwaltung und Bildung, doch ebenso von 
+    Werkstätten, Märkten, Gasthäusern, Höfen und den alltäglichen Mühen seiner Bewohner. Wer die Stadt nur nach ihren Ratsstuben beurteilt, 
+    kennt sie schlecht; wer sie nur nach ihren Wirtshäusern beurteilt, kennt sie vermutlich besser, aber nicht zwingend vollständiger.</p>
+
+    <p>Auch für die Aloyer Söldner besitzt Grodaus Bedeutung. Viele Wege in den Dienst der Republik führen über die dortigen Stellen, über Schriftstücke, 
+    Empfehlungen, akademische Ausbildung oder Kontakte zu Rat und Verwaltung. Gesandte und Söldner, die Aloy nach außen vertreten, tragen oft 
+    Kunde aus Grodaus mit sich, ob in Form offizieller Aufträge, politischer Weisungen oder ungebetener Ratschläge.</p>
+
+    <p>Fremden gegenüber zeigt sich Grodaus geordnet, geschäftig und nicht immer leicht zu durchschauen. Wer aus Ländern mit Königen, Herzögen und
+    Grafen kommt, wundert sich bisweilen darüber, dass in Aloy kein einzelner Herrscher über allem steht. In Grodaus wird diese Verwunderung
+    meist mit Geduld, Stolz oder einem längeren Vortrag über die Vorzüge republikanischer Ordnung beantwortet.</p>
+
+    <p>Im Austausch mit den Splitterlanden nimmt Grodaus eine zentrale Rolle ein. Diplomatische Kontakte, Berichte reisender Söldner, Anfragen fremder
+    Gemeinschaften und politische Entwicklungen werden hier gesammelt, geprüft und in die Arbeit des Rates eingebracht. Was draußen geschieht, 
+    erreicht früher oder später Grodaus; was Grodaus beschließt, findet früher oder später seinen Weg nach draußen.</p>
+
+    <p>So ist Grodaus Hauptstadt, Ratssitz, Akademiestadt, Erinnerungsort und Verwaltungszentrum zugleich. Die Stadt steht für den Anspruch Aloys, 
+    frei, geordnet und gelehrt zu sein — auch dann, wenn Ordnung und Gelehrsamkeit im Einzelfall mehrere Sitzungen, drei Abschriften und einen 
+    Streit zwischen zwei Zünften erfordern.</p>
+
+  </ItCityArticle>
 </ItContentPage>

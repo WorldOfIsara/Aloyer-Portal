@@ -1,17 +1,28 @@
 ﻿---
 import ItContentPage from '../../../components/ItContentPage.astro';
-import ItIllustration from '../../../components/ItIllustration.astro';
+import ItCityArticle from '../../../components/ItCityArticle.astro';
+import TextDivider from '../../../components/TextDivider.astro';
 ---
 
 <ItContentPage title="Tiafunt, Hafen und Tor zur Welt">
-  <ItIllustration
-    src="/images/it/das-land-aloy/tiafunt-bucht.webp"
-    alt="Historische Grafik einer von Gebirge umgebenen Hafenbucht mit Stadt und Segelschiffen"
-    caption="Die Bucht von Tiafunt, Tor Aloys zum Meer und zu den fremden Landen."
-    width={1300}
-    height={742}
-    priority={true}
-  />
+  <ItCityArticle
+    name="Tiafunt"
+    subtitle="Größter Meerhafen Aloys"
+    summary="Tiefunt ist das unangefochtene Zentrum des Umschalgs und des Provits. Hier laufen Waren aus allen Ecken der Splitterlande ein und werden für den Weitertransport verladen."
+    imageSrc="/images/it/das-land-aloy/tiafunt-bucht.webp"
+    imageAlt="Historische Stadtansicht einer großen befestigten Stadt mit Türmen, Mauern und Zufahrtsstraße"
+    imageCaption="Die Bucht von Tiafunt, Tor Aloys zum Meer und zu den fremden Landen."
+    imageWidth={1500}
+    imageHeight={845}
+    imagePriority={true}
+    crestSrc="/images/it/das-land-aloy/tiafunt_wappen.png"
+    facts={[
+      { label: 'Status', value: 'Größte Hafenstadt' },
+      { label: 'Bedeutung', value: 'Sitz der Handelszentren für Seefracht' },
+      { label: 'Lage', value: 'Süd-Östlich am Meer' },
+    ]}
+  >
+
   <p>Tiafunt ist die bedeutendste Hafenstadt der freien Republik Aloy und gilt gemeinhin als jenes Tor, durch welches Aloy mit der übrigen Welt in Verbindung tritt. Wo Grodaus Rat, Ordnung und Schrift verkörpert, steht Tiafunt für Handel, Seefahrt, Nachrichten, fremde Zungen, nasse Stiefel und Waren, deren Herkunft nicht immer so eindeutig ist, wie es der Zoll gerne hätte.
 <br><br>
 Die Stadt liegt am aloyischen Zugang zum Meer und nimmt daher eine Schlüsselstellung für Reise, Handel und Diplomatie ein. Schiffe aus fremden Landen laufen hier ein, Waren werden gelöscht, Verträge angebahnt, Matrosen angeworben, Nachrichten ausgetauscht und Gerüchte verbreitet, deren Wahrheitsgehalt je nach Windrichtung schwankt. Für viele Fremde ist Tiafunt der erste Ort Aloys, den sie betreten, und für viele Aloyer der letzte heimische Boden, bevor sie in die Welt hinausziehen.
