@@ -2,111 +2,157 @@
 import HortumSchwarzeContent from '../pages/it/glaube/drey/HortumSchwarzeContent.astro';
 import MiramGraueContent from '../pages/it/glaube/drey/MiramGraueContent.astro';
 import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro';
+import { limbarSymbol, miramSymbol, hortumSymbol } from '../data/dreySymbols';
+import '../styles/drey-wheel.css';
 
 const withBase = (path: string) =>
   `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 ---
 
 <section class="drey" data-drey>
-  <div class="drey-wheel-area">
-    <div class="drey-marker" aria-hidden="true"></div>
+  <div class="drey-sanctum">
+    <div class="drey-ornament drey-ornament--tl" aria-hidden="true"></div>
+    <div class="drey-ornament drey-ornament--tr" aria-hidden="true"></div>
+    <div class="drey-ornament drey-ornament--bl" aria-hidden="true"></div>
+    <div class="drey-ornament drey-ornament--br" aria-hidden="true"></div>
+    <div class="drey-side-rail drey-side-rail--left" aria-hidden="true"></div>
+    <div class="drey-side-rail drey-side-rail--right" aria-hidden="true"></div>
 
-    <div class="drey-wheel" data-drey-wheel style="--wheel-rotation: 0deg;">
-      <svg
-        class="drey-svg"
-        viewBox="0 0 100 100"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <defs>
-          <clipPath id="drey-clip-top" clipPathUnits="userSpaceOnUse">
-            <path d="M50 50 L6.7 25 A50 50 0 0 1 93.3 25 Z" />
-          </clipPath>
+    <div class="drey-wheel-stage">
+      <div class="drey-marker" aria-hidden="true"></div>
 
-          <clipPath id="drey-clip-right" clipPathUnits="userSpaceOnUse">
-            <path d="M50 50 L93.3 25 A50 50 0 0 1 50 100 Z" />
-          </clipPath>
+      <div class="drey-reliquary">
+        <div class="drey-wheel-window">
+          <div class="drey-wheel" data-drey-wheel style="--wheel-rotation: 0deg;">
+            <svg
+              class="drey-svg"
+              viewBox="0 0 100 100"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <defs>
+                <clipPath id="drey-clip-top" clipPathUnits="userSpaceOnUse">
+                  <path d="M50 50 L6.7 25 A50 50 0 0 1 93.3 25 Z" />
+                </clipPath>
 
-          <clipPath id="drey-clip-left" clipPathUnits="userSpaceOnUse">
-            <path d="M50 50 L50 100 A50 50 0 0 1 6.7 25 Z" />
-          </clipPath>
-        </defs>
+                <clipPath id="drey-clip-right" clipPathUnits="userSpaceOnUse">
+                  <path d="M50 50 L93.3 25 A50 50 0 0 1 50 100 Z" />
+                </clipPath>
 
-        <!-- Limbar oben -->
-        <g clip-path="url(#drey-clip-top)">
-          <image
-            href={withBase('/images/it/glaube-goetter/limbar-der-weisse_wheel.webp')}
-            x="8"
-            y="-2"
-            width="84"
-            height="84"
-            preserveAspectRatio="xMidYMid meet"
-          />
-        </g>
+                <clipPath id="drey-clip-left" clipPathUnits="userSpaceOnUse">
+                  <path d="M50 50 L50 100 A50 50 0 0 1 6.7 25 Z" />
+                </clipPath>
 
-        <!-- Miram rechts unten -->
-        <g clip-path="url(#drey-clip-right)">
-          <image
-            href={withBase('/images/it/glaube-goetter/miram-die-graue_wheel.webp')}
-            x="26"
-            y="38"
-            width="84"
-            height="84"
-            preserveAspectRatio="xMidYMid meet"
-            transform="rotate(120 70 64)"
-          />
-        </g>
+                <linearGradient id="drey-divider-gold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#f2ddb0" />
+                  <stop offset="0.36" stop-color="#9a642f" />
+                  <stop offset="0.7" stop-color="#e0bd79" />
+                  <stop offset="1" stop-color="#68401f" />
+                </linearGradient>
+              </defs>
 
-        <!-- Hortum links unten -->
-        <g clip-path="url(#drey-clip-left)">
-          <image
-            href={withBase('/images/it/glaube-goetter/hortum-der-schwarze_wheel.webp')}
-            x="-10"
-            y="38"
-            width="84"
-            height="84"
-            preserveAspectRatio="xMidYMid meet"
-            transform="rotate(-120 30 64)"
-          />
-        </g>
+              <g clip-path="url(#drey-clip-top)">
+                <image
+                  href={withBase('/images/it/glaube-goetter/limbar-der-weisse_wheel.webp')}
+                  x="8"
+                  y="-2"
+                  width="84"
+                  height="84"
+                  preserveAspectRatio="xMidYMid meet"
+                />
+              </g>
 
-        <path class="drey-line" d="M50 50 L6.7 25" />
-        <path class="drey-line" d="M50 50 L93.3 25" />
-        <path class="drey-line" d="M50 50 L50 100" />
+              <g clip-path="url(#drey-clip-right)">
+                <image
+                  href={withBase('/images/it/glaube-goetter/miram-die-graue_wheel.webp')}
+                  x="26"
+                  y="38"
+                  width="84"
+                  height="84"
+                  preserveAspectRatio="xMidYMid meet"
+                  transform="rotate(120 70 64)"
+                />
+              </g>
 
-        <circle class="drey-outline" cx="50" cy="50" r="49.5" />
-        <circle class="drey-center" cx="50" cy="50" r="5" />
-      </svg>
+              <g clip-path="url(#drey-clip-left)">
+                <image
+                  href={withBase('/images/it/glaube-goetter/hortum-der-schwarze_wheel.webp')}
+                  x="-10"
+                  y="38"
+                  width="84"
+                  height="84"
+                  preserveAspectRatio="xMidYMid meet"
+                  transform="rotate(-120 30 64)"
+                />
+              </g>
 
-      <button
-        class="god-segment is-active"
-        type="button"
-        data-god="limba"
-        aria-pressed="true"
-        aria-label="Limba, den Weißen auswählen"
-      >
-        <span class="sr-only">Limba</span>
-      </button>
+              <path class="drey-divider-shadow" d="M50 50 L6.7 25 M50 50 L93.3 25 M50 50 L50 100" />
+              <path class="drey-divider-metal" d="M50 50 L6.7 25 M50 50 L93.3 25 M50 50 L50 100" />
+              <path class="drey-divider-hairline" d="M50 50 L6.7 25 M50 50 L93.3 25 M50 50 L50 100" />
+              <circle class="drey-divider-shadow" cx="50" cy="50" r="49.1" />
+              <circle class="drey-divider-metal" cx="50" cy="50" r="49.1" />
+            </svg>
 
-      <button
-        class="god-segment"
-        type="button"
-        data-god="miram"
-        aria-pressed="false"
-        aria-label="Miram, die Graue auswählen"
-      >
-        <span class="sr-only">Miram</span>
-      </button>
+            <button
+              class="god-segment is-active"
+              type="button"
+              data-god="limba"
+              aria-pressed="true"
+              aria-label="Limba, den Weißen auswählen"
+            >
+              <span class="sr-only">Limba</span>
+            </button>
 
-      <button
-        class="god-segment"
-        type="button"
-        data-god="hortum"
-        aria-pressed="false"
-        aria-label="Hortum, den Schwarzen auswählen"
-      >
-        <span class="sr-only">Hortum</span>
-      </button>
+            <button
+              class="god-segment"
+              type="button"
+              data-god="miram"
+              aria-pressed="false"
+              aria-label="Miram, die Graue auswählen"
+            >
+              <span class="sr-only">Miram</span>
+            </button>
+
+            <button
+              class="god-segment"
+              type="button"
+              data-god="hortum"
+              aria-pressed="false"
+              aria-label="Hortum, den Schwarzen auswählen"
+            >
+              <span class="sr-only">Hortum</span>
+            </button>
+          </div>
+
+          <div class="drey-active-wedge" aria-hidden="true"></div>
+
+          <div
+            class="drey-center-seal"
+            data-center-seal
+            data-active-god="limba"
+            aria-hidden="true"
+          >
+            <img
+              class="drey-center-symbol is-active"
+              data-god-symbol="limba"
+              src={limbarSymbol}
+              alt=""
+            />
+            <img
+              class="drey-center-symbol"
+              data-god-symbol="miram"
+              src={miramSymbol}
+              alt=""
+            />
+            <img
+              class="drey-center-symbol"
+              data-god-symbol="hortum"
+              src={hortumSymbol}
+              alt=""
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -125,213 +171,11 @@ const withBase = (path: string) =>
   </div>
 </section>
 
-<style>
-  .drey {
-    margin: 2rem 0 0;
-  }
-
-  .drey-wheel-area {
-    position: relative;
-    display: grid;
-    place-items: center;
-    min-height: 760px;
-    margin: 2rem auto 3rem;
-  }
-
-  .drey-marker {
-    position: absolute;
-    top: 0;
-    z-index: 20;
-    width: 0;
-    height: 0;
-    border-left: 1rem solid transparent;
-    border-right: 1rem solid transparent;
-    border-top: 1.6rem solid currentColor;
-    filter: drop-shadow(0 0 0.8rem rgba(255, 255, 255, 0.45));
-    pointer-events: none;
-  }
-
-  .drey-wheel {
-    --wheel-rotation: 0deg;
-
-    position: relative;
-    width: min(92vw, 680px);
-    aspect-ratio: 1;
-    border-radius: 50%;
-
-    transform: rotate(var(--wheel-rotation));
-    transition: transform 700ms cubic-bezier(.2, .8, .2, 1);
-
-    filter:
-      drop-shadow(0 0 0.45rem rgba(255, 255, 255, 0.16))
-      drop-shadow(0 1.5rem 3rem rgba(0, 0, 0, 0.25));
-  }
-
-  .drey-svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-  }
-
-  .drey-line {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.42);
-    stroke-width: 0.45;
-    stroke-linecap: round;
-  }
-
-  .drey-outline {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.5);
-    stroke-width: 0.65;
-  }
-
-  .drey-center {
-    fill: rgba(255, 255, 255, 0.03);
-    stroke: rgba(255, 255, 255, 0.48);
-    stroke-width: 0.55;
-  }
-
-  .god-segment {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    background: transparent;
-    color: inherit;
-    clip-path: var(--segment);
-  }
-
-  .god-segment:focus-visible {
-    outline: none;
-  }
-
-  .god-segment::after {
-    content: "";
-    position: absolute;
-    left: var(--hover-left);
-    top: var(--hover-top);
-    width: 9rem;
-    height: 9rem;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.72);
-    box-shadow: 0 0 1rem rgba(255, 255, 255, 0.18);
-
-    transform: translate(-50%, -50%) scale(0.85);
-    opacity: 0;
-    pointer-events: none;
-
-    transition:
-      opacity 180ms ease,
-      transform 180ms ease;
-  }
-
-  .god-segment:not(.is-active):hover::after,
-  .god-segment:not(.is-active):focus-visible::after {
-    opacity: 0.65;
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  .god-segment[data-god="limba"] {
-    --segment: polygon(
-      50% 50%,
-      6.7% 25%,
-      25% 6.7%,
-      50% 0%,
-      75% 6.7%,
-      93.3% 25%
-    );
-
-    --hover-left: 50%;
-    --hover-top: 27%;
-  }
-
-  .god-segment[data-god="miram"] {
-    --segment: polygon(
-      50% 50%,
-      93.3% 25%,
-      100% 50%,
-      93.3% 75%,
-      75% 93.3%,
-      50% 100%
-    );
-
-    --hover-left: 70%;
-    --hover-top: 64%;
-  }
-
-  .god-segment[data-god="hortum"] {
-    --segment: polygon(
-      50% 50%,
-      50% 100%,
-      25% 93.3%,
-      6.7% 75%,
-      0% 50%,
-      6.7% 25%
-    );
-
-    --hover-left: 30%;
-    --hover-top: 64%;
-  }
-
-  .drey-content {
-    margin-top: 1rem;
-  }
-
-  .drey-content [hidden] {
-    display: none;
-  }
-
-  .drey-content h2 {
-    margin-top: 0;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-  }
-
-  @media (max-width: 760px) {
-    .drey-wheel-area {
-      min-height: 420px;
-      margin-bottom: 2rem;
-    }
-
-    .drey-wheel {
-      width: min(94vw, 390px);
-    }
-
-    .god-segment::after {
-      width: 5.5rem;
-      height: 5.5rem;
-    }
-
-    .drey-marker {
-      border-left-width: 0.75rem;
-      border-right-width: 0.75rem;
-      border-top-width: 1.2rem;
-    }
-  }
-</style>
-
 <script>
   const gods = {
-    limba: {
-      rotation: '0deg'
-    },
-    miram: {
-      rotation: '-120deg'
-    },
-    hortum: {
-      rotation: '120deg'
-    }
+    limba: { rotation: '0deg' },
+    miram: { rotation: '-120deg' },
+    hortum: { rotation: '120deg' }
   };
 
   type GodKey = keyof typeof gods;
@@ -345,6 +189,8 @@ const withBase = (path: string) =>
       const wheel = root.querySelector<HTMLElement>('[data-drey-wheel]');
       const buttons = root.querySelectorAll<HTMLButtonElement>('[data-god]');
       const contentBlocks = root.querySelectorAll<HTMLElement>('[data-god-content]');
+      const centerSeal = root.querySelector<HTMLElement>('[data-center-seal]');
+      const centerSymbols = root.querySelectorAll<HTMLElement>('[data-god-symbol]');
 
       buttons.forEach((button) => {
         button.addEventListener('click', () => {
@@ -360,7 +206,6 @@ const withBase = (path: string) =>
 
           buttons.forEach((otherButton) => {
             const isActive = otherButton === button;
-
             otherButton.classList.toggle('is-active', isActive);
             otherButton.setAttribute('aria-pressed', String(isActive));
           });
@@ -368,12 +213,19 @@ const withBase = (path: string) =>
           contentBlocks.forEach((block) => {
             block.hidden = block.dataset.godContent !== key;
           });
+
+          if (centerSeal) {
+            centerSeal.dataset.activeGod = key;
+          }
+
+          centerSymbols.forEach((symbol) => {
+            symbol.classList.toggle('is-active', symbol.dataset.godSymbol === key);
+          });
         });
       });
     });
   }
 
   initDreyWheel();
-
   document.addEventListener('astro:page-load', initDreyWheel);
 </script>
