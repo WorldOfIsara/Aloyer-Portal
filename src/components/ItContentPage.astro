@@ -22,6 +22,12 @@ const {
   description = `${title} im IT-Bereich von Aloy.`,
   wide = false,
 } = Astro.props;
+
+// Abschnitts-Root erkennen: passt die aktuelle URL auf einen IT-Navigationspunkt
+// mit Unterseiten, zeigen wir automatisch Karten zu diesen Unterseiten.
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const section = itNav.find((item) => item.href.replace(/\/$/, '') === pathname);
+const sectionChildren = section?.children ?? [];
 ---
 
 <BaseLayout
@@ -40,6 +46,24 @@ const {
     <h1>{title}</h1>
     <slot />
   </section>
+
+  {
+    sectionChildren.length > 0 && (
+      <nav class:list={['section-cards', { 'section-cards--wide': wide }]} aria-label={`Unterseiten von ${title}`}>
+        <p class="section-cards__kicker">In diesem Abschnitt</p>
+        <div class="section-cards__grid">
+          {sectionChildren.map((child) => (
+            <a class="section-card surface" href={child.href}>
+              <span class="section-card__label">{child.label}</span>
+              <svg class="section-card__arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </nav>
+    )
+  }
 </BaseLayout>
 
 <style>
@@ -47,6 +71,77 @@ const {
     text-align: left;
     max-width: 980px;
     margin-inline: auto;
+  }
+
+  .section-cards {
+    display: block;
+    max-width: 980px;
+    margin: var(--space-5) auto 0;
+  }
+
+  .section-cards--wide {
+    max-width: 1240px;
+  }
+
+  .section-cards__kicker {
+    font-family: var(--font-ui);
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    color: rgba(230, 155, 107, 0.95);
+    margin: 0 0 0.9rem;
+    text-align: center;
+  }
+
+  .section-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 0.9rem;
+  }
+
+  .section-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.95rem 1.1rem;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-weight: 700;
+    color: #16100b;
+    text-decoration: none;
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
+
+  .section-card__label {
+    line-height: 1.3;
+  }
+
+  .section-card__arrow {
+    flex: 0 0 auto;
+    color: var(--brand-1);
+    opacity: 0.7;
+    transition: transform 160ms ease, opacity 160ms ease;
+  }
+
+  .section-card:hover,
+  .section-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: rgba(159, 72, 39, 0.55);
+    box-shadow: 0 10px 22px rgba(20, 11, 7, 0.18);
+  }
+
+  .section-card:hover .section-card__arrow,
+  .section-card:focus-visible .section-card__arrow {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .section-card,
+    .section-card__arrow {
+      transition: none;
+    }
   }
 
   .it-page--wide {

@@ -179,37 +179,9 @@ body.portal-welcome .surface .kicker {
   color: rgba(230, 155, 107, 0.92);
 }
 
-body.portal-welcome .site-footer {
-  margin-top: auto;
-  border: 0;
-  background: rgba(10, 7, 5, 0.96);
-  backdrop-filter: none;
-}
-
-body.portal-welcome .site-footer .title,
-body.portal-welcome .site-footer .muted,
-body.portal-welcome .site-footer .links a,
-body.portal-welcome .site-footer .mode-label {
-  color: rgba(244, 233, 215, 0.9);
-}
-
-body.portal-welcome .site-footer .slider::before {
-  background: var(--crest-red) !important;
-}
-
-body.portal-welcome .site-footer .switch input:checked + .slider {
-  background: rgba(248, 0, 0, 0.18);
-  border-color: rgba(248, 0, 0, 0.4);
-}
-
 body.portal-welcome.portal-it .site-header {
   background: rgba(66, 49, 33, 0.95);
   border-bottom: 1px solid rgba(212, 183, 145, 0.28);
-}
-
-body.portal-welcome.portal-it .site-footer {
-  background: rgba(66, 49, 33, 0.95);
-  border-top: 1px solid rgba(212, 183, 145, 0.22);
 }
 
 body.portal-welcome.portal-it .surface::before {

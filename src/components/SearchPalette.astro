@@ -1,0 +1,354 @@
+---
+import { searchIndex } from '../data/content';
+import { itNav } from '../data/it';
+import { portalNav } from '../data/portal';
+import type { NavItem } from '../data/site';
+
+interface SearchEntry {
+  href: string;
+  title: string;
+  summary: string;
+  group: string;
+}
+
+const flattenNav = (items: NavItem[], group: string): SearchEntry[] => {
+  const out: SearchEntry[] = [];
+  for (const item of items) {
+    out.push({ href: item.href, title: item.label, summary: '', group });
+    for (const child of item.children ?? []) {
+      out.push({ href: child.href, title: child.label, summary: item.label, group });
+    }
+  }
+  return out;
+};
+
+// Kombinierter Index: bestehende Portal/Lore/Chronik/Downloads + IT-Wiki + OT-Bereich
+const combined: SearchEntry[] = [
+  ...(searchIndex as SearchEntry[]),
+  ...flattenNav(itNav, 'IT-Wiki'),
+  ...flattenNav(portalNav, 'OT-Bereich'),
+];
+
+// Dubletten nach href entfernen (erster Treffer gewinnt)
+const seen = new Set<string>();
+const entries = combined.filter((entry) => {
+  const key = entry.href.replace(/\/$/, '');
+  if (seen.has(key)) return false;
+  seen.add(key);
+  return true;
+});
+
+const serialized = JSON.stringify(entries);
+---
+
+<div class="search-overlay" data-search-overlay hidden>
+  <div class="search-backdrop" data-search-close></div>
+  <div class="search-dialog" role="dialog" aria-modal="true" aria-label="Portal-Suche">
+    <div class="search-field">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" />
+        <path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <input
+        type="search"
+        data-search-input
+        placeholder="Suche nach Thema, Ort, Rolle, Regel…"
+        aria-label="Suchbegriff"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd class="search-esc">Esc</kbd>
+    </div>
+    <ul class="search-results" data-search-results role="listbox" aria-label="Suchergebnisse"></ul>
+    <p class="search-empty" data-search-empty hidden>Keine Treffer. Versuch einen anderen Begriff.</p>
+  </div>
+</div>
+
+<script is:inline define:vars={{ serialized }}>
+  (() => {
+    const entries = JSON.parse(serialized);
+    const overlay = document.querySelector('[data-search-overlay]');
+    const input = document.querySelector('[data-search-input]');
+    const results = document.querySelector('[data-search-results]');
+    const empty = document.querySelector('[data-search-empty]');
+    if (!overlay || !input || !results || !empty) return;
+
+    let activeIndex = -1;
+    let current = [];
+    let lastFocus = null;
+
+    const normalize = (value) =>
+      value
+        .toLowerCase()
+        .replace(/ä/g, 'a')
+        .replace(/ö/g, 'o')
+        .replace(/ü/g, 'u')
+        .replace(/ß/g, 'ss')
+        .replace(/[áàâ]/g, 'a')
+        .replace(/[éèê]/g, 'e')
+        .replace(/[íìî]/g, 'i')
+        .replace(/[óòô]/g, 'o')
+        .replace(/[úùû]/g, 'u');
+
+    const render = (query) => {
+      const q = normalize(query.trim());
+      current = !q
+        ? entries.slice(0, 40)
+        : entries
+            .filter((e) => {
+              const hay = normalize(`${e.title} ${e.summary} ${e.group}`);
+              return hay.includes(q);
+            })
+            .slice(0, 40);
+
+      results.innerHTML = '';
+      activeIndex = current.length ? 0 : -1;
+
+      current.forEach((entry, index) => {
+        const li = document.createElement('li');
+        li.className = 'search-result';
+        li.setAttribute('role', 'option');
+        li.dataset.index = String(index);
+        li.setAttribute('aria-selected', index === activeIndex ? 'true' : 'false');
+
+        const link = document.createElement('a');
+        link.href = entry.href;
+        link.className = 'search-result__link';
+
+        const title = document.createElement('span');
+        title.className = 'search-result__title';
+        title.textContent = entry.title;
+
+        const group = document.createElement('span');
+        group.className = 'search-result__group';
+        group.textContent = entry.group;
+
+        link.appendChild(title);
+        link.appendChild(group);
+        li.appendChild(link);
+        li.addEventListener('mousemove', () => setActive(index));
+        results.appendChild(li);
+      });
+
+      empty.hidden = current.length > 0;
+    };
+
+    const setActive = (index) => {
+      activeIndex = index;
+      const nodes = results.querySelectorAll('.search-result');
+      nodes.forEach((node, i) => {
+        node.setAttribute('aria-selected', i === index ? 'true' : 'false');
+        if (i === index) node.scrollIntoView({ block: 'nearest' });
+      });
+    };
+
+    const go = (index) => {
+      const entry = current[index];
+      if (entry) window.location.href = entry.href;
+    };
+
+    const open = () => {
+      if (!overlay.hidden) return;
+      lastFocus = document.activeElement;
+      overlay.hidden = false;
+      document.body.classList.add('search-open');
+      input.value = '';
+      render('');
+      requestAnimationFrame(() => input.focus());
+    };
+
+    const close = () => {
+      if (overlay.hidden) return;
+      overlay.hidden = true;
+      document.body.classList.remove('search-open');
+      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+    };
+
+    document.querySelectorAll('[data-search-trigger]').forEach((trigger) => {
+      trigger.addEventListener('click', (event) => {
+        event.preventDefault();
+        open();
+      });
+    });
+
+    document.querySelectorAll('[data-search-close]').forEach((el) => {
+      el.addEventListener('click', close);
+    });
+
+    input.addEventListener('input', (event) => render(event.target.value));
+
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (current.length) setActive((activeIndex + 1) % current.length);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (current.length) setActive((activeIndex - 1 + current.length) % current.length);
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        if (activeIndex >= 0) go(activeIndex);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const key = event.key.toLowerCase();
+      if ((event.metaKey || event.ctrlKey) && key === 'k') {
+        event.preventDefault();
+        overlay.hidden ? open() : close();
+      } else if (event.key === 'Escape' && !overlay.hidden) {
+        event.preventDefault();
+        close();
+      } else if (key === '/' && overlay.hidden && !/^(input|textarea|select)$/i.test(document.activeElement?.tagName ?? '')) {
+        event.preventDefault();
+        open();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    align-items: start;
+    justify-items: center;
+    padding: clamp(3.5rem, 12vh, 9rem) 1rem 2rem;
+  }
+
+  .search-overlay[hidden] {
+    display: none;
+  }
+
+  .search-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 7, 5, 0.62);
+    backdrop-filter: blur(3px);
+    animation: search-fade 160ms ease;
+  }
+
+  .search-dialog {
+    position: relative;
+    width: min(640px, 100%);
+    background: rgba(20, 14, 10, 0.98);
+    border: 1px solid rgba(212, 183, 145, 0.28);
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    animation: search-pop 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid rgba(212, 183, 145, 0.18);
+    color: rgba(244, 233, 215, 0.75);
+  }
+
+  .search-field input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: rgba(244, 233, 215, 0.96);
+    font: 600 1.05rem/1.3 'Source Sans 3', 'Segoe UI', sans-serif;
+    outline: none;
+  }
+
+  .search-field input::placeholder {
+    color: rgba(244, 233, 215, 0.45);
+    font-weight: 500;
+  }
+
+  .search-esc {
+    flex: 0 0 auto;
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 6px;
+    border: 1px solid rgba(212, 183, 145, 0.3);
+    color: rgba(244, 233, 215, 0.7);
+  }
+
+  .search-results {
+    list-style: none;
+    margin: 0;
+    padding: 0.4rem;
+    max-height: min(52vh, 420px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .search-result__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.7rem;
+    border-radius: 10px;
+    text-decoration: none;
+    color: rgba(244, 233, 215, 0.92);
+  }
+
+  .search-result__title {
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .search-result__group {
+    flex: 0 0 auto;
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(230, 155, 107, 0.9);
+    background: rgba(159, 72, 39, 0.16);
+    border-radius: 999px;
+    padding: 0.12rem 0.55rem;
+  }
+
+  .search-result[aria-selected='true'] .search-result__link {
+    background: rgba(159, 72, 39, 0.28);
+  }
+
+  .search-empty {
+    margin: 0;
+    padding: 1.2rem 1rem 1.6rem;
+    text-align: center;
+    color: rgba(244, 233, 215, 0.6);
+    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+  }
+
+  .search-empty[hidden] {
+    display: none;
+  }
+
+  :global(body.search-open) {
+    overflow: hidden;
+  }
+
+  @keyframes search-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes search-pop {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search-backdrop,
+    .search-dialog {
+      animation: none;
+    }
+  }
+</style>
