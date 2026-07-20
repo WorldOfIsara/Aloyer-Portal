@@ -91,7 +91,13 @@ const {
 
 <figure class="aloy-map" data-aloy-map>
   <div class="aloy-map__frame" data-reveal="fade">
-    <img class="aloy-map__img" src={withBase(src)} alt={alt} loading="lazy" decoding="async" />
+    <img
+      class="aloy-map__img"
+      src={withBase(src)}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+    />
 
     <div class="aloy-map__layer">
       {
@@ -116,7 +122,10 @@ const {
                 <span class="aloy-map__dot" aria-hidden="true" />
               </button>
 
-              <aside class="aloy-map__tip" aria-label={`Vorschau zu ${point.name}`}>
+              <aside
+                class="aloy-map__tip"
+                aria-label={`Vorschau zu ${point.name}`}
+              >
                 {
                   point.crest && (
                     <img
@@ -133,7 +142,10 @@ const {
                   <a class="aloy-map__tip-name" href={href}>
                     {point.name}
                   </a>
-                  <span class="aloy-map__tip-desc">{point.desc}</span>
+
+                  <span class="aloy-map__tip-desc">
+                    {point.desc}
+                  </span>
                 </span>
               </aside>
             </div>
@@ -187,7 +199,6 @@ const {
     inset: 0;
   }
 
-  /* Hotspot bleibt wie in deiner funktionierenden Version positioniert */
   .aloy-map__spot {
     position: absolute;
     transform: translate(-50%, -50%);
@@ -228,10 +239,18 @@ const {
     width: 1.05rem;
     height: 1.05rem;
     border-radius: 999px;
-    background: radial-gradient(circle at 35% 30%, #f3d9a6, #9f4827 62%, #7f2f1f);
+    background:
+      radial-gradient(
+        circle at 35% 30%,
+        #f3d9a6,
+        #9f4827 62%,
+        #7f2f1f
+      );
     border: 2px solid rgba(250, 238, 210, 0.9);
     box-shadow: 0 2px 8px rgba(20, 11, 7, 0.55);
-    transition: transform 160ms ease, box-shadow 160ms ease;
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease;
   }
 
   .aloy-map__dot::after {
@@ -276,11 +295,14 @@ const {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 150ms ease, transform 150ms ease, visibility 150ms ease;
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease,
+      visibility 150ms ease;
     z-index: 4;
   }
 
-  .aloy-map__spot[data-side="left"] .aloy-map__tip {
+  .aloy-map__spot[data-side='left'] .aloy-map__tip {
     left: auto;
     right: calc(100% + 0.55rem);
     transform: translateY(-50%) translateX(4px);
@@ -337,7 +359,7 @@ const {
     color: var(--ink-2);
   }
 
-  /* Desktop: Liste nicht anzeigen */
+  /* Auf Desktop keine Städtekacheln unter der Karte anzeigen */
   .aloy-map__list {
     display: none;
   }
@@ -359,7 +381,7 @@ const {
     }
   }
 
-  /* Mobile/Tablet: Liste wie vorher anzeigen */
+  /* Auf Mobile und Tablet die Liste als alternative Navigation anzeigen */
   @media (max-width: 760px) {
     .aloy-map__tip {
       display: none;
@@ -410,7 +432,9 @@ const {
       background: rgba(255, 255, 255, 0.45);
       text-decoration: none;
       color: #16100b;
-      transition: transform 140ms ease, border-color 140ms ease;
+      transition:
+        transform 140ms ease,
+        border-color 140ms ease;
     }
 
     .aloy-map__list a:hover,
@@ -450,62 +474,84 @@ const {
 
 <script>
   function initAloyMapPreviews() {
-    document.querySelectorAll<HTMLElement>('[data-aloy-map]').forEach((map) => {
-      if (map.dataset.aloyMapInitialized === 'true') return;
+    document
+      .querySelectorAll<HTMLElement>('[data-aloy-map]')
+      .forEach((map) => {
+        if (map.dataset.aloyMapInitialized === 'true') {
+          return;
+        }
 
-      map.dataset.aloyMapInitialized = 'true';
+        map.dataset.aloyMapInitialized = 'true';
 
-      const points = map.querySelectorAll<HTMLElement>('[data-map-point]');
-      const mobileQuery = window.matchMedia('(max-width: 760px)');
+        const points =
+          map.querySelectorAll<HTMLElement>('[data-map-point]');
 
-      function closeAll() {
+        const mobileQuery =
+          window.matchMedia('(max-width: 760px)');
+
+        function closeAll() {
+          points.forEach((point) => {
+            point.classList.remove('is-active');
+
+            const button =
+              point.querySelector<HTMLButtonElement>(
+                '.aloy-map__button'
+              );
+
+            button?.setAttribute('aria-expanded', 'false');
+          });
+        }
+
         points.forEach((point) => {
-          point.classList.remove('is-active');
+          const button =
+            point.querySelector<HTMLButtonElement>(
+              '.aloy-map__button'
+            );
 
-          const button = point.querySelector<HTMLButtonElement>('.aloy-map__button');
-          button?.setAttribute('aria-expanded', 'false');
+          button?.addEventListener('click', (event) => {
+            event.stopPropagation();
+
+            const href = button.dataset.href;
+
+            /*
+             * Auf Mobilgeräten führt ein Klick direkt zur Stadtseite.
+             * Auf Desktop öffnet der Klick zunächst das Vorschaufenster.
+             */
+            if (mobileQuery.matches && href) {
+              window.location.href = href;
+              return;
+            }
+
+            const isActive =
+              point.classList.contains('is-active');
+
+            closeAll();
+
+            if (!isActive) {
+              point.classList.add('is-active');
+              button.setAttribute('aria-expanded', 'true');
+            }
+          });
         });
-      }
 
-      points.forEach((point) => {
-        const button = point.querySelector<HTMLButtonElement>('.aloy-map__button');
-
-        button?.addEventListener('click', (event) => {
-          event.stopPropagation();
-
-          const href = button.dataset.href;
-
-          if (mobileQuery.matches && href) {
-            window.location.href = href;
-            return;
+        document.addEventListener('click', (event) => {
+          if (!map.contains(event.target as Node)) {
+            closeAll();
           }
+        });
 
-          const isActive = point.classList.contains('is-active');
-
-          closeAll();
-
-          if (!isActive) {
-            point.classList.add('is-active');
-            button.setAttribute('aria-expanded', 'true');
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') {
+            closeAll();
           }
         });
       });
-
-      document.addEventListener('click', (event) => {
-        if (!map.contains(event.target as Node)) {
-          closeAll();
-        }
-      });
-
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-          closeAll();
-        }
-      });
-    });
   }
 
   initAloyMapPreviews();
 
-  document.addEventListener('astro:page-load', initAloyMapPreviews);
+  document.addEventListener(
+    'astro:page-load',
+    initAloyMapPreviews
+  );
 </script>
