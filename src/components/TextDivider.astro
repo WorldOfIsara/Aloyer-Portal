@@ -1,0 +1,120 @@
+---
+interface Props {
+  label?: string;
+  variant?: 'simple' | 'ornament' | 'strong';
+  spacing?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  label,
+  variant = 'ornament',
+  spacing = 'md',
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'text-divider',
+    `text-divider--${variant}`,
+    `text-divider--${spacing}`,
+    { 'text-divider--with-label': Boolean(label) },
+  ]}
+  role="separator"
+  aria-label={label}
+>
+  <span class="text-divider__line" aria-hidden="true"></span>
+
+  {
+    label && (
+      <span class="text-divider__label">
+        {label}
+      </span>
+    )
+  }
+
+  <span class="text-divider__line" aria-hidden="true"></span>
+</div>
+
+<style>
+  .text-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    width: 100%;
+  }
+
+  .text-divider--sm {
+    margin: 1.25rem 0;
+  }
+
+  .text-divider--md {
+    margin: 2rem 0;
+  }
+
+  .text-divider--lg {
+    margin: 3rem 0;
+  }
+
+  .text-divider__line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(92, 55, 31, 0.55),
+      transparent
+    );
+  }
+
+  .text-divider__label {
+    flex: 0 0 auto;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(159, 72, 39, 0.92);
+    white-space: nowrap;
+  }
+
+  .text-divider--simple .text-divider__line {
+    background: rgba(92, 55, 31, 0.35);
+  }
+
+  .text-divider--strong .text-divider__line {
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(92, 55, 31, 0.75),
+      rgba(159, 72, 39, 0.9),
+      rgba(92, 55, 31, 0.75),
+      transparent
+    );
+  }
+
+  .text-divider--ornament .text-divider__line {
+    height: 10px;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(92, 55, 31, 0.88) 0 2px, transparent 2px 100%),
+      linear-gradient(90deg, transparent 0%, rgba(92, 55, 31, 0.8) 16%, rgba(92, 55, 31, 0.92) 50%, rgba(92, 55, 31, 0.8) 84%, transparent 100%);
+    background-size:
+      22px 10px,
+      100% 2px;
+    background-repeat: repeat-x, no-repeat;
+    background-position: center, center;
+  }
+
+  @media (max-width: 520px) {
+    .text-divider {
+      gap: 0.6rem;
+    }
+
+    .text-divider__label {
+      font-size: 0.68rem;
+      letter-spacing: 0.09em;
+      white-space: normal;
+      text-align: center;
+    }
+  }
+</style>

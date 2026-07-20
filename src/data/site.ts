@@ -1,19 +1,20 @@
-export type NavSubItem = {
-  label: string;
-  href: string;
-};
-
-export type NavItem = {
+export interface NavSubItem {
   label: string;
   href: string;
   children?: NavSubItem[];
-};
+}
+
+export interface NavItem {
+  label: string;
+  href: string;
+  children?: NavSubItem[];
+}
 
 export const siteConfig = {
   name: 'Aloy - Reulos Orga',
   titleSuffix: 'Aloy Portal',
   description:
-    'Offizielle Einstiegs- und Wissensplattform für die Aloyer Söldner: Mitspielen, Kernregeln, Welt und Chronik.',
+    'Offizielle Einstiegs- und Wissensplattform fï¿½r die Aloyer Sï¿½ldner: Mitspielen, Kernregeln, Welt und Chronik.',
   nav: [
     { label: 'Start', href: '/portal' },
     { label: 'IT-Bereich', href: '/it/vorrede' },
