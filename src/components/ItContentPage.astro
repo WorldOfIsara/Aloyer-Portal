@@ -26,9 +26,46 @@ const {
 
 // Abschnitts-Root erkennen: passt die aktuelle URL auf einen IT-Navigationspunkt
 // mit Unterseiten, zeigen wir automatisch Karten zu diesen Unterseiten.
-const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
-const section = itNav.find((item) => item.href.replace(/\/$/, '') === pathname);
-const sectionChildren = section?.children ?? [];
+// Funktioniert auch für verschachtelte Navigation, z. B. Söldner → Haubentaucher → Charaktere.
+
+type NavNode = {
+  label: string;
+  href?: string;
+  children?: NavNode[];
+};
+
+const normalizePath = (path: string) => {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  let normalized = path;
+
+  if (base && base !== '/' && normalized.startsWith(base)) {
+    normalized = normalized.slice(base.length) || '/';
+  }
+
+  return normalized.replace(/\/$/, '') || '/';
+};
+
+function findNavItemByPath(items: NavNode[], path: string): NavNode | undefined {
+  for (const item of items) {
+    if (item.href && normalizePath(item.href) === path) {
+      return item;
+    }
+
+    if (item.children) {
+      const found = findNavItemByPath(item.children, path);
+
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+const pathname = normalizePath(Astro.url.pathname);
+const section = findNavItemByPath(itNav, pathname);
+const sectionChildren = section?.children?.filter((child) => Boolean(child.href)) ?? [];
 ---
 
 <BaseLayout
@@ -56,7 +93,7 @@ const sectionChildren = section?.children ?? [];
         <p class="section-cards__kicker">In diesem Abschnitt</p>
         <div class="section-cards__grid">
           {sectionChildren.map((child, index) => (
-            <a class="section-card surface" href={child.href} data-reveal style={`--reveal-delay:${index * 70}ms`}>
+            <a class="section-card surface" href={normalizePath(child.href!)} data-reveal style={`--reveal-delay:${index * 70}ms`}>
               <span class="section-card__label">{child.label}</span>
               <svg class="section-card__arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" aria-hidden="true">
                 <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />

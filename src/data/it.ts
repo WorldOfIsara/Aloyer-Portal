@@ -51,6 +51,15 @@ export const itNav: NavItem[] = [
     ],
   },
   {
+      label: 'Haubentaucher',
+      href: '/it/soeldner/haubentaucher',
+      children: [
+        { label: 'Wenzel', href: '/it/soeldner/haubentaucher/Wenzel' },
+        { label: 'Charaktername 2', href: '/it/soeldner/haubentaucher/charaktername-2' },
+        { label: 'Charaktername 3', href: '/it/soeldner/haubentaucher/charaktername-3' },
+      ],
+    },
+  {
     label: 'Die Akademie',
     href: '/it/akademie',
     children: [
