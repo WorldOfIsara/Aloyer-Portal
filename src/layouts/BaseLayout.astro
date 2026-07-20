@@ -32,6 +32,10 @@ const {
   bodyClass,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const isItPage = Astro.url.pathname.startsWith('/it');
+const headerBrandHref = isItPage ? `${base}/it/vorrede` : `${base}/portal`;
+const headerBrandLabel = isItPage ? 'Zur IT-Vorrede' : 'Zur Startseite';
 ---
 
 <!doctype html>
@@ -46,8 +50,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.toString()} />
     <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href="/logos/haubentaucher-wappen-transparent.png?v=2" />
     <link rel="canonical" href={canonical.toString()} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -65,6 +68,15 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       brandLogoAlt={headerBrandLogoAlt}
       brandLogoFreestanding={headerBrandLogoFreestanding}
     />
+    <script is:inline define:vars={{ headerBrandHref, headerBrandLabel }}>
+      (() => {
+        const brandLink = document.querySelector('.site-header .brand');
+        if (!(brandLink instanceof HTMLAnchorElement)) return;
+
+        brandLink.setAttribute('href', headerBrandHref);
+        brandLink.setAttribute('aria-label', headerBrandLabel);
+      })();
+    </script>
     <main>
       <slot />
     </main>
