@@ -3,8 +3,11 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://reulos-orga.de',
+  site: 'https://worldofisara.github.io', //als temporärer Ersatz für 'https://reulos-orga.de' oder für z.B. www.aloyer-soeldner.de, https://www.aloy.de oder https://www.Soeldner-Aloy.de
+  base: '/Aloyer-Portal',
+
   integrations: [sitemap()],
+
   redirects: {
     '/intime/aloyer-gotterwelt': '/welt-lore/goetterwelt',
     '/intime': '/welt-lore',
