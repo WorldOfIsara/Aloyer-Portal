@@ -21,7 +21,7 @@ function toPhotoAlt(fileName: string): string {
 }
 
 const fotostreckeImages = getFotostreckeFiles().map((file, index) => ({
-  src: `/fotostrecke/${index}`,
+  src: `/fotostrecke/${index}.webp`,
   alt: toPhotoAlt(file.fileName),
 }));
 
