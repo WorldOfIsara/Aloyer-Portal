@@ -70,9 +70,6 @@ export const itNav: NavItem[] = [
     href: '/it/glaube',
     children: [
       { label: 'Die Drei', href: '/it/glaube/die-drei' },
-      { label: 'Limba, der Weiße', href: '/it/glaube/limba-weisse' },
-      { label: 'Miram, die Graue', href: '/it/glaube/miram-graue' },
-      { label: 'Hortum, der Schwarze', href: '/it/glaube/hortum-schwarze' },
       { label: 'Weitere Götter', href: '/it/glaube/weitere-gottheiten' },
       { label: 'Priester und Tempel', href: '/it/glaube/priester-tempel' },
       { label: 'Gebete und Segenssprüche', href: '/it/glaube/gebete-segenssprueche' },

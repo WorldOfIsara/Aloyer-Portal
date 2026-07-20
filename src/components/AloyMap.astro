@@ -1,0 +1,277 @@
+---
+interface MapPoint {
+  name: string;
+  href: string;
+  desc: string;
+  // Position in Prozent des Kartenbildes (0–100). Bei Bedarf hier feinjustieren.
+  x: number;
+  y: number;
+}
+
+interface Props {
+  src?: string;
+  alt?: string;
+  points?: MapPoint[];
+}
+
+const defaultPoints: MapPoint[] = [
+  { name: 'Grodaus', href: '/it/aloy/grodaus', desc: 'Hauptstadt der Republik, Sitz des Rates', x: 35.5, y: 47 },
+  { name: 'Ohm', href: '/it/aloy/ohm-akademie', desc: 'Befestigte Grenzstadt, rote Akademie', x: 66.5, y: 24 },
+  { name: 'Vormberg', href: '/it/aloy/vormberg', desc: 'Minen, Handwerk und Gewerbe', x: 16.5, y: 24 },
+  { name: 'Umseck', href: '/it/aloy/umseck-waidfuath', desc: 'Stadt im Osten Aloys', x: 74.3, y: 43.7 },
+  { name: 'Waidfuath', href: '/it/aloy/umseck-waidfuath', desc: 'Stadt im Waldland des Südwestens', x: 23, y: 75 },
+  { name: 'Tiafunt', href: '/it/aloy/tiafunt', desc: 'Hafenstadt und Tor zur Welt', x: 74, y: 74.3 },
+];
+
+const {
+  src = '/images/it/das-land-aloy/Aloy_Map.jpg',
+  alt = 'Karte des Landes Aloy mit Gebirgen, Flüssen und den bekannten Städten',
+  points = defaultPoints,
+} = Astro.props;
+---
+
+<figure class="aloy-map">
+  <div class="aloy-map__frame" data-reveal="fade">
+    <img class="aloy-map__img" src={src} alt={alt} loading="lazy" decoding="async" />
+    <div class="aloy-map__layer">
+      {
+        points.map((point) => (
+          <a
+            class="aloy-map__spot"
+            href={point.href}
+            style={`left:${point.x}%;top:${point.y}%`}
+            aria-label={`${point.name} – ${point.desc}`}
+          >
+            <span class="aloy-map__dot" aria-hidden="true" />
+            <span class="aloy-map__tip">
+              <span class="aloy-map__tip-name">{point.name}</span>
+              <span class="aloy-map__tip-desc">{point.desc}</span>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  <figcaption class="aloy-map__caption">
+    Klicke eine Stadt an, um zu ihrem Eintrag zu gelangen.
+  </figcaption>
+
+  <ul class="aloy-map__list">
+    {
+      points.map((point) => (
+        <li>
+          <a href={point.href}>
+            <strong>{point.name}</strong>
+            <span>{point.desc}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</figure>
+
+<style>
+  .aloy-map {
+    margin: 0 0 var(--space-5);
+  }
+
+  .aloy-map__frame {
+    position: relative;
+    display: block;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid rgba(92, 55, 31, 0.45);
+    box-shadow: 0 14px 34px rgba(20, 11, 7, 0.28);
+    line-height: 0;
+  }
+
+  .aloy-map__img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .aloy-map__layer {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Hotspot: per Prozent positioniert, Mittelpunkt auf der Stadt */
+  .aloy-map__spot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 999px;
+    text-decoration: none;
+    z-index: 1;
+  }
+
+  .aloy-map__spot:hover,
+  .aloy-map__spot:focus-visible {
+    z-index: 3;
+    outline: none;
+  }
+
+  .aloy-map__dot {
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 999px;
+    background: radial-gradient(circle at 35% 30%, #f3d9a6, #9f4827 62%, #7f2f1f);
+    border: 2px solid rgba(250, 238, 210, 0.9);
+    box-shadow: 0 2px 8px rgba(20, 11, 7, 0.55);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+
+  /* dezenter Puls, damit die Punkte auffindbar sind */
+  .aloy-map__dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 999px;
+    border: 2px solid rgba(159, 72, 39, 0.55);
+    animation: aloy-pulse 2600ms ease-out infinite;
+  }
+
+  .aloy-map__spot:hover .aloy-map__dot,
+  .aloy-map__spot:focus-visible .aloy-map__dot {
+    transform: scale(1.25);
+    box-shadow: 0 4px 14px rgba(20, 11, 7, 0.65);
+  }
+
+  .aloy-map__tip {
+    position: absolute;
+    bottom: calc(100% + 0.35rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    min-width: max-content;
+    max-width: 15rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 10px;
+    background: rgba(20, 14, 10, 0.97);
+    border: 1px solid rgba(212, 183, 145, 0.3);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+    color: rgba(244, 233, 215, 0.96);
+    text-align: center;
+    line-height: 1.3;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 150ms ease, transform 150ms ease;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .aloy-map__tip-name {
+    display: block;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    font-size: 0.92rem;
+  }
+
+  .aloy-map__tip-desc {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    color: rgba(230, 155, 107, 0.92);
+    margin-top: 0.12rem;
+  }
+
+  .aloy-map__spot:hover .aloy-map__tip,
+  .aloy-map__spot:focus-visible .aloy-map__tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .aloy-map__caption {
+    margin: 0.7rem 0 0;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+
+  /* Textliste als Fallback (Touch, Screenreader, kein Hover) */
+  .aloy-map__list {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.55rem;
+  }
+
+  .aloy-map__list a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(177, 146, 104, 0.55);
+    background: rgba(255, 255, 255, 0.45);
+    text-decoration: none;
+    color: #16100b;
+    transition: transform 140ms ease, border-color 140ms ease;
+  }
+
+  .aloy-map__list a:hover,
+  .aloy-map__list a:focus-visible {
+    transform: translateY(-2px);
+    border-color: rgba(159, 72, 39, 0.55);
+  }
+
+  .aloy-map__list strong {
+    font-family: var(--font-ui);
+  }
+
+  .aloy-map__list span {
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+
+  @keyframes aloy-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    70% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 620px) {
+    /* Auf kleinen Screens sind Tooltips fummelig – Textliste trägt die Info,
+       die Punkte bleiben als Direktlinks erhalten. */
+    .aloy-map__tip {
+      display: none;
+    }
+
+    .aloy-map__spot {
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aloy-map__dot::after {
+      animation: none;
+    }
+
+    .aloy-map__dot,
+    .aloy-map__list a,
+    .aloy-map__tip {
+      transition: none;
+    }
+  }
+</style>

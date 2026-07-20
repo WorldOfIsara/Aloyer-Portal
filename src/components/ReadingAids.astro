@@ -1,0 +1,274 @@
+---
+// Lesehilfen für lange Lore-Seiten:
+//  - Lesefortschrittsbalken oben
+//  - automatisch aus h2/h3 generiertes Inhaltsverzeichnis mit Scrollspy
+// Wird in ItContentPage eingebunden; das TOC erscheint nur ab 3 Überschriften.
+interface Props {
+  contentSelector?: string;
+}
+const { contentSelector = '.it-page' } = Astro.props;
+---
+
+<div class="reading-progress" aria-hidden="true">
+  <span class="reading-progress__bar" data-progress-bar></span>
+</div>
+
+<nav class="page-toc" data-page-toc hidden aria-label="Auf dieser Seite">
+  <button class="page-toc__toggle" type="button" data-toc-toggle aria-expanded="true">
+    <span>Auf dieser Seite</span>
+    <svg class="page-toc__chevron" viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+      <path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+  <ul class="page-toc__list" data-toc-list></ul>
+</nav>
+
+<script is:inline define:vars={{ contentSelector }}>
+  (() => {
+    const scroller = document.scrollingElement || document.documentElement;
+    const bar = document.querySelector('[data-progress-bar]');
+
+    // --- Fortschrittsbalken ---
+    if (bar) {
+      let ticking = false;
+      const update = () => {
+        const max = scroller.scrollHeight - scroller.clientHeight;
+        const frac = max > 0 ? Math.min(1, Math.max(0, scroller.scrollTop / max)) : 0;
+        bar.style.transform = `scaleX(${frac})`;
+        ticking = false;
+      };
+      const onScroll = () => {
+        if (!ticking) {
+          ticking = true;
+          window.requestAnimationFrame(update);
+        }
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      update();
+    }
+
+    // --- Auto-Inhaltsverzeichnis ---
+    const nav = document.querySelector('[data-page-toc]');
+    const list = document.querySelector('[data-toc-list]');
+    const toggle = document.querySelector('[data-toc-toggle]');
+    const content = document.querySelector(contentSelector) || document.querySelector('main');
+    if (!nav || !list || !content) return;
+
+    const headings = Array.from(content.querySelectorAll('h2, h3'));
+    if (headings.length < 2) return;
+
+    const slugify = (text) =>
+      text
+        .toLowerCase()
+        .replace(/ä/g, 'ae')
+        .replace(/ö/g, 'oe')
+        .replace(/ü/g, 'ue')
+        .replace(/ß/g, 'ss')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'abschnitt';
+
+    const used = new Set();
+    const links = new Map();
+
+    headings.forEach((heading) => {
+      let id = heading.id;
+      if (!id) {
+        id = slugify(heading.textContent || '');
+        let unique = id;
+        let n = 2;
+        while (used.has(unique) || document.getElementById(unique)) {
+          unique = `${id}-${n++}`;
+        }
+        id = unique;
+        heading.id = id;
+      }
+      used.add(id);
+
+      const li = document.createElement('li');
+      li.className = heading.tagName === 'H3' ? 'page-toc__item page-toc__item--sub' : 'page-toc__item';
+      const link = document.createElement('a');
+      link.href = `#${id}`;
+      link.textContent = heading.textContent || '';
+      li.appendChild(link);
+      list.appendChild(li);
+      links.set(id, link);
+    });
+
+    nav.hidden = false;
+
+    // --- Scrollspy ---
+    let activeId = null;
+    const setActive = (id) => {
+      if (id === activeId) return;
+      if (activeId && links.has(activeId)) links.get(activeId).classList.remove('is-active');
+      activeId = id;
+      if (activeId && links.has(activeId)) links.get(activeId).classList.add('is-active');
+    };
+
+    const spy = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible.length) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: '-90px 0px -70% 0px', threshold: 0 },
+    );
+    headings.forEach((h) => spy.observe(h));
+
+    // --- Ein-/Ausklappen (kleine Screens) ---
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const open = nav.classList.toggle('is-collapsed');
+        toggle.setAttribute('aria-expanded', String(!open));
+      });
+      list.addEventListener('click', (event) => {
+        if (event.target.closest('a') && window.matchMedia('(max-width: 1399px)').matches) {
+          nav.classList.add('is-collapsed');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    }
+  })();
+</script>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 30;
+    background: rgba(159, 72, 39, 0.16);
+    pointer-events: none;
+  }
+
+  .reading-progress__bar {
+    display: block;
+    height: 100%;
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left center;
+    background: linear-gradient(90deg, var(--brand-0), var(--brand-2));
+    box-shadow: 0 0 8px rgba(159, 72, 39, 0.5);
+  }
+
+  .page-toc {
+    max-width: 980px;
+    margin: 0 auto var(--space-4);
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius-md);
+    background: rgba(253, 247, 236, 0.9);
+    border: 1px solid rgba(177, 146, 104, 0.5);
+  }
+
+  .page-toc[hidden] {
+    display: none;
+  }
+
+  .page-toc__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--brand-1);
+  }
+
+  .page-toc__chevron {
+    transition: transform 180ms ease;
+  }
+
+  .page-toc.is-collapsed .page-toc__chevron {
+    transform: rotate(-90deg);
+  }
+
+  .page-toc__list {
+    list-style: none;
+    margin: 0.7rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.28rem;
+    overflow: hidden;
+  }
+
+  .page-toc.is-collapsed .page-toc__list {
+    display: none;
+  }
+
+  .page-toc__item a {
+    display: block;
+    padding: 0.28rem 0.5rem;
+    border-radius: 8px;
+    border-left: 2px solid transparent;
+    color: var(--ink-1);
+    font-family: var(--font-ui);
+    font-size: 0.92rem;
+    line-height: 1.35;
+    text-decoration: none;
+  }
+
+  .page-toc__item--sub a {
+    padding-left: 1.3rem;
+    font-size: 0.86rem;
+    color: var(--ink-2);
+  }
+
+  .page-toc__item a:hover,
+  .page-toc__item a:focus-visible {
+    background: rgba(159, 72, 39, 0.1);
+  }
+
+  .page-toc__item a.is-active {
+    border-left-color: var(--brand-1);
+    background: rgba(159, 72, 39, 0.14);
+    color: var(--brand-0);
+    font-weight: 600;
+  }
+
+  /* Ab sehr breiten Screens: schwebende, mitscrollende Seitenleiste im linken Rand */
+  @media (min-width: 1400px) {
+    .page-toc {
+      position: fixed;
+      top: calc(var(--site-header-height, 76px) + 1.5rem);
+      left: max(1rem, calc((100vw - 1100px) / 2 - 232px));
+      width: 216px;
+      max-height: calc(100vh - var(--site-header-height, 76px) - 3rem);
+      margin: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .page-toc__toggle {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .page-toc__chevron {
+      display: none;
+    }
+
+    .page-toc.is-collapsed .page-toc__list {
+      display: grid;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-toc__chevron {
+      transition: none;
+    }
+  }
+</style>
