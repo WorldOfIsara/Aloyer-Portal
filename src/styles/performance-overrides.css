@@ -8,3 +8,14 @@ body.portal-welcome.portal-it {
     auto,
     512px 512px;
 }
+
+/* Im schmaleren Desktop-Layout bleibt mehr Platz für die umfangreiche IT-Navigation. */
+@media (min-width: 981px) and (max-width: 1360px) {
+  body.portal-welcome.portal-it .site-header .brand-text {
+    display: none;
+  }
+
+  body.portal-welcome.portal-it .site-header .brand {
+    gap: 0;
+  }
+}
