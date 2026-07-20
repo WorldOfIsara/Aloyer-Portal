@@ -2,6 +2,9 @@
 import HortumSchwarzeContent from '../pages/it/glaube/drey/HortumSchwarzeContent.astro';
 import MiramGraueContent from '../pages/it/glaube/drey/MiramGraueContent.astro';
 import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro';
+
+const withBase = (path: string) =>
+  `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 ---
 
 <section class="drey" data-drey>
@@ -16,25 +19,25 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
         focusable="false"
       >
         <defs>
-          <clipPath id="drey-clip-hortum" clipPathUnits="userSpaceOnUse">
+          <clipPath id="drey-clip-top" clipPathUnits="userSpaceOnUse">
             <path d="M50 50 L6.7 25 A50 50 0 0 1 93.3 25 Z" />
           </clipPath>
 
-          <clipPath id="drey-clip-miram" clipPathUnits="userSpaceOnUse">
+          <clipPath id="drey-clip-right" clipPathUnits="userSpaceOnUse">
             <path d="M50 50 L93.3 25 A50 50 0 0 1 50 100 Z" />
           </clipPath>
 
-          <clipPath id="drey-clip-limba" clipPathUnits="userSpaceOnUse">
+          <clipPath id="drey-clip-left" clipPathUnits="userSpaceOnUse">
             <path d="M50 50 L50 100 A50 50 0 0 1 6.7 25 Z" />
           </clipPath>
         </defs>
 
-        <!-- Hortum oben -->
-        <g clip-path="url(#drey-clip-hortum)">
+        <!-- Limbar oben -->
+        <g clip-path="url(#drey-clip-top)">
           <image
-            href="/images/it/glaube-goetter/hortum-der-schwarze_wheel.webp"
+            href={withBase('/images/it/glaube-goetter/limbar-der-weisse_wheel.webp')}
             x="8"
-            y="-6"
+            y="-2"
             width="84"
             height="84"
             preserveAspectRatio="xMidYMid meet"
@@ -42,11 +45,11 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
         </g>
 
         <!-- Miram rechts unten -->
-        <g clip-path="url(#drey-clip-miram)">
+        <g clip-path="url(#drey-clip-right)">
           <image
-            href="/images/it/glaube-goetter/miram-die-graue_wheel.webp"
-            x="28"
-            y="20"
+            href={withBase('/images/it/glaube-goetter/miram-die-graue_wheel.webp')}
+            x="26"
+            y="38"
             width="84"
             height="84"
             preserveAspectRatio="xMidYMid meet"
@@ -54,12 +57,12 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
           />
         </g>
 
-        <!-- Limba links unten -->
-        <g clip-path="url(#drey-clip-limba)">
+        <!-- Hortum links unten -->
+        <g clip-path="url(#drey-clip-left)">
           <image
-            href="/images/it/glaube-goetter/limbar-der-weisse_wheel.webp"
-            x="-12"
-            y="20"
+            href={withBase('/images/it/glaube-goetter/hortum-der-schwarze_wheel.webp')}
+            x="-10"
+            y="38"
             width="84"
             height="84"
             preserveAspectRatio="xMidYMid meet"
@@ -67,26 +70,22 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
           />
         </g>
 
-        <!-- Dezente Segmentlinien, keine Einfärbung -->
         <path class="drey-line" d="M50 50 L6.7 25" />
         <path class="drey-line" d="M50 50 L93.3 25" />
         <path class="drey-line" d="M50 50 L50 100" />
 
-        <!-- Dezenter Außenkreis -->
         <circle class="drey-outline" cx="50" cy="50" r="49.5" />
-
-        <!-- Kleiner Mittelpunkt -->
         <circle class="drey-center" cx="50" cy="50" r="5" />
       </svg>
 
       <button
         class="god-segment is-active"
         type="button"
-        data-god="hortum"
+        data-god="limba"
         aria-pressed="true"
-        aria-label="Hortum, den Schwarzen auswählen"
+        aria-label="Limba, den Weißen auswählen"
       >
-        <span class="sr-only">Hortum</span>
+        <span class="sr-only">Limba</span>
       </button>
 
       <button
@@ -102,26 +101,26 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
       <button
         class="god-segment"
         type="button"
-        data-god="limba"
+        data-god="hortum"
         aria-pressed="false"
-        aria-label="Limba, den Weißen auswählen"
+        aria-label="Hortum, den Schwarzen auswählen"
       >
-        <span class="sr-only">Limba</span>
+        <span class="sr-only">Hortum</span>
       </button>
     </div>
   </div>
 
   <div class="drey-content" aria-live="polite">
-    <div data-god-content="hortum">
-      <HortumSchwarzeContent />
+    <div data-god-content="limba">
+      <LimbaWeisseContent />
     </div>
 
     <div data-god-content="miram" hidden>
       <MiramGraueContent />
     </div>
 
-    <div data-god-content="limba" hidden>
-      <LimbaWeisseContent />
+    <div data-god-content="hortum" hidden>
+      <HortumSchwarzeContent />
     </div>
   </div>
 </section>
@@ -152,57 +151,47 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
     pointer-events: none;
   }
 
+  .drey-wheel {
+    --wheel-rotation: 0deg;
 
+    position: relative;
+    width: min(92vw, 680px);
+    aspect-ratio: 1;
+    border-radius: 50%;
 
+    transform: rotate(var(--wheel-rotation));
+    transition: transform 700ms cubic-bezier(.2, .8, .2, 1);
 
+    filter:
+      drop-shadow(0 0 0.45rem rgba(255, 255, 255, 0.16))
+      drop-shadow(0 1.5rem 3rem rgba(0, 0, 0, 0.25));
+  }
 
-.drey-wheel {
-  --wheel-rotation: 0deg;
+  .drey-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
 
-  position: relative;
-  width: min(92vw, 680px);
-  aspect-ratio: 1;
-  border-radius: 50%;
+  .drey-line {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.42);
+    stroke-width: 0.45;
+    stroke-linecap: round;
+  }
 
-  transform: rotate(var(--wheel-rotation));
-  transition: transform 700ms cubic-bezier(.2, .8, .2, 1);
+  .drey-outline {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.5);
+    stroke-width: 0.65;
+  }
 
-  /* dezente weiße Zeichnung / leichter magischer Schein */
-  filter:
-    drop-shadow(0 0 0.45rem rgba(255, 255, 255, 0.16))
-    drop-shadow(0 1.5rem 3rem rgba(0, 0, 0, 0.25));
-}
-
-.drey-svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-/* Segmentlinien */
-.drey-line {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.42);
-  stroke-width: 0.45;
-  stroke-linecap: round;
-}
-
-/* Außenkreis */
-.drey-outline {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.5);
-  stroke-width: 0.65;
-}
-
-/* Mittelpunkt */
-.drey-center {
-  fill: rgba(255, 255, 255, 0.03);
-  stroke: rgba(255, 255, 255, 0.48);
-  stroke-width: 0.55;
-}
-
-
+  .drey-center {
+    fill: rgba(255, 255, 255, 0.03);
+    stroke: rgba(255, 255, 255, 0.48);
+    stroke-width: 0.55;
+  }
 
   .god-segment {
     position: absolute;
@@ -213,7 +202,6 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
     cursor: pointer;
     background: transparent;
     color: inherit;
-
     clip-path: var(--segment);
   }
 
@@ -229,7 +217,8 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
     width: 9rem;
     height: 9rem;
     border-radius: 50%;
-    border: 2px solid currentColor;
+    border: 2px solid rgba(255, 255, 255, 0.72);
+    box-shadow: 0 0 1rem rgba(255, 255, 255, 0.18);
 
     transform: translate(-50%, -50%) scale(0.85);
     opacity: 0;
@@ -246,7 +235,7 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
     transform: translate(-50%, -50%) scale(1);
   }
 
-  .god-segment[data-god="hortum"] {
+  .god-segment[data-god="limba"] {
     --segment: polygon(
       50% 50%,
       6.7% 25%,
@@ -274,7 +263,7 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
     --hover-top: 64%;
   }
 
-  .god-segment[data-god="limba"] {
+  .god-segment[data-god="hortum"] {
     --segment: polygon(
       50% 50%,
       50% 100%,
@@ -334,13 +323,13 @@ import LimbaWeisseContent from '../pages/it/glaube/drey/LimbaWeisseContent.astro
 
 <script>
   const gods = {
-    hortum: {
+    limba: {
       rotation: '0deg'
     },
     miram: {
       rotation: '-120deg'
     },
-    limba: {
+    hortum: {
       rotation: '120deg'
     }
   };
