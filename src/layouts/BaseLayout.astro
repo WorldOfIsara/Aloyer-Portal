@@ -1,6 +1,7 @@
 ﻿---
 import SiteHeader from '../components/SiteHeader.astro';
 import SearchPalette from '../components/SearchPalette.astro';
+import ScrollReveal from '../components/ScrollReveal.astro';
 import { siteConfig } from '../data/site';
 import type { NavItem } from '../data/site';
 import '../styles/global.css';
@@ -57,6 +58,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title} | {siteConfig.titleSuffix}</title>
   </head>
   <body class={bodyClass}>
+    <ScrollReveal />
     <SiteHeader
       nav={nav}
       brandText={headerBrandText}

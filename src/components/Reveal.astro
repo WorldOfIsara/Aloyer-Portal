@@ -1,0 +1,22 @@
+---
+// Wiederverwendbarer Wrapper, um einen Abschnitt beim Scrollen einzublenden.
+// Beispiel:  <Reveal>...</Reveal>
+//            <Reveal as="section" variant="left" delay={120}>...</Reveal>
+interface Props {
+  as?: string;
+  variant?: 'up' | 'fade' | 'left' | 'right';
+  delay?: number;
+  class?: string;
+}
+
+const { as = 'div', variant = 'up', delay = 0, class: className } = Astro.props;
+const Tag = as as any;
+---
+
+<Tag
+  class:list={[className]}
+  data-reveal={variant}
+  style={delay ? `--reveal-delay:${delay}ms` : undefined}
+>
+  <slot />
+</Tag>
