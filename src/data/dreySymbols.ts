@@ -1,8 +1,8 @@
 export const limbarSymbol =
-  '/images/it/glaube-goetter/symbole/limbar symbol.png';
+  '/images/it/glaube-goetter/Limbar Symbol.png';
 
 export const miramSymbol =
-  '/images/it/glaube-goetter/symbole/miram symbol.png';
+  '/images/it/glaube-goetter/Miram Symbol.png';
 
 export const hortumSymbol =
-  '/images/it/glaube-goetter/symbole/hortum symbol.png';
+  '/images/it/glaube-goetter/Hortum Symbol.png';
