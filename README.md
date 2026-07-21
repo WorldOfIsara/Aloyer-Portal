@@ -163,3 +163,6 @@ Schema befindet sich unter `directus/schema/`.
 ## Repository
 
 [github.com/WorldOfIsara/Aloyer-Portal](https://github.com/WorldOfIsara/Aloyer-Portal)
+
+## Test-Website über Github Pages
+[https://worldofisara.github.io/Aloyer-Portal](https://worldofisara.github.io/Aloyer-Portal/)
