@@ -18,6 +18,24 @@ const deitySymbols: Record<string, string> = {
   Hortum: hortumSymbol,
 };
 
+// Farbe des Schlagschattens hinter der Perle im Inhaltsbereich, passend
+// zum jeweiligen Hauptgott: weiß bei Limba, grau bei Miram, schwarz bei
+// Hortum. Bei gemischter Abstammung (z. B. "Miram & Hortum") wird die
+// erste passende Sphäre im Text genutzt.
+const badgeGlowBySphere: Record<string, string> = {
+  Limba: 'rgba(255, 255, 255, 0.92)',
+  Miram: 'rgba(120, 120, 120, 0.88)',
+  Hortum: 'rgba(0, 0, 0, 0.9)',
+};
+
+function badgeGlow(sphere?: string): string {
+  const fallback = 'rgba(20, 12, 7, 0.8)';
+  if (!sphere) return fallback;
+  if (badgeGlowBySphere[sphere]) return badgeGlowBySphere[sphere];
+  const match = Object.keys(badgeGlowBySphere).find((key) => sphere.includes(key));
+  return match ? badgeGlowBySphere[match] : fallback;
+}
+
 export interface SeeligeBeadItem {
   id: string;
   name: string;
@@ -134,8 +152,20 @@ const activeLoopIndex = items.length + baseIndex;
         <div class="bead-panel" data-bead-panel={item.id} hidden={item.id !== activeId}>
           <div class="bead-panel__layout">
             <div class="bead-panel__identity">
-              <div class="bead-panel__badge" aria-hidden="true">
-                <span class="bead-panel__badge-letter">{item.name.slice(0, 1)}</span>
+              <div class="bead-panel__badge-wrap">
+                <div
+                  class="bead-panel__badge"
+                  aria-hidden="true"
+                  style={`--badge-glow: ${badgeGlow(item.sphere)}`}
+                >
+                  <span class="bead-panel__badge-letter">{item.name.slice(0, 1)}</span>
+                </div>
+
+                <div
+                  class="bead-panel__badge2"
+                  aria-hidden="true"
+                  style={`--badge-glow: ${badgeGlow(item.sphere)}`}
+                ></div>
               </div>
 
               <h3 class="bead-panel__name">{item.name}</h3>
@@ -379,7 +409,26 @@ const activeLoopIndex = items.length + baseIndex;
     border-right: 1px solid rgba(92, 55, 31, 0.3);
   }
 
-  .bead-panel__badge {
+  /*
+    Wrapper, damit .bead-panel__badge und .bead-panel__badge2 exakt
+    übereinanderliegen (gleiche Stelle) statt nebeneinander im Flex-Fluss
+    zu landen.
+  */
+  .bead-panel__badge-wrap {
+    position: relative;
+    width: 5.2rem;
+    height: 5.2rem;
+  }
+
+  .bead-panel__badge,
+  .bead-panel__badge2 {
+    /* top/left 50% + translate(-50%, -50%) statt inset: 0, damit auch
+       eine abweichende (kleinere) Größe von badge2 exakt mittig bleibt,
+       statt oben links im Wrapper zu kleben. */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -389,9 +438,18 @@ const activeLoopIndex = items.length + baseIndex;
     background-image: var(--bead-image);
     background-size: cover;
     background-position: center;
-    box-shadow:
-      0 3px 8px rgba(20, 12, 7, 0.55),
-      inset 0 0 0 2px rgba(244, 236, 224, 0.5);
+    /* Kein Rahmen/Ring mehr – nur ein gleichmäßiger Schlagschatten
+       (kein Versatz) in der Farbe des zugehörigen Hauptgottes
+       (--badge-glow, inline pro Item gesetzt). */
+  }
+
+  /* badge2 hat keinen Inhalt (keine Initiale) – liegt absolut zentriert
+     hinter badge (kleiner + niedrigerer z-index). */
+  .bead-panel__badge2 {
+    width: 4.2rem;
+    height: 4.2rem;
+    z-index: -1;
+    box-shadow: 0 0 26px 13px var(--badge-glow, rgba(20, 12, 7, 0.8));
   }
 
   .bead-panel__badge-letter {
