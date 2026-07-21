@@ -60,6 +60,37 @@ const {
 
 const altText = imageAlt ?? `Porträt von ${name}`;
 
+// Zufällige, aber wiederholungsarme Verteilung der 4 Zettel-Varianten:
+// pro Vierer-Block wird [1,2,3,4] neu gemischt (Fisher-Yates), sodass
+// jede Variante innerhalb eines Blocks genau einmal vorkommt, statt
+// stur im Kreis 1-2-3-4-1-2-3-4 zu wiederholen. Läuft serverseitig
+// beim Build, daher kein Layout-Shift und kein Hydration-Mismatch.
+function shuffledNoteVariants(count: number): number[] {
+  const variants: number[] = [];
+
+  while (variants.length < count) {
+    const batch = [1, 2, 3, 4];
+
+    for (let i = batch.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [batch[i], batch[j]] = [batch[j], batch[i]];
+    }
+
+    // Direkten Übergang "...4 | 4..." zwischen zwei Blöcken vermeiden.
+    const previous = variants[variants.length - 1];
+    if (previous !== undefined && batch[0] === previous) {
+      const swapWith = 1 + Math.floor(Math.random() * (batch.length - 1));
+      [batch[0], batch[swapWith]] = [batch[swapWith], batch[0]];
+    }
+
+    variants.push(...batch);
+  }
+
+  return variants.slice(0, count);
+}
+
+const noteVariants = shuffledNoteVariants(notes.length);
+
 const dossierFacts: CharacterFact[] = [
   { label: 'Rang', value: rank ?? '-' },
   { label: 'Einsatzort', value: deploymentArea ?? '-' },
@@ -126,16 +157,6 @@ const dossierFacts: CharacterFact[] = [
   {
     notes.length > 0 && (
       <section class="character-sheet__notes" aria-labelledby={`${name}-notizen`}>
-        <svg aria-hidden="true" focusable="false" class="note-filter-defs">
-          <filter id="note-paper-grain" x="-20%" y="-20%" width="140%" height="140%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" stitchTiles="stitch" result="grain" />
-            <feColorMatrix in="grain" type="matrix" values="0 0 0 0 0.14  0 0 0 0 0.09  0 0 0 0 0.04  0 0 0 0.55 0" />
-          </filter>
-          <filter id="note-paper-fiber" x="-20%" y="-20%" width="140%" height="140%">
-            <feTurbulence type="turbulence" baseFrequency="0.012 0.09" numOctaves="2" seed="9" result="fiber" />
-            <feColorMatrix in="fiber" type="matrix" values="0 0 0 0 0.24  0 0 0 0 0.15  0 0 0 0 0.06  0 0 0 0.4 0" />
-          </filter>
-        </svg>
         <h2 id={`${name}-notizen`}>Notizen</h2>
 
         <div class="character-sheet__notes-grid">
@@ -143,11 +164,15 @@ const dossierFacts: CharacterFact[] = [
             <article
               class:list={[
                 'character-note',
-                `character-note--${(index % 4) + 1}`,
+                `character-note--${noteVariants[index]}`,
               ]}
+              style={`--note-image: url('${withBase(`/images/it/helper/Note${noteVariants[index]}.webp`)}');`}
+              data-fit-note
             >
-              <h3>{note.title}</h3>
-              <p>{note.text}</p>
+              <div class="character-note__body" data-fit-note-body>
+                <h3>{note.title}</h3>
+                <p>{note.text}</p>
+              </div>
             </article>
           ))}
         </div>
@@ -155,6 +180,41 @@ const dossierFacts: CharacterFact[] = [
     )
   }
 </article>
+
+<script>
+  const MIN_SCALE = 0.55;
+  const STEP = 0.05;
+
+  function fitNoteText(note: HTMLElement) {
+    const body = note.querySelector<HTMLElement>('[data-fit-note-body]');
+    if (!body) return;
+
+    let scale = 1;
+    body.style.setProperty('--note-text-scale', '1');
+
+    // Erst zurücksetzen, dann schrittweise verkleinern, bis der Text
+    // wieder vollständig innerhalb des Zettels liegt.
+    while (scale > MIN_SCALE && body.scrollHeight > body.clientHeight + 1) {
+      scale = Math.round((scale - STEP) * 100) / 100;
+      body.style.setProperty('--note-text-scale', String(scale));
+    }
+  }
+
+  function fitAllNotes() {
+    document.querySelectorAll<HTMLElement>('[data-fit-note]').forEach(fitNoteText);
+  }
+
+  let resizeTimer: number | undefined;
+  function scheduleFit() {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(fitAllNotes, 120);
+  }
+
+  fitAllNotes();
+  document.fonts?.ready.then(fitAllNotes);
+  window.addEventListener('resize', scheduleFit);
+  document.addEventListener('astro:page-load', fitAllNotes);
+</script>
 
 <style>
   .character-sheet {
@@ -311,102 +371,62 @@ const dossierFacts: CharacterFact[] = [
   .character-sheet__notes-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    align-items: start;
     gap: 1.4rem;
     margin-top: 1.75rem;
   }
 
-  .note-filter-defs {
-    position: absolute;
-    width: 0;
-    height: 0;
-    overflow: hidden;
-  }
-
   .character-note {
     --note-rotation: 0deg;
-    --paper-a: #ead8aa;
-    --paper-b: #d1b06d;
-    --paper-c: #f4e8c3;
-    --special-mark: none;
-    --tape: none;
-    --grain-opacity: 0.5;
+    --note-image: none;
+    --note-text-scale: 1;
 
     position: relative;
-    min-height: 12rem;
-    padding: 1.35rem 1.25rem 1.25rem;
+    box-sizing: border-box;
+    width: 100%;
+    aspect-ratio: var(--note-aspect, 1 / 1);
+    /*
+      WICHTIG: padding-top/bottom bezieht sich in CSS immer auf die
+      BREITE des Elements, nie auf die eigene Höhe. Bei stark
+      unterschiedlichen Seitenverhältnissen muss der vertikale Wert
+      daher pro Variante umgerechnet werden (siehe --note-pad-block
+      weiter unten), sonst wäre bei einem breiten/flachen Zettel wie
+      Note 4 das Padding absolut viel zu groß.
+    */
+    padding-inline: 9%;
+    padding-top: var(--note-pad-top, var(--note-pad-block, 10%));
+    padding-bottom: var(--note-pad-bottom, var(--note-pad-block, 10%));
     color: #24170d;
 
-    background:
-      var(--tape),
-      var(--special-mark),
-      linear-gradient(to right, rgba(60, 36, 16, 0.34), transparent 13%, transparent 87%, rgba(60, 36, 16, 0.28)),
-      linear-gradient(to bottom, rgba(60, 36, 16, 0.28), transparent 15%, transparent 85%, rgba(60, 36, 16, 0.36)),
-      var(--tear-line),
-      radial-gradient(ellipse 30% 22% at var(--stain-x, 18%) var(--stain-y, 22%), rgba(70, 43, 20, 0.34), rgba(70, 43, 20, 0.15) 55%, transparent 78%),
-      radial-gradient(ellipse 24% 26% at var(--stain-2-x, 72%) var(--stain-2-y, 78%), rgba(70, 43, 20, 0.26), rgba(70, 43, 20, 0.1) 60%, transparent 80%),
-      radial-gradient(ellipse 60% 50% at 50% 45%, transparent 55%, rgba(58, 34, 16, 0.22) 100%),
-      radial-gradient(circle at 28% 86%, rgba(255, 255, 255, 0.18), transparent 20%),
-      linear-gradient(128deg, var(--paper-c), var(--paper-a) 42%, var(--paper-b) 78%, var(--paper-a));
-    background-blend-mode:
-      multiply, multiply, multiply, multiply, multiply, multiply, multiply, multiply, normal, normal;
-
-    border: 1px solid rgba(66, 40, 18, 0.4);
-    border-radius: 0;
-    clip-path: var(--note-tear);
-
-    box-shadow:
-      3px 4px 0 -1px rgba(20, 11, 7, 0.1),
-      6px 9px 0 -2px rgba(20, 11, 7, 0.07);
+    background-image: var(--note-image);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
 
     filter:
       drop-shadow(0 4px 5px rgba(20, 11, 7, 0.22))
-      drop-shadow(0 14px 18px rgba(20, 11, 7, 0.28))
-      drop-shadow(0 2px 2px rgba(20, 11, 7, 0.18));
+      drop-shadow(0 14px 18px rgba(20, 11, 7, 0.28));
 
     transform: rotate(var(--note-rotation));
-    isolation: isolate;
+  }
+
+  .character-note__body {
+    height: 100%;
     overflow: hidden;
-  }
-
-  .character-note::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: #000;
-    filter: url(#note-paper-grain);
-    opacity: var(--grain-opacity);
-    mix-blend-mode: multiply;
-  }
-
-  .character-note::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background: #000;
-    filter: url(#note-paper-fiber);
-    opacity: 0.32;
-    mix-blend-mode: multiply;
-    mask-image:
-      linear-gradient(to right, black, transparent 12%, transparent 88%, black),
-      linear-gradient(to bottom, black, transparent 12%, transparent 88%, black);
-    mask-composite: intersect;
-    -webkit-mask-composite: source-in;
+    font-size: calc(1rem * var(--note-text-scale, 1));
   }
 
   .character-note h3 {
     position: relative;
     z-index: 1;
-    margin: 0 0 0.55rem;
+    margin: 0 0 0.55em;
     padding: 0;
     text-align: left;
     font-family: var(--font-ui);
-    font-size: 1rem;
+    font-size: 1.05em;
     line-height: 1.25;
     color: rgba(72, 42, 20, 0.98);
+    overflow-wrap: break-word;
   }
 
   .character-note h3::after {
@@ -417,124 +437,39 @@ const dossierFacts: CharacterFact[] = [
     position: relative;
     z-index: 1;
     margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.55;
+    font-size: 0.95em;
+    line-height: 1.5;
     font-weight: 650;
     color: rgba(33, 23, 15, 0.95);
+    overflow-wrap: break-word;
   }
 
-  /* Variante 1: vergilbtes Ledgerblatt mit Kaffee-/Bierring */
   .character-note--1 {
     --note-rotation: -2.4deg;
-    --paper-a: #ead7a5;
-    --paper-b: #cfaf68;
-    --paper-c: #f5e9c6;
-    --stain-x: 20%;
-    --stain-y: 78%;
-    --stain-2-x: 82%;
-    --stain-2-y: 24%;
-    --grain-opacity: 0.5;
-    --special-mark:
-      radial-gradient(circle 15% at 22% 76%, transparent 63%, rgba(64, 38, 16, 0.55) 66%, rgba(64, 38, 16, 0.3) 71%, transparent 76%),
-      radial-gradient(circle 15% at 22% 76%, rgba(64, 38, 16, 0.16), transparent 70%);
-    --note-tear: polygon(
-      0 4%, 5% 0, 12% 3%, 21% 1%, 33% 4%, 44% 0,
-      56% 3%, 67% 1%, 79% 4%, 90% 1%, 100% 3%,
-      97% 17%, 100% 31%, 96% 45%, 100% 61%,
-      97% 75%, 100% 89%, 96% 100%,
-      84% 97%, 71% 100%, 58% 96%, 45% 100%,
-      33% 97%, 20% 100%, 8% 96%, 0 99%,
-      3% 84%, 0 69%, 4% 55%, 0 39%, 3% 24%
-    );
-    --tear-line:
-      linear-gradient(116deg, transparent 0 46%, rgba(70, 43, 20, 0.28) 47% 50%, transparent 51% 100%)
-      10% 22% / 34% 20% no-repeat;
+    --note-aspect: 982 / 939;
+    --note-pad-block: 10%;
   }
 
-  /* Variante 2: rußig-graue Feldnotiz mit Brandfleck */
   .character-note--2 {
     --note-rotation: 1.8deg;
-    --paper-a: #cbb083;
-    --paper-b: #9a7847;
-    --paper-c: #ded0a3;
-    --stain-x: 78%;
-    --stain-y: 18%;
-    --stain-2-x: 30%;
-    --stain-2-y: 72%;
-    --grain-opacity: 0.62;
-    --special-mark:
-      radial-gradient(circle 20% at 84% 14%, rgba(20, 12, 6, 0.75), rgba(35, 21, 10, 0.5) 45%, rgba(35, 21, 10, 0.18) 68%, transparent 82%);
-    --note-tear: polygon(
-      2% 0, 13% 3%, 25% 1%, 38% 4%, 50% 0,
-      61% 2%, 73% 0, 85% 3%, 90% 12%, 97% 4%, 100% 9%,
-      95% 16%, 100% 27%, 94% 39%, 100% 52%,
-      95% 64%, 100% 78%, 93% 91%, 99% 100%,
-      86% 96%, 73% 100%, 62% 97%, 49% 100%,
-      37% 96%, 24% 100%, 12% 97%, 0 100%,
-      2% 86%, 0 73%, 3% 59%, 0 44%, 2% 29%, 0 13%
-    );
-    --tear-line:
-      linear-gradient(45deg, transparent 0 47%, rgba(35, 21, 10, 0.3) 48% 50%, transparent 51% 100%)
-      70% 18% / 24% 22% no-repeat;
+    --note-aspect: 948 / 916;
+    --note-pad-block: 10%;
   }
 
-  /* Variante 3: sonnengebleichtes Pergament mit Wasserrand und ausgefranster Kante */
   .character-note--3 {
     --note-rotation: -1.3deg;
-    --paper-a: #e8dcb8;
-    --paper-b: #cdbb8a;
-    --paper-c: #f6efd8;
-    --stain-x: 50%;
-    --stain-y: 88%;
-    --stain-2-x: 12%;
-    --stain-2-y: 30%;
-    --grain-opacity: 0.42;
-    --special-mark:
-      radial-gradient(ellipse 70% 20% at 46% 92%, rgba(90, 74, 42, 0.4), rgba(90, 74, 42, 0.16) 60%, transparent 85%),
-      radial-gradient(ellipse 55% 10% at 40% 80%, transparent 60%, rgba(90, 74, 42, 0.28) 78%, transparent 92%);
-    --note-tear: polygon(
-      0 2%, 10% 0, 21% 2%, 32% 0, 44% 3%, 55% 1%,
-      68% 3%, 80% 0, 91% 2%, 100% 1%,
-      98% 15%, 100% 29%, 97% 43%, 100% 57%,
-      98% 71%, 100% 84%, 95% 100%,
-      82% 94%, 70% 100%, 58% 93%, 45% 100%,
-      33% 94%, 20% 100%, 8% 95%, 0 98%,
-      2% 90%, 5% 85%, 0% 80%, 4% 74%, 0% 68%,
-      3% 62%, 0% 56%, 4% 50%, 0% 44%,
-      2% 38%, 0 32%, 2% 25%, 0 18%, 2% 10%
-    );
-    --tear-line:
-      linear-gradient(90deg, transparent 0 47%, rgba(90, 74, 42, 0.24) 48% 50%, transparent 51% 100%)
-      46% 82% / 36% 14% no-repeat;
+    --note-aspect: 719 / 1022;
+    --note-pad-block: 14%;
+    /* Zettel hat oben einen Knick/umgeschlagene Ecke – Text startet
+       daher zusätzlich ~10% der Höhe tiefer, damit nichts über den
+       Knick läuft. */
+    --note-pad-top: 28%;
   }
 
-  /* Variante 4: dunkles Notizblatt mit Tintenklecks und Wachstropfen */
   .character-note--4 {
     --note-rotation: 2.6deg;
-    --paper-a: #d3b076;
-    --paper-b: #9c7439;
-    --paper-c: #e6cf9c;
-    --stain-x: 74%;
-    --stain-y: 20%;
-    --stain-2-x: 22%;
-    --stain-2-y: 82%;
-    --grain-opacity: 0.55;
-    --special-mark:
-      radial-gradient(circle 12% at 80% 16%, rgba(15, 9, 5, 0.8), rgba(15, 9, 5, 0.4) 55%, transparent 80%),
-      linear-gradient(200deg, transparent 40%, rgba(15, 9, 5, 0.35) 42%, transparent 44%) 78% 22% / 30% 40% no-repeat,
-      radial-gradient(circle 5% at 27% 85%, rgba(122, 20, 20, 0.65), rgba(122, 20, 20, 0.3) 60%, transparent 85%);
-    --note-tear: polygon(
-      0 6%, 7% 1%, 17% 4%, 29% 0, 41% 2%, 53% 0,
-      66% 4%, 78% 1%, 90% 3%, 100% 0,
-      96% 12%, 100% 25%, 97% 39%, 100% 54%,
-      96% 68%, 100% 82%, 92% 88%, 97% 100%,
-      84% 98%, 72% 100%, 60% 96%, 48% 100%,
-      35% 97%, 23% 100%, 10% 94%, 0 100%,
-      5% 86%, 0 72%, 4% 57%, 0 43%, 3% 29%, 0 16%
-    );
-    --tear-line:
-      linear-gradient(62deg, transparent 0 47%, rgba(15, 9, 5, 0.32) 48% 50%, transparent 51% 100%)
-      12% 76% / 30% 20% no-repeat;
+    --note-aspect: 1006 / 367;
+    --note-pad-block: 4%;
   }
 
   @media (max-width: 850px) {

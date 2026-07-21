@@ -1,0 +1,159 @@
+---
+interface Props {
+  source?: string;
+  variant?: 'quote' | 'poem';
+  dropcap?: boolean;
+  align?: 'left' | 'center';
+}
+
+const {
+  source,
+  variant = 'quote',
+  dropcap = true,
+  align = 'left',
+} = Astro.props;
+---
+
+<figure
+  class:list={[
+    'it-verse',
+    `it-verse--${variant}`,
+    `it-verse--${align}`,
+    { 'it-verse--dropcap': dropcap },
+  ]}
+>
+  <blockquote class="it-verse__body">
+    <slot />
+  </blockquote>
+
+  {
+    source && (
+      <figcaption class="it-verse__source">
+        {source}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .it-verse {
+    margin: 2.4rem auto;
+    max-width: 46rem;
+    padding: 0;
+    color: inherit;
+  }
+
+  .it-verse__body {
+    position: relative;
+    margin: 0;
+    padding: 1.35rem 2.1rem;
+    border-top: 3px double rgba(45, 30, 18, 0.86);
+    border-bottom: 3px double rgba(45, 30, 18, 0.86);
+  }
+
+  .it-verse__body::before,
+  .it-verse__body::after {
+    content: '❧';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    line-height: 1;
+    color: rgba(139, 42, 28, 0.88);
+    background: transparent;
+  }
+
+  .it-verse__body::before {
+    top: -0.58rem;
+  }
+
+  .it-verse__body::after {
+    bottom: -0.58rem;
+  }
+
+  .it-verse__body :global(p) {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 1.08rem;
+    line-height: 1.85;
+    font-weight: 600;
+    color: rgba(35, 24, 15, 0.96);
+  }
+
+  .it-verse__body :global(p + p) {
+    margin-top: 1rem;
+  }
+
+  .it-verse--quote .it-verse__body :global(p) {
+    text-align: justify;
+    text-wrap: pretty;
+  }
+
+  .it-verse--poem {
+    max-width: 38rem;
+  }
+
+  .it-verse--poem .it-verse__body :global(p) {
+    text-align: left;
+    line-height: 1.9;
+  }
+
+  .it-verse--center .it-verse__body :global(p) {
+    text-align: center;
+  }
+
+  .it-verse--dropcap .it-verse__body :global(p:first-of-type)::first-letter {
+    float: left;
+    margin: 0.02em 0.1em 0 0;
+    font-family: var(--font-heading);
+    font-size: 4.15em;
+    line-height: 0.78;
+    font-weight: 700;
+    color: rgba(139, 42, 28, 0.96);
+    text-shadow:
+      1px 1px 0 rgba(255, 245, 220, 0.7),
+      2px 2px 0 rgba(45, 30, 18, 0.18);
+  }
+
+  .it-verse__source {
+    margin-top: 0.85rem;
+    font-family: var(--font-ui);
+    font-size: 0.92rem;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    text-align: right;
+    color: rgba(69, 45, 26, 0.82);
+  }
+
+  .it-verse__source::before {
+    content: '— ';
+  }
+
+  @media (max-width: 640px) {
+    .it-verse {
+      margin: 1.8rem auto;
+    }
+
+    .it-verse__body {
+      padding: 1.15rem 1rem;
+    }
+
+    .it-verse__body :global(p) {
+      font-size: 1rem;
+      line-height: 1.72;
+    }
+
+    .it-verse--quote .it-verse__body :global(p) {
+      text-align: left;
+    }
+
+    .it-verse--dropcap .it-verse__body :global(p:first-of-type)::first-letter {
+      font-size: 3.3em;
+    }
+
+    .it-verse__source {
+      text-align: center;
+    }
+  }
+</style>
