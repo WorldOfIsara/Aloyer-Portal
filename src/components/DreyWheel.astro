@@ -86,11 +86,11 @@ const withBase = (path: string) =>
             <button
               class="god-segment is-active"
               type="button"
-              data-god="limba"
+              data-god="limbar"
               aria-pressed="true"
-              aria-label="Limba, den Weißen auswählen"
+              aria-label="Limbar, den Weißen auswählen"
             >
-              <span class="sr-only">Limba</span>
+              <span class="sr-only">Limbar</span>
             </button>
 
             <button
@@ -119,25 +119,25 @@ const withBase = (path: string) =>
           <div
             class="drey-center-seal"
             data-center-seal
-            data-active-god="limba"
+            data-active-god="limbar"
             aria-hidden="true"
           >
             <img
               class="drey-center-symbol is-active"
-              data-god-symbol="limba"
-              src={limbarSymbol}
+              data-god-symbol="limbar"
+              src={withBase(limbarSymbol)}
               alt=""
             />
             <img
               class="drey-center-symbol"
               data-god-symbol="miram"
-              src={miramSymbol}
+              src={withBase(miramSymbol)}
               alt=""
             />
             <img
               class="drey-center-symbol"
               data-god-symbol="hortum"
-              src={hortumSymbol}
+              src={withBase(hortumSymbol)}
               alt=""
             />
           </div>
@@ -146,7 +146,7 @@ const withBase = (path: string) =>
     </div>
 
   <div class="drey-content" aria-live="polite">
-    <div data-god-content="limba">
+    <div data-god-content="limbar">
       <LimbaWeisseContent />
     </div>
 
@@ -162,7 +162,7 @@ const withBase = (path: string) =>
 
 <script>
   const gods = {
-    limba: { angle: 0 },
+    limbar: { angle: 0 },
     miram: { angle: -120 },
     hortum: { angle: 120 }
   };
