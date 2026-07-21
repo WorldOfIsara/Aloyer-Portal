@@ -36,7 +36,7 @@ const defaultPoints: MapPoint[] = [
     name: 'Grodaus',
     href: '/it/aloy/grodaus',
     desc: 'Hauptstadt Aloys,Sitz des Aloyer Rates,Hauptumschlag des Handels,Sitz der Akademie des wahren Glaubens zu Aloy',
-    crest: '/images/it/das-land-aloy/grodaus_wappen.png',
+    crest: '/images/it/das-land-aloy/grodaus_wappen.webp',
     x: 35.5,
     y: 47,
   },
@@ -44,7 +44,7 @@ const defaultPoints: MapPoint[] = [
     name: 'Ohm',
     href: '/it/aloy/ohm-akademie',
     desc: 'Befestigte Grenzstadt, rote Akademie, einziger Landzugang zu Aloy.',
-    crest: '/images/it/das-land-aloy/ohm_wappen.png',
+    crest: '/images/it/das-land-aloy/ohm_wappen.webp',
     x: 66.5,
     y: 24,
   },
@@ -52,7 +52,7 @@ const defaultPoints: MapPoint[] = [
     name: 'Vormberg',
     href: '/it/aloy/vormberg',
     desc: 'Hauptsitz des Bergbaus. Zentrum der Kumpel und Schmiede.',
-    crest: '/images/it/das-land-aloy/vormberg_wappen.png',
+    crest: '/images/it/das-land-aloy/vormberg_wappen.webp',
     x: 16.5,
     y: 24,
   },
@@ -60,7 +60,7 @@ const defaultPoints: MapPoint[] = [
     name: 'Umseck',
     href: '/it/aloy/umseck-waidfuath',
     desc: 'Eine kleine Stadt, die sich em Handel über den Landweg verschrieben hat.',
-    crest: '/images/it/das-land-aloy/umseck_wappen.png',
+    crest: '/images/it/das-land-aloy/umseck_wappen.webp',
     x: 74.3,
     y: 43.7,
   },
@@ -68,7 +68,7 @@ const defaultPoints: MapPoint[] = [
     name: 'Waidfuath',
     href: '/it/aloy/umseck-waidfuath',
     desc: 'Kleinste Stadt Aloys, mitten im Wald gelegen und etwas Weltfremd.',
-    crest: '/images/it/das-land-aloy/waidfurth_wappen.png',
+    crest: '/images/it/das-land-aloy/waidfurth_wappen.webp',
     x: 23,
     y: 75,
   },
@@ -76,14 +76,14 @@ const defaultPoints: MapPoint[] = [
     name: 'Tiafunt',
     href: '/it/aloy/tiafunt',
     desc: 'Handelszentrum, größte Hafenstadt direkt am Meer.',
-    crest: '/images/it/das-land-aloy/tiafunt_wappen.png',
+    crest: '/images/it/das-land-aloy/tiafunt_wappen.webp',
     x: 74,
     y: 74.3,
   },
 ];
 
 const {
-  src = '/images/it/das-land-aloy/Aloy_Map.jpg',
+  src = '/images/it/das-land-aloy/Aloy_Map.webp',
   alt = 'Karte des Landes Aloy mit Gebirgen, Flüssen und den bekannten Städten',
   points = defaultPoints,
 } = Astro.props;
@@ -95,8 +95,11 @@ const {
       class="aloy-map__img"
       src={withBase(src)}
       alt={alt}
-      loading="lazy"
+      width={2048}
+      height={1536}
+      loading="eager"
       decoding="async"
+      fetchpriority="high"
     />
 
     <div class="aloy-map__layer">

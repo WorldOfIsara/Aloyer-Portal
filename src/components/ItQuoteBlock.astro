@@ -230,13 +230,20 @@ const isFlanked = variant === 'flanked';
     justify-content: center;
   }
 
+  /*
+    Rückt die Zierbilder näher an den Zitattext in der Mitte heran:
+    links nach rechts, rechts nach links. Wert je nach gewünschtem
+    Abstand anpassen (px oder %).
+  */
+ 
+
   .it-verse__flank-image img {
     display: block;
     width: 100%;
     max-width: 220px;
     height: auto;
     object-fit: contain;
-    filter: drop-shadow(0 8px 10px rgba(20, 11, 7, 0.18));
+    filter: drop-shadow(0 8px 10px rgba(20, 11, 7, 0.18)); 
   }
 
   .it-verse__flank-center {
@@ -255,8 +262,9 @@ const isFlanked = variant === 'flanked';
       gap: 1rem;
     }
 
-    .it-verse__flank-image img {
-      max-width: 130px;
+    /* Auf Mobile keine Zierbilder links/rechts, nur der Zitattext. */
+    .it-verse__flank-image {
+      display: none;
     }
   }
 

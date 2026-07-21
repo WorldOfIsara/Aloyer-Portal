@@ -123,7 +123,7 @@ export const seelige: SeeligeBeadItem[] = [
     name: 'Favilla',
     epithet: 'die Totengräberin',
     sphere: 'Hortum',
-    text: 'Sania ist eine der beiden Töchter Hortums. Ihre Aufgabe ist es, die Seelen jener zu holen, deren Leben gewaltsam endet. Sie ist vor allem mit Schlachtfeldern, Blutopfern und Kriegerbrauch verbunden. Unter aloyer Kriegsleuten ist es Brauch, erschlagene Gegner Sania zu weihen, damit sie deren Blut anstelle des eigenen nehme. Der bekannte Weihespruch lautet sinngemäß:',
+    text: 'Favilla kümmert sich um jene, deren Lebenszeit in Frieden endet. Sie wird als schön, bleich und beinahe unwiderstehlich beschrieben. Ihr Lächeln soll den letzten Atem rauben und die Seele in die Zwischenwelt geleiten.',
     //  quote: {
     //    text: 'Sania, ich weihe dir diesen Körper; nimm sein Blut statt meines.',
     //    source: '',
@@ -150,7 +150,7 @@ export const seelige: SeeligeBeadItem[] = [
     id: 'tsund',
     name: 'Tsund',
     epithet: 'Heilung und Genesung',
-    sphere: 'Miram & Hortum',
+    sphere: 'Hortum',
     text: 'Tsund ist ein Kind Mirams und Hortums und steht für Heilung, Linderung von Leid und das Hinauszögern eines zu frühen Todes – nicht für dessen vollständige Aufhebung. Er wird bei Krankheiten, schweren Wunden, Wundfieber, in Feldlazaretten und Spitälern angerufen und begleitet Sterbende, wenn Heilung nicht mehr möglich ist. Jeder Ort der Heilung gilt als sein Tempel; kann eine Krankheit nicht aufgehalten werden, lindert Tsund das Leiden und übergibt die Verstorbenen schließlich Favilla. Er entsteht aus Mirams Mitleid mit den Leidenden und Hortums Pflicht, die Toten aufzunehmen, und verkörpert so den Ausgleich zwischen natürlichem Tod und menschlichem Leid.',
   },
 
