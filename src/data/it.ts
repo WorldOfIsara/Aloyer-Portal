@@ -144,5 +144,5 @@ export const itNav: NavItem[] = [
 
 export const itBrandText = 'Aloyer Register und Chroniken';
 export const itBrandAlt = 'Aloy-Wappen';
-export const itBrandLogoSrc = '/logos/Aloy-Wappen.png';
+export const itBrandLogoSrc = '/logos/Aloy-Wappen_it.png';
 export const itFooterDescription = 'Du befindest dich im IT-Bereich';

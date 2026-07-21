@@ -1,10 +1,26 @@
 ---
 interface Props {
   source?: string;
-  variant?: 'quote' | 'poem';
+  variant?: 'quote' | 'poem' | 'flanked';
   dropcap?: boolean;
   align?: 'left' | 'center';
 }
+
+const withBase = (path: string) => {
+  if (
+    path.startsWith('http://') ||
+    path.startsWith('https://') ||
+    path.startsWith('//') ||
+    path.startsWith('#') ||
+    path.startsWith('mailto:') ||
+    path.startsWith('tel:') ||
+    path.startsWith(import.meta.env.BASE_URL)
+  ) {
+    return path;
+  }
+
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+};
 
 const {
   source,
@@ -12,28 +28,76 @@ const {
   dropcap = true,
   align = 'left',
 } = Astro.props;
+
+const isFlanked = variant === 'flanked';
 ---
 
-<figure
-  class:list={[
-    'it-verse',
-    `it-verse--${variant}`,
-    `it-verse--${align}`,
-    { 'it-verse--dropcap': dropcap },
-  ]}
->
-  <blockquote class="it-verse__body">
-    <slot />
-  </blockquote>
+{
+  isFlanked ? (
+    <figure class="it-verse it-verse--flanked">
+      <div class="it-verse__flank-row">
+        <div class="it-verse__flank-image it-verse__flank-image--left" aria-hidden="true">
+          <img
+            src={withBase('/images/it/das-land-aloy/wofl_obg_links.png')}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
 
-  {
-    source && (
-      <figcaption class="it-verse__source">
-        {source}
-      </figcaption>
-    )
-  }
-</figure>
+        <div
+          class:list={[
+            'it-verse__flank-center',
+            `it-verse--${align}`,
+            { 'it-verse--dropcap': dropcap },
+          ]}
+        >
+          <blockquote class="it-verse__body">
+            <slot />
+          </blockquote>
+
+          {
+            source && (
+              <figcaption class="it-verse__source">
+                {source}
+              </figcaption>
+            )
+          }
+        </div>
+
+        <div class="it-verse__flank-image it-verse__flank-image--right" aria-hidden="true">
+          <img
+            src={withBase('/images/it/das-land-aloy/wofl_obg_rechts.png')}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </figure>
+  ) : (
+    <figure
+      class:list={[
+        'it-verse',
+        `it-verse--${variant}`,
+        `it-verse--${align}`,
+        { 'it-verse--dropcap': dropcap },
+      ]}
+    >
+      <blockquote class="it-verse__body">
+        <slot />
+      </blockquote>
+
+      {
+        source && (
+          <figcaption class="it-verse__source">
+            {source}
+          </figcaption>
+        )
+      }
+    </figure>
+  )
+}
 
 <style>
   .it-verse {
@@ -128,6 +192,72 @@ const {
 
   .it-verse__source::before {
     content: '— ';
+  }
+
+  /*
+    Variante "flanked": volle Breite, 20/60/20 – links und rechts je ein
+    zentriertes Zierbild, in der Mitte der Zitattext.
+  */
+  .it-verse--flanked {
+    width: 100%;
+    max-width: 100%;
+    margin: 2.4rem 0;
+  }
+
+  .it-verse__flank-row {
+    /*
+      WICHTIG: Bei Prozent-Spuren wird "gap" NICHT automatisch von den
+      Prozentwerten abgezogen – 20% + 60% + 20% + 2 × gap wäre sonst
+      breiter als der Container und würde nach rechts überlaufen
+      (sichtbar als "rechtsversetzt"). Daher hier den Gap-Anteil je
+      Spalte per calc() herausrechnen, sodass die Summe exakt 100%
+      bleibt.
+    */
+    --flank-gap: 1.25rem;
+
+    display: grid;
+    grid-template-columns:
+      calc(20% - var(--flank-gap) * 0.4)
+      calc(60% - var(--flank-gap) * 1.2)
+      calc(20% - var(--flank-gap) * 0.4);
+    align-items: center;
+    gap: var(--flank-gap);
+  }
+
+  .it-verse__flank-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .it-verse__flank-image img {
+    display: block;
+    width: 100%;
+    max-width: 220px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 10px rgba(20, 11, 7, 0.18));
+  }
+
+  .it-verse__flank-center {
+    min-width: 0;
+  }
+
+  .it-verse__flank-center .it-verse__body {
+    max-width: 46rem;
+    margin-inline: auto;
+  }
+
+  @media (max-width: 780px) {
+    .it-verse__flank-row {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 1rem;
+    }
+
+    .it-verse__flank-image img {
+      max-width: 130px;
+    }
   }
 
   @media (max-width: 640px) {
