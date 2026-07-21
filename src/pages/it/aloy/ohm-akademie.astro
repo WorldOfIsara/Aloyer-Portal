@@ -1,32 +1,45 @@
-﻿---
+---
 import ItContentPage from '../../../components/ItContentPage.astro';
-import ItIllustration from '../../../components/ItIllustration.astro';
+import ItCityArticle from '../../../components/ItCityArticle.astro';
+import TextDivider from '../../../components/TextDivider.astro';
 ---
 
 <ItContentPage title="Ohm und die rote Akademie">
-  <ItIllustration
-    src="/images/it/das-land-aloy/ohm-stadttor.webp"
-    alt="Historische Grafik einer stark befestigten Gebirgsstadt mit großem Stadttor"
-    caption="Das befestigte Stadttor von Ohm am wichtigsten Landweg in die Republik."
-    width={1500}
-    height={812}
-    priority={true}
-  />
-  <p>Ohm zählt zu den bedeutenden Städten der freien Republik Aloy und ist vor allem durch die rote Akademie bekannt. Während Grodaus als Herz der Verwaltung und Gelehrsamkeit gilt und Tiafunt den Blick über das Meer öffnet, steht Ohm für Wehrhaftigkeit, Ausbildung, Ordnung im Feld und die ernste Kunst, nicht nur tapfer, sondern auch brauchbar zu kämpfen.
-<br><br>
-Die Stadt ist eng mit dem militärischen Zweig der Akademie verbunden. Hier werden Soldaten ausgebildet, Waffen geführt, Formationen geübt, Befehle eingeschärft und jene Tugenden vermittelt, ohne die ein bewaffneter Haufen zwar laut, aber selten nützlich ist. Disziplin, Verlässlichkeit, Standhaftigkeit und das Verständnis für Befehl und Verantwortung gelten in Ohm als Grundlagen jeder ernstzunehmenden Kriegskunst.
-<br><br>
-Die rote Akademie dient nicht allein der Ausbildung einfacher Kämpfer. In ihren Einrichtungen werden Fußsoldaten, Schützen, Feldärzte, Sappeure, Spielleute, Offiziere und weitere militärische Spezialisten geschult. Auch jene, die später als Söldner in fremde Lande ziehen, erhalten hier das Rüstzeug, um Aloy nicht nur mit Waffen, sondern auch mit Haltung zu vertreten.
-<br><br>
-Von besonderem Wert ist die Verbindung zwischen praktischer Ausbildung und aloyischer Staatskunde. Ein Soldat Aloys soll nicht bloß wissen, wie man eine Waffe hält, sondern auch, wem er dient, wofür er steht und weshalb ein freies Land ohne Adel dennoch Ordnung im Heerwesen braucht. Wer in Ohm ausgebildet wird, lernt daher nicht nur Kampf, sondern auch Verantwortung gegenüber der Republik.
-<br><br>
-Die Stadt selbst ist vom Betrieb der Akademie geprägt. Übungsplätze, Kasernen, Werkstätten, Lazarette, Schreibstuben, Waffenkammern und Unterkünfte bestimmen weite Teile des städtischen Lebens. Händler, Handwerker, Wirte und Versorger leben ebenso vom akademischen und militärischen Betrieb wie die zahlreichen Ausbilder, Schreiber und Bediensteten, die den Alltag der roten Akademie möglich machen.
-<br><br>
-Ohm ist auch mit den besonders angesehenen Truppenteilen Aloys verbunden. In den Aufzeichnungen werden unter anderem die Ohmer Wölfe genannt, deren Ruf auf Disziplin, Härte und besonderer Einsatzfähigkeit beruht. Solche Einheiten tragen dazu bei, dass Ohm nicht nur als Ausbildungsort, sondern auch als Sinnbild aloyischer Wehrkraft verstanden wird.
-<br><br>
-Für die Aloyer Söldner besitzt Ohm eine naheliegende Bedeutung. Viele von ihnen haben dort einen Teil ihrer Ausbildung erhalten oder stehen zumindest in einer Tradition, die von der roten Akademie geprägt wurde. Wer als Söldner Aloys in den Splitterlanden auftritt, trägt somit nicht nur persönliche Bewaffnung und eigene Erfahrung mit sich, sondern auch ein Stück Ohmer Lehre.
-<br><br>
-Im Austausch mit fremden Ländern und Bünden ist Ohm vor allem dort von Bedeutung, wo aloyische Söldnerdienste, militärische Beratung, Wachaufgaben oder gemeinsame Unternehmungen gefragt sind. Die Republik verkauft nicht allein Schwerter, sondern ausgebildete Leute, geordnete Trupps und die Zusicherung, dass hinter einem Vertrag mehr steht als ein Haufen mutiger Zufälle.
-<br><br>
-So steht Ohm für die bewaffnete Seite Aloys: nicht für blinden Kriegseifer, sondern für geordnete Wehrhaftigkeit. Die rote Akademie lehrt, dass Mut nützlich, Disziplin aber verlässlicher ist; dass ein guter Soldat seine Waffe kennt, ein besserer Soldat aber auch den Grund, aus dem er sie zieht.</p>
+  <ItCityArticle
+    name="Ohm"
+    subtitle="Grenz- und Garnisonsstadt, Sitz der roten Akademie"
+    summary="Ohm steht für Wehrhaftigkeit, Ausbildung und Ordnung im Feld. Als einziger regulärer Landzugang Aloys ist die Stadt zugleich Grenzposten und Herz der militärischen Ausbildung."
+    imageSrc="/images/it/das-land-aloy/ohm-stadttor.webp"
+    imageAlt="Historische Grafik einer stark befestigten Gebirgsstadt mit großem Stadttor"
+    imageCaption="Das befestigte Stadttor von Ohm am wichtigsten Landweg in die Republik."
+    imageWidth={1500}
+    imageHeight={812}
+    imagePriority={true}
+    crestSrc="/images/it/das-land-aloy/ohm_wappen.png"
+    facts={[
+      { label: 'Status', value: 'Grenz- und Garnisonsstadt' },
+      { label: 'Bedeutung', value: 'Sitz der roten Akademie (militärischer Zweig)' },
+      { label: 'Lage', value: 'Am einzigen regulären Landweg nach Aloy' },
+    ]}
+  >
+
+    <p>Ohm zählt zu den bedeutenden Städten der freien Republik Aloy und ist vor allem durch die rote Akademie bekannt. Während Grodaus als Herz der Verwaltung und Gelehrsamkeit gilt und Tiafunt den Blick über das Meer öffnet, steht Ohm für Wehrhaftigkeit, Ausbildung, Ordnung im Feld und die ernste Kunst, nicht nur tapfer, sondern auch brauchbar zu kämpfen.</p>
+
+    <p>Die Stadt ist eng mit dem militärischen Zweig der Akademie verbunden. Hier werden Soldaten ausgebildet, Waffen geführt, Formationen geübt, Befehle eingeschärft und jene Tugenden vermittelt, ohne die ein bewaffneter Haufen zwar laut, aber selten nützlich ist. Disziplin, Verlässlichkeit, Standhaftigkeit und das Verständnis für Befehl und Verantwortung gelten in Ohm als Grundlagen jeder ernstzunehmenden Kriegskunst.</p>
+
+    <p>Die rote Akademie dient nicht allein der Ausbildung einfacher Kämpfer. In ihren Einrichtungen werden Fußsoldaten, Schützen, Feldärzte, Sappeure, Spielleute, Offiziere und weitere militärische Spezialisten geschult. Auch jene, die später als Söldner in fremde Lande ziehen, erhalten hier das Rüstzeug, um Aloy nicht nur mit Waffen, sondern auch mit Haltung zu vertreten.</p>
+
+    <p>Von besonderem Wert ist die Verbindung zwischen praktischer Ausbildung und aloyischer Staatskunde. Ein Soldat Aloys soll nicht bloß wissen, wie man eine Waffe hält, sondern auch, wem er dient, wofür er steht und weshalb ein freies Land ohne Adel dennoch Ordnung im Heerwesen braucht. Wer in Ohm ausgebildet wird, lernt daher nicht nur Kampf, sondern auch Verantwortung gegenüber der Republik.</p>
+
+    <p>Die Stadt selbst ist vom Betrieb der Akademie geprägt. Übungsplätze, Kasernen, Werkstätten, Lazarette, Schreibstuben, Waffenkammern und Unterkünfte bestimmen weite Teile des städtischen Lebens. Händler, Handwerker, Wirte und Versorger leben ebenso vom akademischen und militärischen Betrieb wie die zahlreichen Ausbilder, Schreiber und Bediensteten, die den Alltag der roten Akademie möglich machen.</p>
+
+    <p>Ohm ist auch mit den besonders angesehenen Truppenteilen Aloys verbunden. In den Aufzeichnungen werden unter anderem die Ohmer Wölfe genannt, deren Ruf auf Disziplin, Härte und besonderer Einsatzfähigkeit beruht. Solche Einheiten tragen dazu bei, dass Ohm nicht nur als Ausbildungsort, sondern auch als Sinnbild aloyischer Wehrkraft verstanden wird.</p>
+
+    <p>Für die Aloyer Söldner besitzt Ohm eine naheliegende Bedeutung. Viele von ihnen haben dort einen Teil ihrer Ausbildung erhalten oder stehen zumindest in einer Tradition, die von der roten Akademie geprägt wurde. Wer als Söldner Aloys in den Splitterlanden auftritt, trägt somit nicht nur persönliche Bewaffnung und eigene Erfahrung mit sich, sondern auch ein Stück Ohmer Lehre.</p>
+
+    <p>Im Austausch mit fremden Ländern und Bünden ist Ohm vor allem dort von Bedeutung, wo aloyische Söldnerdienste, militärische Beratung, Wachaufgaben oder gemeinsame Unternehmungen gefragt sind. Die Republik verkauft nicht allein Schwerter, sondern ausgebildete Leute, geordnete Trupps und die Zusicherung, dass hinter einem Vertrag mehr steht als ein Haufen mutiger Zufälle.</p>
+
+    <p>So steht Ohm für die bewaffnete Seite Aloys: nicht für blinden Kriegseifer, sondern für geordnete Wehrhaftigkeit. Die rote Akademie lehrt, dass Mut nützlich, Disziplin aber verlässlicher ist; dass ein guter Soldat seine Waffe kennt, ein besserer Soldat aber auch den Grund, aus dem er sie zieht.</p>
+
+  </ItCityArticle>
 </ItContentPage>

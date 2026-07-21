@@ -1,32 +1,45 @@
-﻿---
+---
 import ItContentPage from '../../../components/ItContentPage.astro';
-import ItIllustration from '../../../components/ItIllustration.astro';
+import ItCityArticle from '../../../components/ItCityArticle.astro';
+import TextDivider from '../../../components/TextDivider.astro';
 ---
 
 <ItContentPage title="Vormberg, Minen und Handwerk">
-  <ItIllustration
-    src="/images/it/das-land-aloy/vormberg.webp"
-    alt="Historische Grafik einer ummauerten Bergstadt mit Förderanlagen und hohen Gebirgsgipfeln"
-    caption="Vormberg mit seinen Befestigungen, Werkplätzen und Förderanlagen."
-    width={1500}
-    height={696}
-    priority={true}
-  />
-  <p>Vormberg zählt zu den bedeutenden Städten der freien Republik Aloy und ist vor allem für Bergbau, Verarbeitung und ehrbares Handwerk bekannt. Wo Grodaus die Geschicke der Republik ordnet, Tiafunt die Tore zur See öffnet und Ohm die Kriegskunst schult, steht Vormberg für jene Arbeit, ohne die weder Rat noch Heer noch Handel lange bestehen könnten.
-<br><br>
-Die Stadt liegt in einer Gegend, die seit langer Zeit mit Erz, Stein, Werkstätten und schwerem Tagewerk verbunden ist. Ihre Bedeutung erwächst nicht aus feinen Reden, großen Hafenkais oder akademischen Disputen, sondern aus Minen, Schmieden, Lagerplätzen, Werkhöfen, Rauch, Staub und dem beständigen Klang von Werkzeug auf Material. In Vormberg wird geschaffen, was andernorts gebraucht, verkauft, getragen oder in Rechnungen eingetragen wird.
-<br><br>
-Der Bergbau bildet eine der wichtigsten Grundlagen der Stadt. Aus den umliegenden Gruben und Schächten werden Erze, Stein und andere nutzbare Stoffe gewonnen, die für Handwerk, Bauwesen, Münzwesen, Werkzeuge, Waffen und zahlreiche weitere Gewerbe der Republik von Bedeutung sind. Die Arbeit in den Minen gilt als hart, gefährlich und unverzichtbar, weshalb jene, die ihr nachgehen, in Aloy nicht gering geachtet werden sollten.
-<br><br>
-Eng verbunden mit dem Bergbau ist das Handwerk Vormbergs. Schmiede, Gießer, Steinmetze, Werkzeugmacher, Fuhrleute, Köhler, Zimmerleute, Lederarbeiter und viele weitere Gewerke tragen zum Ruf der Stadt bei. Nicht alles, was in Vormberg entsteht, ist schön; doch vieles davon ist nützlich, belastbar und von jener Art, die auch nach Jahren noch ihren Dienst tut, sofern kein Narr es zweckentfremdet.
-<br><br>
-Die Zünfte spielen in Vormberg eine besondere Rolle. Wie überall in Aloy sind sie nicht nur wirtschaftliche Zusammenschlüsse, sondern auch Träger von Ordnung, Ausbildung, Ansehen und politischer Stimme. Über Zunftwesen, Meisterschaft, Lehrzeit und Prüfung wird sichergestellt, dass Handwerk nicht bloß ausgeübt, sondern anerkannt, geprüft und weitergegeben wird. Die Akademie achtet hierbei auf einheitliche Maßstäbe, auch wenn einzelne Meister der Ansicht sind, ihre eigene Werkstatt sei bereits Maßstab genug.
-<br><br>
-Für die Republik ist Vormberg von erheblichem Wert. Das Heer benötigt Waffen, Werkzeuge, Beschläge, Nägel, Wagen, Reparaturen und Rüstzeug. Die Städte benötigen Baumaterial, Geräte und Handwerkswaren. Händler benötigen verlässliche Erzeugnisse, mit denen sich Handel treiben lässt. Selbst die Schreiber der Akademie sind auf Messer, Beschläge, Schlösser, Lampen, Tintenhalter und Regale angewiesen, auch wenn sie dies selten mit der gebotenen Dankbarkeit vermerken.
-<br><br>
-Auch für die Aloyer Söldner ist Vormberg bedeutsam. Ein Söldner mag von Mut, Sold und Ehre sprechen, doch ohne gute Ausrüstung, feste Nähte, brauchbares Eisen und jemanden, der den Schaden nach einer Reise wieder richtet, bleibt davon wenig übrig. Waffen, Rüstungsteile, Lagergerät, Werkzeuge und manches Stück persönlicher Ausstattung haben ihren Ursprung in Vormberger Arbeit oder in Gewerken, die von ihr abhängen.
-<br><br>
-Im Austausch mit den Splitterlanden tritt Vormbergs Bedeutung vor allem durch Waren und Können hervor. Aloy kann nicht nur Söldner in fremde Dienste senden, sondern auch Handwerksgut, Rohstoffe, Reparaturdienste und gewerbliche Erfahrung anbieten. Gerade in fremden Lagern zeigt sich häufig, dass ein guter Handwerker mindestens so wertvoll sein kann wie ein bewaffneter Mann, vor allem wenn letzterer gerade etwas zerbrochen hat.
-<br><br>
-Vormberg steht somit für die arbeitende Kraft Aloys. Die Stadt erinnert daran, dass Freiheit nicht allein durch Beschlüsse, Gebete oder Schwerter erhalten wird, sondern ebenso durch Gruben, Werkstätten, Zünfte und jene Bürger, die jeden Tag mit ihren Händen schaffen, was die Republik trägt.</p>
+  <ItCityArticle
+    name="Vormberg"
+    subtitle="Bergbau- und Handwerksstadt Aloys"
+    summary="Vormberg ist die arbeitende Kraft der Republik: Erz, Schmieden, Zünfte und jenes ehrbare Handwerk, ohne das weder Rat noch Heer noch Handel lange bestehen könnten."
+    imageSrc="/images/it/das-land-aloy/vormberg.webp"
+    imageAlt="Historische Grafik einer ummauerten Bergstadt mit Förderanlagen und hohen Gebirgsgipfeln"
+    imageCaption="Vormberg mit seinen Befestigungen, Werkplätzen und Förderanlagen."
+    imageWidth={1500}
+    imageHeight={696}
+    imagePriority={true}
+    crestSrc="/images/it/das-land-aloy/vormberg_wappen.png"
+    facts={[
+      { label: 'Status', value: 'Bergbau- und Handwerksstadt' },
+      { label: 'Bedeutung', value: 'Erzabbau, Schmiedekunst und Zünfte' },
+      { label: 'Lage', value: 'Im Bergland Aloys' },
+    ]}
+  >
+
+    <p>Vormberg zählt zu den bedeutenden Städten der freien Republik Aloy und ist vor allem für Bergbau, Verarbeitung und ehrbares Handwerk bekannt. Wo Grodaus die Geschicke der Republik ordnet, Tiafunt die Tore zur See öffnet und Ohm die Kriegskunst schult, steht Vormberg für jene Arbeit, ohne die weder Rat noch Heer noch Handel lange bestehen könnten.</p>
+
+    <p>Die Stadt liegt in einer Gegend, die seit langer Zeit mit Erz, Stein, Werkstätten und schwerem Tagewerk verbunden ist. Ihre Bedeutung erwächst nicht aus feinen Reden, großen Hafenkais oder akademischen Disputen, sondern aus Minen, Schmieden, Lagerplätzen, Werkhöfen, Rauch, Staub und dem beständigen Klang von Werkzeug auf Material. In Vormberg wird geschaffen, was andernorts gebraucht, verkauft, getragen oder in Rechnungen eingetragen wird.</p>
+
+    <p>Der Bergbau bildet eine der wichtigsten Grundlagen der Stadt. Aus den umliegenden Gruben und Schächten werden Erze, Stein und andere nutzbare Stoffe gewonnen, die für Handwerk, Bauwesen, Münzwesen, Werkzeuge, Waffen und zahlreiche weitere Gewerbe der Republik von Bedeutung sind. Die Arbeit in den Minen gilt als hart, gefährlich und unverzichtbar, weshalb jene, die ihr nachgehen, in Aloy nicht gering geachtet werden sollten.</p>
+
+    <p>Eng verbunden mit dem Bergbau ist das Handwerk Vormbergs. Schmiede, Gießer, Steinmetze, Werkzeugmacher, Fuhrleute, Köhler, Zimmerleute, Lederarbeiter und viele weitere Gewerke tragen zum Ruf der Stadt bei. Nicht alles, was in Vormberg entsteht, ist schön; doch vieles davon ist nützlich, belastbar und von jener Art, die auch nach Jahren noch ihren Dienst tut, sofern kein Narr es zweckentfremdet.</p>
+
+    <p>Die Zünfte spielen in Vormberg eine besondere Rolle. Wie überall in Aloy sind sie nicht nur wirtschaftliche Zusammenschlüsse, sondern auch Träger von Ordnung, Ausbildung, Ansehen und politischer Stimme. Über Zunftwesen, Meisterschaft, Lehrzeit und Prüfung wird sichergestellt, dass Handwerk nicht bloß ausgeübt, sondern anerkannt, geprüft und weitergegeben wird. Die Akademie achtet hierbei auf einheitliche Maßstäbe, auch wenn einzelne Meister der Ansicht sind, ihre eigene Werkstatt sei bereits Maßstab genug.</p>
+
+    <p>Für die Republik ist Vormberg von erheblichem Wert. Das Heer benötigt Waffen, Werkzeuge, Beschläge, Nägel, Wagen, Reparaturen und Rüstzeug. Die Städte benötigen Baumaterial, Geräte und Handwerkswaren. Händler benötigen verlässliche Erzeugnisse, mit denen sich Handel treiben lässt. Selbst die Schreiber der Akademie sind auf Messer, Beschläge, Schlösser, Lampen, Tintenhalter und Regale angewiesen, auch wenn sie dies selten mit der gebotenen Dankbarkeit vermerken.</p>
+
+    <p>Auch für die Aloyer Söldner ist Vormberg bedeutsam. Ein Söldner mag von Mut, Sold und Ehre sprechen, doch ohne gute Ausrüstung, feste Nähte, brauchbares Eisen und jemanden, der den Schaden nach einer Reise wieder richtet, bleibt davon wenig übrig. Waffen, Rüstungsteile, Lagergerät, Werkzeuge und manches Stück persönlicher Ausstattung haben ihren Ursprung in Vormberger Arbeit oder in Gewerken, die von ihr abhängen.</p>
+
+    <p>Im Austausch mit den Splitterlanden tritt Vormbergs Bedeutung vor allem durch Waren und Können hervor. Aloy kann nicht nur Söldner in fremde Dienste senden, sondern auch Handwerksgut, Rohstoffe, Reparaturdienste und gewerbliche Erfahrung anbieten. Gerade in fremden Lagern zeigt sich häufig, dass ein guter Handwerker mindestens so wertvoll sein kann wie ein bewaffneter Mann, vor allem wenn letzterer gerade etwas zerbrochen hat.</p>
+
+    <p>Vormberg steht somit für die arbeitende Kraft Aloys. Die Stadt erinnert daran, dass Freiheit nicht allein durch Beschlüsse, Gebete oder Schwerter erhalten wird, sondern ebenso durch Gruben, Werkstätten, Zünfte und jene Bürger, die jeden Tag mit ihren Händen schaffen, was die Republik trägt.</p>
+
+  </ItCityArticle>
 </ItContentPage>

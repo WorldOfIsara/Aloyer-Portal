@@ -10,17 +10,7 @@ const withBase = (path: string) =>
 ---
 
 <section class="drey" data-drey>
-  <div class="drey-sanctum">
-    <div class="drey-ornament drey-ornament--tl" aria-hidden="true"></div>
-    <div class="drey-ornament drey-ornament--tr" aria-hidden="true"></div>
-    <div class="drey-ornament drey-ornament--bl" aria-hidden="true"></div>
-    <div class="drey-ornament drey-ornament--br" aria-hidden="true"></div>
-    <div class="drey-side-rail drey-side-rail--left" aria-hidden="true"></div>
-    <div class="drey-side-rail drey-side-rail--right" aria-hidden="true"></div>
-
     <div class="drey-wheel-stage">
-      <div class="drey-marker" aria-hidden="true"></div>
-
       <div class="drey-reliquary">
         <div class="drey-wheel-window">
           <div class="drey-wheel" data-drey-wheel style="--wheel-rotation: 0deg;">
@@ -154,7 +144,6 @@ const withBase = (path: string) =>
         </div>
       </div>
     </div>
-  </div>
 
   <div class="drey-content" aria-live="polite">
     <div data-god-content="limba">
@@ -173,12 +162,73 @@ const withBase = (path: string) =>
 
 <script>
   const gods = {
-    limba: { rotation: '0deg' },
-    miram: { rotation: '-120deg' },
-    hortum: { rotation: '120deg' }
+    limba: { angle: 0 },
+    miram: { angle: -120 },
+    hortum: { angle: 120 }
   };
 
   type GodKey = keyof typeof gods;
+
+  // Gedämpfte Feder ("mechanisches Einrasten"): überschwingt leicht über das
+  // Ziel hinaus und pendelt sich dann ein, statt gleichmäßig einzugleiten.
+  const SPRING_STIFFNESS = 180;
+  const SPRING_DAMPING = 12;
+  const SPRING_MASS = 1;
+  const REST_DISTANCE = 0.05;
+  const REST_VELOCITY = 0.05;
+  const MAX_STEP = 1 / 30;
+
+  type SpringState = {
+    position: number;
+    velocity: number;
+    target: number;
+    rafId: number | null;
+    lastTime: number | null;
+  };
+
+  const prefersReducedMotion = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function shortestDelta(from: number, to: number) {
+    const diff = (to - from) % 360;
+    return ((diff + 540) % 360) - 180;
+  }
+
+  function driveSpring(wheel: HTMLElement, state: SpringState) {
+    const tick = (time: number) => {
+      const last = state.lastTime ?? time;
+      const dt = Math.min((time - last) / 1000, MAX_STEP);
+      state.lastTime = time;
+
+      const displacement = state.position - state.target;
+      const springForce = -SPRING_STIFFNESS * displacement;
+      const dampingForce = -SPRING_DAMPING * state.velocity;
+      const acceleration = (springForce + dampingForce) / SPRING_MASS;
+
+      state.velocity += acceleration * dt;
+      state.position += state.velocity * dt;
+
+      const settled =
+        Math.abs(state.position - state.target) < REST_DISTANCE &&
+        Math.abs(state.velocity) < REST_VELOCITY;
+
+      if (settled) {
+        state.position = state.target;
+        state.velocity = 0;
+        state.rafId = null;
+        state.lastTime = null;
+        wheel.style.setProperty('--wheel-rotation', `${state.position}deg`);
+        return;
+      }
+
+      wheel.style.setProperty('--wheel-rotation', `${state.position}deg`);
+      state.rafId = requestAnimationFrame(tick);
+    };
+
+    if (state.rafId !== null) cancelAnimationFrame(state.rafId);
+    state.lastTime = null;
+    state.rafId = requestAnimationFrame(tick);
+  }
 
   function initDreyWheel() {
     document.querySelectorAll<HTMLElement>('[data-drey]').forEach((root) => {
@@ -192,17 +242,36 @@ const withBase = (path: string) =>
       const centerSeal = root.querySelector<HTMLElement>('[data-center-seal]');
       const centerSymbols = root.querySelectorAll<HTMLElement>('[data-god-symbol]');
 
+      if (!wheel) return;
+
+      const springState: SpringState = {
+        position: 0,
+        velocity: 0,
+        target: 0,
+        rafId: null,
+        lastTime: null,
+      };
+
       buttons.forEach((button) => {
         button.addEventListener('click', () => {
           const key = button.dataset.god as GodKey | undefined;
 
-          if (!key || !wheel) return;
+          if (!key) return;
 
           const god = gods[key];
 
           if (!god) return;
 
-          wheel.style.setProperty('--wheel-rotation', god.rotation);
+          if (prefersReducedMotion()) {
+            springState.position = god.angle;
+            springState.velocity = 0;
+            springState.target = god.angle;
+            wheel.style.setProperty('--wheel-rotation', `${god.angle}deg`);
+          } else {
+            const delta = shortestDelta(springState.target, god.angle);
+            springState.target += delta;
+            driveSpring(wheel, springState);
+          }
 
           buttons.forEach((otherButton) => {
             const isActive = otherButton === button;

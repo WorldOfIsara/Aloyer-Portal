@@ -1,112 +1,15 @@
 .drey {
-  margin: 2rem 0 0;
-}
-
-.drey-sanctum {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
   display: grid;
   place-items: center;
-  min-height: 790px;
-  margin: 2rem auto 3rem;
-  padding: clamp(3rem, 7vw, 5.4rem) clamp(1.25rem, 5vw, 4rem);
-  border: 1px solid rgba(56, 32, 18, 0.86);
-  border-radius: 30px;
-  background:
-    radial-gradient(circle at 50% 48%, rgba(255, 241, 212, 0.34) 0 19%, transparent 48%),
-    radial-gradient(circle at 50% 48%, transparent 0 43%, rgba(73, 40, 21, 0.11) 64%, transparent 78%),
-    linear-gradient(90deg, rgba(63, 36, 20, 0.16), transparent 7%, transparent 93%, rgba(63, 36, 20, 0.16)),
-    repeating-linear-gradient(92deg, rgba(78, 46, 27, 0.035) 0 1px, transparent 1px 13px),
-    linear-gradient(145deg, rgba(239, 225, 206, 0.95), rgba(203, 174, 145, 0.92));
-  box-shadow:
-    0 34px 72px rgba(42, 22, 11, 0.34),
-    inset 0 0 0 5px rgba(255, 255, 255, 0.18),
-    inset 0 0 90px rgba(72, 39, 20, 0.24);
+  margin: 2rem 0 0;
 }
-
-.drey-sanctum::before {
-  content: '';
-  position: absolute;
-  inset: 14px;
-  z-index: -2;
-  border: 1px solid rgba(91, 53, 29, 0.42);
-  border-radius: 20px;
-  box-shadow:
-    inset 0 0 0 4px rgba(255, 239, 208, 0.16),
-    inset 0 0 46px rgba(60, 33, 18, 0.12);
-}
-
-.drey-sanctum::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -3;
-  opacity: 0.82;
-  background:
-    radial-gradient(circle at 34px 34px, #6e4529 0 3px, #d4aa70 3.5px 5px, transparent 5.5px),
-    radial-gradient(circle at calc(100% - 34px) 34px, #6e4529 0 3px, #d4aa70 3.5px 5px, transparent 5.5px),
-    radial-gradient(circle at 34px calc(100% - 34px), #6e4529 0 3px, #d4aa70 3.5px 5px, transparent 5.5px),
-    radial-gradient(circle at calc(100% - 34px) calc(100% - 34px), #6e4529 0 3px, #d4aa70 3.5px 5px, transparent 5.5px);
-  pointer-events: none;
-}
-
-.drey-ornament {
-  position: absolute;
-  z-index: -1;
-  width: clamp(110px, 16vw, 190px);
-  aspect-ratio: 1;
-  opacity: 0.48;
-  pointer-events: none;
-  background:
-    radial-gradient(circle, transparent 0 12%, rgba(92, 55, 31, 0.66) 12.5% 14%, transparent 14.5% 24%, rgba(92, 55, 31, 0.28) 24.5% 26%, transparent 26.5%),
-    conic-gradient(from 0deg, transparent 0 9deg, rgba(92, 55, 31, 0.34) 9deg 12deg, transparent 12deg 30deg);
-  -webkit-mask: radial-gradient(circle, #000 0 68%, transparent 69%);
-  mask: radial-gradient(circle, #000 0 68%, transparent 69%);
-}
-
-.drey-ornament--tl { top: -35px; left: -35px; }
-.drey-ornament--tr { top: -35px; right: -35px; transform: scaleX(-1); }
-.drey-ornament--bl { bottom: -35px; left: -35px; transform: scaleY(-1); }
-.drey-ornament--br { right: -35px; bottom: -35px; transform: scale(-1); }
-
-.drey-side-rail {
-  position: absolute;
-  top: 12%;
-  bottom: 12%;
-  width: 18px;
-  z-index: -1;
-  border-radius: 999px;
-  opacity: 0.6;
-  background: linear-gradient(90deg, #342014, #aa7746 28%, #e0bc83 48%, #704524 70%, #2d1a10);
-  box-shadow:
-    0 0 0 2px rgba(49, 29, 17, 0.4),
-    inset 0 0 0 2px rgba(255, 228, 181, 0.18);
-}
-
-.drey-side-rail::before,
-.drey-side-rail::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  width: 34px;
-  aspect-ratio: 1;
-  transform: translateX(-50%) rotate(45deg);
-  border: 2px solid rgba(51, 29, 16, 0.64);
-  background: linear-gradient(135deg, #c69455, #4c2c18);
-  box-shadow: inset 0 0 0 3px rgba(255, 229, 180, 0.18);
-}
-
-.drey-side-rail::before { top: -12px; }
-.drey-side-rail::after { bottom: -12px; }
-.drey-side-rail--left { left: clamp(18px, 3vw, 36px); }
-.drey-side-rail--right { right: clamp(18px, 3vw, 36px); }
 
 .drey-wheel-stage {
   position: relative;
   display: grid;
   place-items: center;
   width: min(820px, 100%);
+  margin-inline: auto;
   padding: clamp(2.25rem, 6vw, 3.75rem);
   border-radius: 50%;
 }
@@ -133,49 +36,6 @@
     0 0 46px rgba(255, 238, 196, 0.34),
     0 0 110px rgba(79, 42, 20, 0.18);
   pointer-events: none;
-}
-
-.drey-marker {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  z-index: 20;
-  width: 52px;
-  height: 70px;
-  transform: translateX(-50%);
-  filter: drop-shadow(0 9px 8px rgba(31, 17, 9, 0.38));
-  pointer-events: none;
-}
-
-.drey-marker::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 21px;
-  height: 21px;
-  transform: translateX(-50%) rotate(45deg);
-  border: 2px solid #29170e;
-  background:
-    radial-gradient(circle at 32% 28%, #f0cf90 0 8%, transparent 9%),
-    linear-gradient(135deg, #d0a05d, #664020 70%);
-  box-shadow:
-    inset 0 0 0 3px rgba(255, 226, 169, 0.22),
-    0 3px 6px rgba(32, 17, 9, 0.26);
-}
-
-.drey-marker::after {
-  content: '';
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  width: 0;
-  height: 0;
-  transform: translateX(-50%);
-  border-left: 16px solid transparent;
-  border-right: 16px solid transparent;
-  border-top: 30px solid #28160e;
-  filter: drop-shadow(0 2px 0 rgba(222, 181, 110, 0.35));
 }
 
 .drey-reliquary {
@@ -243,7 +103,6 @@
   inset: 0;
   border-radius: 50%;
   transform: rotate(var(--wheel-rotation));
-  transition: transform 760ms cubic-bezier(0.2, 0.82, 0.2, 1);
   will-change: transform;
 }
 
@@ -492,24 +351,8 @@
 }
 
 @media (max-width: 760px) {
-  .drey-sanctum {
-    min-height: auto;
-    margin: 1rem auto 2rem;
-    padding: 2.5rem 0.4rem 1.75rem;
-    border-radius: 20px;
-  }
-
-  .drey-side-rail {
-    display: none;
-  }
-
   .drey-wheel-stage {
     padding: 2.1rem 0.2rem 0.75rem;
-  }
-
-  .drey-marker {
-    top: -3px;
-    transform: translateX(-50%) scale(0.8);
   }
 
   .drey-reliquary {

@@ -1,39 +1,66 @@
 ---
 import ItContentPage from '../../../components/ItContentPage.astro';
-import ItIllustration from '../../../components/ItIllustration.astro';
+import ItCityArticle from '../../../components/ItCityArticle.astro';
+import TextDivider from '../../../components/TextDivider.astro';
 ---
 
 <ItContentPage title="Umseck und Waidfuath">
   <p>Umseck und Waidfuath zählen zu den kleineren, doch keineswegs unbedeutenden Städten der freien Republik Aloy. Wer allein nach Größe urteilt, mag sie hinter Grodaus, Tiafunt, Ohm oder Vormberg zurückstellen; wer jedoch die Republik verstehen will, muss auch jene Orte betrachten, in denen sich aloyisches Leben abseits der großen Ratsstuben, Häfen, Akademien und Werkstätten zeigt.</p>
 
-  <ItIllustration
-    src="/images/it/das-land-aloy/umseck.webp"
-    alt="Historische Stadtansicht mit Feldern, Vieh und arbeitenden Menschen vor der Stadt"
-    caption="Umseck und die Äcker seines Umlandes."
-    width={1500}
-    height={792}
-    priority
-  />
+  <ItCityArticle
+    name="Umseck"
+    subtitle="Alte Landstadt Aloys"
+    summary="Umseck verbindet ländliche Ordnung, städtische Verwaltung und die Erinnerung an die Zeit der Befreiung Aloys – bodenständig, wachsam und nicht leicht zu beeindrucken."
+    imageSrc="/images/it/das-land-aloy/umseck.webp"
+    imageAlt="Historische Stadtansicht mit Feldern, Vieh und arbeitenden Menschen vor der Stadt"
+    imageCaption="Umseck und die Äcker seines Umlandes."
+    imageWidth={1500}
+    imageHeight={792}
+    imagePriority={true}
+    crestSrc="/images/it/das-land-aloy/umseck_wappen.png"
+    facts={[
+      { label: 'Status', value: 'Landstadt mit alter Bedeutung' },
+      { label: 'Bedeutung', value: 'Landwirtschaft, regionale Stimme im Rat, Erinnerung an die Befreiung' },
+      { label: 'Lage', value: 'Im ländlichen Umland Aloys' },
+    ]}
+  >
 
-  <p>Umseck ist eine Stadt von eigenem Gewicht und alter Bedeutung. In ihren Mauern und in ihrem Umland verbinden sich ländliche Ordnung, städtische Verwaltung und die Erinnerung an vergangene Umbrüche. Die Gegend um Umseck wird in mehreren Überlieferungen mit Ereignissen aus der Zeit der Befreiung Aloys verbunden, weshalb der Name der Stadt nicht nur in Steuerlisten, Handelswegen und Ratsakten begegnet, sondern auch in Chroniken, Erzählungen und manchem erhitzten Gespräch über die alten Tage.</p>
+    <p>Umseck ist eine Stadt von eigenem Gewicht und alter Bedeutung. In ihren Mauern und in ihrem Umland verbinden sich ländliche Ordnung, städtische Verwaltung und die Erinnerung an vergangene Umbrüche. Die Gegend um Umseck wird in mehreren Überlieferungen mit Ereignissen aus der Zeit der Befreiung Aloys verbunden, weshalb der Name der Stadt nicht nur in Steuerlisten, Handelswegen und Ratsakten begegnet, sondern auch in Chroniken, Erzählungen und manchem erhitzten Gespräch über die alten Tage.</p>
 
-  <p>Die Bürger Umsecks gelten als bodenständig, wachsam und nicht leicht zu beeindrucken. Das mag an der Lage der Stadt, an ihrer Geschichte oder schlicht daran liegen, dass nicht jeder Aloyer das Bedürfnis hat, jede fremde Neuerung sofort für eine Verbesserung zu halten. Umseck steht in der Republik für verlässliche Arbeit, regionale Eigenständigkeit und jenen Teil des Landes, der weder durch große Hafenreden noch durch akademische Gelehrsamkeit übermäßig verformt wurde.</p>
+    <p>Die Bürger Umsecks gelten als bodenständig, wachsam und nicht leicht zu beeindrucken. Das mag an der Lage der Stadt, an ihrer Geschichte oder schlicht daran liegen, dass nicht jeder Aloyer das Bedürfnis hat, jede fremde Neuerung sofort für eine Verbesserung zu halten. Umseck steht in der Republik für verlässliche Arbeit, regionale Eigenständigkeit und jenen Teil des Landes, der weder durch große Hafenreden noch durch akademische Gelehrsamkeit übermäßig verformt wurde.</p>
 
-  <p>Im Gefüge der Republik besitzt Umseck wie alle größeren Gemeinden seine Stimme und seine Interessen. Die Stadt bringt Vertreter, Anliegen und Eigenheiten in den Rat ein und achtet darauf, dass die Belange der eigenen Bürger nicht hinter denen der größeren Orte verschwinden. Gerade hierin zeigt sich der Wert der aloyischen Ordnung: Auch wer nicht aus Grodaus spricht, soll gehört werden, sofern er seine Sache ordentlich vorträgt und nicht bereits vor der Abstimmung drei andere Tagesordnungspunkte blockiert.</p>
+    <p>Im Gefüge der Republik besitzt Umseck wie alle größeren Gemeinden seine Stimme und seine Interessen. Die Stadt bringt Vertreter, Anliegen und Eigenheiten in den Rat ein und achtet darauf, dass die Belange der eigenen Bürger nicht hinter denen der größeren Orte verschwinden. Gerade hierin zeigt sich der Wert der aloyischen Ordnung: Auch wer nicht aus Grodaus spricht, soll gehört werden, sofern er seine Sache ordentlich vorträgt und nicht bereits vor der Abstimmung drei andere Tagesordnungspunkte blockiert.</p>
 
-  <ItIllustration
-    src="/images/it/das-land-aloy/waidfuath.webp"
-    alt="Historische Grafik einer kleineren Stadt unter einer Höhenburg mit Brücke und Flusslandschaft"
-    caption="Waidfuath zwischen Fluss, Brücke und bewaldeten Höhen."
-    width={1500}
-    height={1040}
-  />
+  </ItCityArticle>
 
-  <p>Waidfuath ist kleiner, doch im aloyischen Bewusstsein nicht minder eigen. Die Stadt und ihr Umland werden häufig mit ländlicher Kultur, einfachen Leuten, alten Geschichten und manchem eigentümlichen Brauch verbunden. Wer Waidfuath nur als abgelegenen Ort betrachtet, verkennt, dass gerade solche Gegenden oft mehr über ein Land verraten als seine großen Plätze und feierlichen Hallen.</p>
+  <TextDivider />
 
-  <p>Aus Waidfuath und seiner Umgebung stammen zahlreiche Erzählungen, Warnungen und Berichte, die im Register mit angemessener Vorsicht behandelt werden. Nicht jede Geschichte aus Waidfuath ist falsch, doch manche verlangt vom Leser ein wohlwollendes Herz, einen nüchternen Verstand und die Bereitschaft, zwischen Volksglauben, Jagderzählung und tatsächlicher Beobachtung zu unterscheiden. Die Akademie nimmt entsprechende Hinweise entgegen, behält sich aber vor, bei besonders abenteuerlichen Berichten Rückfragen zu stellen.</p>
+  <ItCityArticle
+    name="Waidfuath"
+    subtitle="Kleinstadt zwischen Fluss und Wald"
+    summary="Waidfuath ist klein, doch im aloyischen Bewusstsein nicht minder eigen – geprägt von Land, Wald, Feld, Handwerk, kleinen Märkten und Geschichten, die die Akademie mit gebührender Vorsicht behandelt."
+    imageSrc="/images/it/das-land-aloy/waidfuath.webp"
+    imageAlt="Historische Grafik einer kleineren Stadt unter einer Höhenburg mit Brücke und Flusslandschaft"
+    imageCaption="Waidfuath zwischen Fluss, Brücke und bewaldeten Höhen."
+    imageWidth={1500}
+    imageHeight={1040}
+    crestSrc="/images/it/das-land-aloy/waidfurth_wappen.png"
+    facts={[
+      { label: 'Status', value: 'Kleinstadt am Fluss' },
+      { label: 'Bedeutung', value: 'Landwirtschaft, Handwerk, ländliche Überlieferung' },
+      { label: 'Lage', value: 'An Fluss und Brücke, unter bewaldeten Höhen' },
+    ]}
+  >
 
-  <p>Waidfuath steht besonders für jenen aloyischen Menschenschlag, der mit Land, Wald, Feld, Wetter, Vieh, Handwerk und kleinen Märkten vertraut ist. Seine Bürger mögen weniger Lärm um sich machen als die Hafenleute Tiafunts oder die Gelehrten Grodaus, doch sie tragen ihren Teil zur Republik bei: durch Arbeit, Erzeugnisse, Abgaben, Wehrpflicht, Geschichten, Bräuche und die beständige Erinnerung daran, dass Aloy nicht allein aus Ratsbeschlüssen besteht.</p>
+    <p>Waidfuath ist kleiner, doch im aloyischen Bewusstsein nicht minder eigen. Die Stadt und ihr Umland werden häufig mit ländlicher Kultur, einfachen Leuten, alten Geschichten und manchem eigentümlichen Brauch verbunden. Wer Waidfuath nur als abgelegenen Ort betrachtet, verkennt, dass gerade solche Gegenden oft mehr über ein Land verraten als seine großen Plätze und feierlichen Hallen.</p>
+
+    <p>Aus Waidfuath und seiner Umgebung stammen zahlreiche Erzählungen, Warnungen und Berichte, die im Register mit angemessener Vorsicht behandelt werden. Nicht jede Geschichte aus Waidfuath ist falsch, doch manche verlangt vom Leser ein wohlwollendes Herz, einen nüchternen Verstand und die Bereitschaft, zwischen Volksglauben, Jagderzählung und tatsächlicher Beobachtung zu unterscheiden. Die Akademie nimmt entsprechende Hinweise entgegen, behält sich aber vor, bei besonders abenteuerlichen Berichten Rückfragen zu stellen.</p>
+
+    <p>Waidfuath steht besonders für jenen aloyischen Menschenschlag, der mit Land, Wald, Feld, Wetter, Vieh, Handwerk und kleinen Märkten vertraut ist. Seine Bürger mögen weniger Lärm um sich machen als die Hafenleute Tiafunts oder die Gelehrten Grodaus, doch sie tragen ihren Teil zur Republik bei: durch Arbeit, Erzeugnisse, Abgaben, Wehrpflicht, Geschichten, Bräuche und die beständige Erinnerung daran, dass Aloy nicht allein aus Ratsbeschlüssen besteht.</p>
+
+  </ItCityArticle>
+
+  <TextDivider />
 
   <p>Sowohl Umseck als auch Waidfuath zeigen, dass Aloy mehr ist als seine Hauptstadt, sein Hafen oder seine Akademien. Die Republik lebt aus dem Zusammenwirken vieler Orte, deren Eigenheiten nicht geglättet, sondern in die gemeinsame Ordnung eingebunden werden. Jeder Ort bringt seine Stimme ein, jeder Ort trägt Lasten, und jeder Ort hat das Recht, sich darüber zu beschweren, dass die anderen Orte zu viel Gehör finden.</p>
 

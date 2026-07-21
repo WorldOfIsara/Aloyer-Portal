@@ -1,0 +1,54 @@
+---
+import ItContentPage from '../../../../components/ItContentPage.astro';
+import ItCharacterArticle from '../../../../components/ItCharacterArticle.astro';
+---
+
+<ItContentPage title="Hannes Böttcher">
+  <ItCharacterArticle
+    name="Hannes Böttcher"
+    imageSrc="/images/it/Charakter/Hannes.png"
+    imageAlt="Porträt von Hannes Böttcher"
+    rank="Aloyer Diplomat"
+    origin="Grodaus"
+    summary="Hannes Böttcher ist ein prinzipientreuer, loyaler und rücksichtsvoller Diplomat aus Grodaus, der lieber einmal zu viel nachdenkt, bevor er redet."
+    notes={[
+      {
+        title: 'Erscheinungsbild',
+        text: 'Kurzer, gepflegter Bart und eine sehr kleine, kaum auffallende Narbe im Gesicht, rechts neben der Nase.',
+      },
+      {
+        title: 'Kleidung',
+        text: 'Im Dienst Diplomatenmantel und Amtskette, ansonsten Söldner-Outfit oder Ausgehmantel.',
+      },
+      {
+        title: 'Stärke',
+        text: 'Begegnet fast jeder Situation zunächst mit diplomatischem Wissen.',
+      },
+      {
+        title: 'Schwäche',
+        text: 'Erkennt nicht immer, dass Diplomatie gerade keine Option mehr ist und man längst im „Halts Maul"-Modus angekommen ist.',
+      },
+    ]}
+  >
+    <p>
+      Hannes Böttcher aus Grodaus vertritt Aloy als Diplomat und ist damit
+      einer jener Männer, die den Ruf der Republik nicht mit der Klinge, sondern
+      mit dem Wort verteidigen. Im Dienst trägt er Diplomatenmantel und
+      Amtskette, ansonsten unterscheidet er sich im Auftreten kaum von den
+      Söldnern, mit denen er unterwegs ist.
+    </p>
+
+    <p>
+      Sein Wesen gilt als prinzipientreu, loyal und rücksichtsvoll. Er redet
+      ruhig und besonnen, denkt lieber erst nach und dafür dann ausführlich –
+      wer eine schnelle Antwort von ihm erwartet, muss sich in Geduld üben.
+    </p>
+
+    <p>
+      Diese Bedachtsamkeit ist zugleich seine größte Stärke und seine größte
+      Schwäche: Hannes begegnet fast jeder Lage mit diplomatischem Wissen,
+      übersieht dabei aber mitunter den Moment, in dem Verhandlungen längst
+      keinen Sinn mehr ergeben und schlicht Klartext gefragt ist.
+    </p>
+  </ItCharacterArticle>
+</ItContentPage>
