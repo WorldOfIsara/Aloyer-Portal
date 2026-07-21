@@ -57,6 +57,7 @@ export const itNav: NavItem[] = [
       { label: 'Bast Lercher', href: '/it/soeldner/haubentaucher/Bast' },
       { label: 'Clausz Andelsmann', href: '/it/soeldner/haubentaucher/Clausz' },
       { label: 'Hannes Böttcher', href: '/it/soeldner/haubentaucher/Hannes' },
+      { label: 'Hansbert Fichtensplitter', href: '/it/soeldner/haubentaucher/Hansbert' },
       { label: 'Hartmut (Haddl) Wurz', href: '/it/soeldner/haubentaucher/Hartmut' },
       { label: 'Lars Spalter', href: '/it/soeldner/haubentaucher/Lars' },
       { label: 'Lenz', href: '/it/soeldner/haubentaucher/Lenz' },

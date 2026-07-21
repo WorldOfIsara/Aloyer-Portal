@@ -825,7 +825,7 @@ const activeLoopIndex = items.length + baseIndex;
 
       track.addEventListener('scroll', () => {
         if (!suppressSync && rafId === null) {
-          rafId = requestAnimationFrame(syncActiveFromScroll);
+          rafId = requestAnimationFrame(() => syncActiveFromScroll());
         }
         scheduleSettleCheck();
       });
