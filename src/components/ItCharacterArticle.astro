@@ -1,4 +1,6 @@
 ---
+import TextDivider from './TextDivider.astro';
+
 interface CharacterFact {
   label: string;
   value: string;
@@ -93,10 +95,8 @@ const noteVariants = shuffledNoteVariants(notes.length);
 
 const dossierFacts: CharacterFact[] = [
   { label: 'Rang', value: rank ?? '-' },
-  { label: 'Einsatzort', value: deploymentArea ?? '-' },
   { label: 'Herkunft', value: origin ?? '-' },
   { label: 'Funktion', value: role ?? '-' },
-  { label: 'Früheres Leben', value: formerLife ?? '-' },
   { label: 'Bewaffnung', value: weapons ?? '-' },
 ];
 ---
@@ -149,7 +149,6 @@ const dossierFacts: CharacterFact[] = [
       }
     </div>
   </section>
-
   <section class="character-sheet__text">
     <slot />
   </section>
@@ -169,6 +168,7 @@ const dossierFacts: CharacterFact[] = [
               style={`--note-image: url('${withBase(`/images/it/helper/Note${noteVariants[index]}.webp`)}');`}
               data-fit-note
             >
+              
               <div class="character-note__body" data-fit-note-body>
                 <h3>{note.title}</h3>
                 <p>{note.text}</p>
@@ -234,26 +234,51 @@ const dossierFacts: CharacterFact[] = [
 }
 
 .character-sheet__image {
+  position: relative;
   margin: 0;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  /* Weiße "Karte" hinter dem Bild; overflow bleibt sichtbar, damit die
+     Figur seitlich/unten aus dieser Fläche ausbrechen kann (OOB-Effekt). */
+  overflow: visible;
+  background: #F7EFE0;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(92, 55, 31, 0.42);
+  box-shadow: 0 12px 26px rgba(20, 11, 7, 0.24);
 }
 
-.character-sheet__image img,
 .character-sheet__placeholder {
   display: block;
   width: 100%;
   height: 100%;
   min-height: 100%;
-  aspect-ratio: auto;
-  object-fit: cover;
-  object-position: center top;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(92, 55, 31, 0.42);
-  box-shadow: 0 12px 26px rgba(20, 11, 7, 0.24);
-  background: rgba(255, 255, 255, 0.35);
+}
+
+.character-sheet__image img {
+  display: block;
+  position: relative;
+  z-index: 2;
+  /* Bild ist breiter/höher als seine weiße Karte und nicht croppend
+     (object-fit: contain) – dadurch ragt die Figur sichtbar über den
+     rechten und unteren Rand der Karte hinaus, statt hart am Rahmen
+     abgeschnitten zu werden. */
+  width: 112%;
+  max-width: 112%;
+  height: 104%;
+  /* Fester Abstand vom linken Rand statt Bleed nach links; der Effekt
+     ist bewusst auf oben + rechts begrenzt (ragt über den Kartenrand
+     nach oben und rechts über das Info-Div hinaus). */
+  margin: -3% 0 0 0.4rem;
+  object-fit: contain;
+  object-position: left top;
+  border-radius: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  filter: drop-shadow(0 16px 22px rgba(20, 11, 7, 0.32));
 }
 
 .character-sheet__image figcaption {
@@ -306,6 +331,17 @@ const dossierFacts: CharacterFact[] = [
   }
 
   .character-sheet__summary {
+    /*
+      Wie bei den Fact-Boxen: feste Höhe statt frei wachsend, sonst
+      schiebt eine lange Beschreibung die Facts weiter nach unten und
+      das Info-Div wird von Charakter zu Charakter unterschiedlich hoch.
+      Überlanger Text wird nach 3 Zeilen abgeschnitten.
+    */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: calc(1.62em * 3);
     margin: 0.85rem 0 0;
     line-height: 1.62;
     font-weight: 650;
@@ -324,7 +360,14 @@ const dossierFacts: CharacterFact[] = [
   }
 
   .character-sheet__fact {
-    min-height: 4.6rem;
+    /*
+      WICHTIG: feste Höhe statt min-height. Sonst wächst die Box mit der
+      Textmenge im Wert (z. B. langer "Einsatzort"-Text), wodurch das
+      ganze rechte Info-Div von Charakter zu Charakter unterschiedlich
+      hoch wird. Überlanger Text wird stattdessen im Wert selbst
+      abgeschnitten (siehe .character-sheet__fact-value).
+    */
+    height: 4.6rem;
     padding: 0.8rem 0.9rem;
     border-radius: var(--radius-sm);
     border: 1px solid rgba(177, 146, 104, 0.56);
@@ -349,7 +392,10 @@ const dossierFacts: CharacterFact[] = [
   }
 
   .character-sheet__fact-value {
-    display: block;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     font-weight: 800;
     line-height: 1.35;
     color: rgba(33, 23, 15, 0.95);
@@ -484,10 +530,17 @@ const dossierFacts: CharacterFact[] = [
     margin-inline: auto;
   }
 
-  .character-sheet__image img,
   .character-sheet__placeholder {
     height: auto;
     aspect-ratio: 3 / 4;
+  }
+
+  .character-sheet__image img {
+    width: 116%;
+    max-width: 116%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    margin: -5% 0 0 0.85rem;
   }
 }
 

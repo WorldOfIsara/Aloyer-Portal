@@ -1,10 +1,61 @@
 ---
 import ItContentPage from '../../../components/ItContentPage.astro';
 import ItIllustration from '../../../components/ItIllustration.astro';
+
+const withBase = (path: string) => {
+  if (
+    path.startsWith('http://') ||
+    path.startsWith('https://') ||
+    path.startsWith('//') ||
+    path.startsWith('#') ||
+    path.startsWith('mailto:') ||
+    path.startsWith('tel:') ||
+    path.startsWith(import.meta.env.BASE_URL)
+  ) {
+    return path;
+  }
+
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+};
+
+const branches = [
+  {
+    color: 'blau',
+    title: 'Blau — Wissenschaft und Magie',
+    image: '/images/it/die-akademie/wissenschaft_wappen.png',
+    alt: 'Wappen des blauen Zweigs der Akademie',
+    text: 'Der blaue Zweig hat seinen Hauptsitz in Grodaus. Er umfasst Alchemie, Astronomie, Rhetorik, Arithmetik, Geometrie, Logik, Musiktheorie, Magie und Physik sowie Medizin. Rhetoriker und Schreiber dieses Zweiges führen einen großen Teil der aloyischen Geschichtsschreibung und Register.',
+  },
+  {
+    color: 'gruen',
+    title: 'Grün — Religion und Glaube',
+    image: '/images/it/die-akademie/glaube_wappen.png',
+    alt: 'Wappen des grünen Zweigs der Akademie',
+    text: 'Auch der grüne Zweig hat seinen Hauptsitz in Grodaus. Er widmet sich den Lehren der Drei, der Auslegung der Glaubensschriften, der Verwaltung der Tempel und der Ausbildung von Novizen, Akolythen und Priestern.',
+  },
+  {
+    color: 'rot',
+    title: 'Rot — Militär und Krieg',
+    image: '/images/it/die-akademie/kampf_wappen.png',
+    alt: 'Wappen des roten Zweigs der Akademie',
+    text: 'Der rote Zweig wird vornehmlich von Ohm aus geführt. Dort liegen die großen Ausbildungsstätten für Soldaten, Offiziere und Schwertgesellen. Die Ausbildung zu Wasser und ein Teil der Seefahrtsschulung sind mit Tiafunt verbunden; gemeinsame Grundlagen und Staatskunde werden auch in Grodaus gelehrt.',
+  },
+  {
+    color: 'braun',
+    title: 'Braun — Handwerk und Handel',
+    image: '/images/it/die-akademie/handwerk_wappen.png',
+    alt: 'Wappen des braunen Zweigs der Akademie',
+    text: 'Der braune Zweig besitzt keinen einzelnen Hauptsitz. Seine Arbeit verteilt sich auf die Zünfte und Städte. Die Akademie verwaltet einheitliche Gesellen- und Meisterprüfungen, sichert die Güte handwerklicher Ausbildung und unterweist Händler in Rechnen, Verträgen, Wegen und angemessener Preisbildung.',
+  },
+];
 ---
 
 <ItContentPage title="Die vier Zweige der Akademie">
-  <p>Die Aloyer Akademie gliedert sich in vier Hauptzweige. Jeder Zweig führt eine eigene Farbe, eigene Lehrgebiete und eigene Prüfungen, bleibt jedoch der gemeinsamen Ordnung der Akademie und damit der Republik verpflichtet.</p>
+  <p>
+    Die Aloyer Akademie gliedert sich in vier Hauptzweige. Jeder Zweig führt eine eigene Farbe,
+    eigene Lehrgebiete und eigene Prüfungen, bleibt jedoch der gemeinsamen Ordnung der Akademie
+    und damit der Republik verpflichtet.
+  </p>
 
   <ItIllustration
     src="/images/it/die-akademie/vier-zweige.webp"
@@ -14,17 +65,226 @@ import ItIllustration from '../../../components/ItIllustration.astro';
     height={1044}
   />
 
-  <h2>Blau - Wissenschaft und Magie</h2>
-  <p>Der blaue Zweig hat seinen Hauptsitz in Grodaus. Er umfasst Alchemie, Astronomie, Rhetorik, Arithmetik, Geometrie, Logik, Musiktheorie, Magie und Physik sowie Medizin. Rhetoriker und Schreiber dieses Zweiges führen einen großen Teil der aloyischen Geschichtsschreibung und Register.</p>
+  <section class="academy-branches" aria-label="Die vier Zweige der Akademie">
+    {
+      branches.map((branch, index) => (
+        <>
+          <article
+            class:list={[
+              'academy-branch',
+              `academy-branch--${branch.color}`,
+              { 'academy-branch--reverse': index % 2 === 1 },
+            ]}
+          >
+            <div class="academy-branch__image-area">
+              <div class="academy-branch__image-frame">
+                <img
+                  src={withBase(branch.image)}
+                  alt={branch.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
 
-  <h2>Grün - Religion und Glaube</h2>
-  <p>Auch der grüne Zweig hat seinen Hauptsitz in Grodaus. Er widmet sich den Lehren der Drei, der Auslegung der Glaubensschriften, der Verwaltung der Tempel und der Ausbildung von Novizen, Akolythen und Priestern.</p>
+            <div class="academy-branch__text">
+              <p class="academy-branch__kicker">Zweig der Akademie</p>
+              <h2>{branch.title}</h2>
+              <p>{branch.text}</p>
+            </div>
+          </article>
 
-  <h2>Rot - Militär und Krieg</h2>
-  <p>Der rote Zweig wird vornehmlich von Ohm aus geführt. Dort liegen die großen Ausbildungsstätten für Soldaten, Offiziere und Schwertgesellen. Die Ausbildung zu Wasser und ein Teil der Seefahrtsschulung sind mit Tiafunt verbunden; gemeinsame Grundlagen und Staatskunde werden auch in Grodaus gelehrt.</p>
+          {index < branches.length - 1 && <div class="academy-divider" aria-hidden="true"></div>}
+        </>
+      ))
+    }
+  </section>
 
-  <h2>Braun - Handwerk und Handel</h2>
-  <p>Der braune Zweig besitzt keinen einzelnen Hauptsitz. Seine Arbeit verteilt sich auf die Zünfte und Städte. Die Akademie verwaltet einheitliche Gesellen- und Meisterprüfungen, sichert die Güte handwerklicher Ausbildung und unterweist Händler in Rechnen, Verträgen, Wegen und angemessener Preisbildung.</p>
-
-  <p>Die vier Zweige arbeiten in Fachfragen eigenständig, begegnen einander aber in Verwaltung, Feldwesen, Tempeldienst, Handel und öffentlicher Ordnung. Gerade diese Verbindung von gelehrter, geistlicher, wehrhafter und handwerklicher Ausbildung kennzeichnet die Akademie Aloys.</p>
+  <p>
+    Die vier Zweige arbeiten in Fachfragen eigenständig, begegnen einander aber in Verwaltung,
+    Feldwesen, Tempeldienst, Handel und öffentlicher Ordnung. Gerade diese Verbindung von
+    gelehrter, geistlicher, wehrhafter und handwerklicher Ausbildung kennzeichnet die Akademie Aloys.
+  </p>
 </ItContentPage>
+
+<style>
+  .academy-branches {
+    --branch-height: 280px;
+
+    display: grid;
+    gap: 0;
+    margin: 2.4rem 0;
+  }
+
+  .academy-branch {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    min-height: var(--branch-height);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .academy-branch--reverse {
+    grid-template-columns: 70% 30%;
+  }
+
+  .academy-branch--reverse .academy-branch__image-area {
+    order: 2;
+  }
+
+  .academy-branch--reverse .academy-branch__text {
+    order: 1;
+  }
+
+  .academy-branch__image-area {
+    display: grid;
+    place-items: center;
+    padding: 1.4rem;
+    
+  }
+
+  .academy-branch--reverse .academy-branch__image-area {
+  
+  }
+
+  .academy-branch__image-frame {
+    display: grid;
+    place-items: center;
+    width: min(100%, 11rem);
+    aspect-ratio: 1;
+  }
+
+  .academy-branch__image-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 10px rgba(20, 11, 7, 0.18));
+  }
+
+  .academy-branch__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1.5rem 1.75rem;
+  }
+
+  .academy-branch__kicker {
+    margin: 0 0 0.35rem;
+    font-family: var(--font-ui);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgba(159, 72, 39, 0.95);
+  }
+
+  .academy-branch__text h2 {
+    margin: 0;
+    padding: 0;
+    text-align: left;
+  }
+
+  .academy-branch__text h2::after {
+    display: none;
+  }
+
+  .academy-branch__text p {
+    margin: 0.85rem 0 0;
+    line-height: 1.68;
+  }
+
+  .academy-divider {
+    width: min(360px, 72%);
+    height: 12px;
+    margin: 1.45rem auto;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(92, 55, 31, 0.88) 0 2px, transparent 2px 100%),
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(92, 55, 31, 0.75) 18%,
+        rgba(92, 55, 31, 0.92) 50%,
+        rgba(92, 55, 31, 0.75) 82%,
+        transparent 100%
+      );
+    background-size:
+      22px 10px,
+      100% 2px;
+    background-repeat: repeat-x, no-repeat;
+    background-position: center, center;
+  }
+
+  .academy-branch--blau {
+    border-color: rgba(49, 93, 145, 0.45);
+  }
+
+  .academy-branch--blau .academy-branch__kicker {
+    color: rgba(49, 93, 145, 0.95);
+  }
+
+  .academy-branch--gruen {
+    border-color: rgba(72, 128, 77, 0.45);
+  }
+
+  .academy-branch--gruen .academy-branch__kicker {
+    color: rgba(72, 128, 77, 0.95);
+  }
+
+  .academy-branch--rot {
+    border-color: rgba(159, 72, 39, 0.5);
+  }
+
+  .academy-branch--rot .academy-branch__kicker {
+    color: rgba(159, 72, 39, 0.98);
+  }
+
+  .academy-branch--braun {
+    border-color: rgba(110, 76, 41, 0.5);
+  }
+
+  .academy-branch--braun .academy-branch__kicker {
+    color: rgba(110, 76, 41, 0.98);
+  }
+
+  @media (max-width: 780px) {
+    .academy-branches {
+      --branch-height: auto;
+    }
+
+    .academy-branch,
+    .academy-branch--reverse {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .academy-branch--reverse .academy-branch__image-area,
+    .academy-branch--reverse .academy-branch__text {
+      order: initial;
+    }
+
+    .academy-branch__image-area,
+    .academy-branch--reverse .academy-branch__image-area {
+      border-left: none;
+      border-right: none;
+      border-bottom: 1px solid rgba(92, 55, 31, 0.24);
+      padding: 1.25rem;
+    }
+
+    .academy-branch__image-frame {
+      width: min(48vw, 9rem);
+    }
+
+    .academy-branch__text {
+      padding: 1.25rem;
+    }
+
+    .academy-branch__text h2 {
+      text-align: center;
+    }
+
+    .academy-branch__kicker {
+      text-align: center;
+    }
+  }
+</style>

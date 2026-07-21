@@ -43,6 +43,14 @@ html {
   overflow-x: hidden;
   scroll-padding-top: 5rem;
   -webkit-text-size-adjust: 100%;
+  /*
+    Reserviert den Platz für den vertikalen Scrollbalken immer, auch wenn
+    er (noch) nicht gebraucht wird. Ohne das springt die ganze Seite um
+    die Scrollbar-Breite horizontal, sobald ein wachsender Inhalt (z. B.
+    ein Perlenkette-Panel mit langem Text) erstmals einen Scrollbalken
+    erzwingt oder ihn wieder verschwinden lässt.
+  */
+  scrollbar-gutter: stable;
 }
 
 body {

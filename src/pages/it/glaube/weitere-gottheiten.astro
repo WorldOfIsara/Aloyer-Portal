@@ -1,23 +1,11 @@
 ---
-import ItContentPage from '../../../components/ItContentPage.astro';
+import ItContentPage from '@components/ItContentPage.astro';
+import SeeligeBeadSlider from '@components/SeeligeBeadSlider.astro';
+import { seelige } from '@data/seelige';
 ---
 
-<ItContentPage title="Weitere Götter">
-  <p>Neben den Drei nennen Tempelbücher, Gebete und Volksüberlieferungen zahlreiche weitere Gottheiten. Manche gelten als Kinder der Drei, andere als Halbgötter oder göttliche Begleiter. Ihre Verehrung ist häufig an ein Gewerbe, einen Lebensbereich oder eine besondere Notlage gebunden.</p>
+<ItContentPage title="Die Seelingen Aloys">
 
-  <h2>Gelehrsamkeit, Handwerk und Reise</h2>
-  <p><strong>Carphon, der Wissende</strong>, ist ein Sohn des Weißen und Patron der Wissenschaften, Alchemie und Gelehrten. Er schenkt Erkenntnis, mahnt aber zu Demut und verantwortungsvoller Forschung. <strong>Rogon</strong> steht für Handwerk, Kunst und Ackerbau; Hammer, Säge und Pinsel gelten als seine Zeichen. <strong>Peregrinus</strong> geht den Reisenden auf staubigen Wegen voran und wird um sichere Reise gebeten.</p>
 
-  <h2>Freude, Liebe und Heim</h2>
-  <p><strong>Barsinger, der Spielmann</strong>, beschützt Musik, Spiel, Gaukler, fahrendes Volk und geselliges Trinken. Eine Flöte und ein fröhliches Gemüt kennzeichnen ihn; „Barsinger!“ ist zugleich der kürzeste aloyische Trinkspruch. <strong>Oblectatia</strong>, Tochter des Weißen und einer Sterblichen, ist Halbgöttin der Liebe, Lust, Fruchtbarkeit und Ekstase. <strong>Halma</strong>, Tochter des Weißen und des Schwarzen, schenkt Licht, Wärme und Herdfeuer, verkörpert aber ebenso Brand und zerstörerische Glut.</p>
-
-  <h2>Wandel, Heilung und letzte Wege</h2>
-  <p><strong>Fulgor, der Durchscheinende</strong>, entstammt der Grauen und dem Schwarzen. Als Sphärenwandler wird er von Sehern und Weissagern angerufen und mit Intuition, Menschenkenntnis und dem Geleit wandernder Seelen verbunden. <strong>Tsund</strong>, milder Sohn von Grau und Schwarz, wird um Heilung, Linderung von Schmerz und Aufschub des Todes gebeten.</p>
-
-  <p><strong>Sania</strong> wird auf dem Schlachtfeld angerufen, damit sie die Seele sanft aus dem sterblichen Leib löse. <strong>Favilla</strong> gilt als sanfte Führerin der Sterbenden. Beide stehen den letzten Wegen nahe, ohne Hortums Gericht vorzugreifen.</p>
-
-  <h2>Wahrheit und Ernte</h2>
-  <p><strong>Ultima</strong> wacht über Wahrheit, Waage und gerechte Rechtsprechung. Richter bitten sie, Wahrheit von Lüge und Gewicht von Schein zu trennen. <strong>Pelaga</strong> wird gemeinsam mit Rogon bei Saat, Regen, Ernte und Arbeit angerufen.</p>
-
-  <p>Die Akademie führt diese Gestalten nach ihren überlieferten Aufgaben, weist jedoch darauf hin, dass Tempeltradition und Volksfrömmigkeit nicht jede Verwandtschaft oder Rangfolge gleich deuten. Als gesichert gilt vor allem, wie die Gottheiten im Gebet und Alltag Aloys angerufen werden.</p>
+  <SeeligeBeadSlider items={seelige} heading="Der Seeligen Pantheon" />
 </ItContentPage>

@@ -1,0 +1,930 @@
+---
+// Rosenkranz/Perlenschnur-Slider für den Seeligen-Pantheon.
+// Anders als das Drey-Rad (3 feste Positionen) ist hier eine variable Anzahl
+// an Einheiten (aktuell für 20-30 ausgelegt) vorgesehen. Die Perlen liegen in
+// einer horizontal scrollbaren Reihe mit CSS scroll-snap – das übernimmt auf
+// Mobile das native, ruckelfreie Wisch-/Snap-Verhalten, auf Desktop lässt
+// sich zusätzlich per Pfeil-Buttons und Tastatur navigieren.
+
+import ItQuoteBlock from './ItQuoteBlock.astro';
+import { limbarSymbol, miramSymbol, hortumSymbol } from '../data/dreySymbols';
+
+// Ordnet das Siegel des jeweiligen Hauptgottes (Drey) automatisch anhand
+// von item.sphere zu – zur Anzeige im Inhaltsbereich (nicht auf der
+// Perle selbst, die zeigt weiterhin die Initiale des Namens).
+const deitySymbols: Record<string, string> = {
+  Limba: limbarSymbol,
+  Miram: miramSymbol,
+  Hortum: hortumSymbol,
+};
+
+export interface SeeligeBeadItem {
+  id: string;
+  name: string;
+  epithet?: string;
+  // Name des zugehörigen Hauptgottes (Drey): 'Limba' | 'Miram' | 'Hortum'.
+  // Steuert sowohl den angezeigten Text als auch automatisch, welches
+  // Hauptgott-Siegel im Inhaltsbereich mitangezeigt wird.
+  sphere?: string;
+  text: string;
+  // Optionaler Zitat-/Spruch-Block (z. B. ein Weihespruch), wird per
+  // ItQuoteBlock unter dem normalen Text gerendert.
+  quote?: {
+    text: string;
+    source?: string;
+    variant?: 'quote' | 'poem' | 'flanked';
+  };
+}
+
+interface Props {
+  items: SeeligeBeadItem[];
+  heading?: string;
+  initialId?: string;
+  beadImage?: string;
+  chainImage?: string;
+}
+
+const withBase = (path: string) => {
+  if (
+    path.startsWith('http://') ||
+    path.startsWith('https://') ||
+    path.startsWith('//') ||
+    path.startsWith('#') ||
+    path.startsWith('mailto:') ||
+    path.startsWith('tel:') ||
+    path.startsWith(import.meta.env.BASE_URL)
+  ) {
+    return path;
+  }
+
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+};
+
+const {
+  items,
+  heading,
+  initialId,
+  beadImage = '/images/it/helper/kranz_bead.webp',
+  chainImage = '/images/it/helper/tilable_chain.webp',
+} = Astro.props;
+const activeId = initialId ?? items[0]?.id;
+const beadImageUrl = withBase(beadImage);
+const chainImageUrl = withBase(chainImage);
+
+/*
+  Echtes "endloses" Wischen/Scrollen: der Track selbst ist immer endlich
+  (ein DOM-Element hat eine feste scrollWidth), daher rendern wir die
+  Perlen dreifach hintereinander (Kopie 0/1/2) und starten in der
+  mittleren Kopie. Nähert man sich beim Scrollen dem Rand einer äußeren
+  Kopie, springt das Script im Hintergrund unsichtbar um exakt eine
+  Perlenreihen-Breite zurück in die Mitte (siehe <script> unten,
+  maybeRecenter()). Dadurch gibt es nie einen sichtbaren Anfang oder ein
+  Ende – weder bei den Perlen noch bei der Ketten-Textur, die ja nur der
+  Hintergrund desselben, jetzt dreifach breiten Tracks ist.
+*/
+const loopedItems = [...items, ...items, ...items];
+const baseIndex = Math.max(
+  0,
+  items.findIndex((item) => item.id === activeId),
+);
+const activeLoopIndex = items.length + baseIndex;
+---
+
+<section
+  class="bead-slider"
+  data-bead-slider
+  style={`--bead-image:url('${beadImageUrl}');--chain-image:url('${chainImageUrl}')`}
+>
+  {heading && <p class="bead-slider__kicker">{heading}</p>}
+
+  <div class="bead-slider__nav">
+    <div class="bead-slider__viewport">
+      <div
+        class="bead-slider__track"
+        data-bead-track
+        role="listbox"
+        aria-label="Wähle eine Gottheit aus dem Pantheon"
+        tabindex="0"
+      >
+        {
+          loopedItems.map((item, i) => (
+            <button
+              class:list={['bead', { 'is-active': i === activeLoopIndex }]}
+              type="button"
+              role="option"
+              aria-selected={i === activeLoopIndex}
+              tabindex={i === activeLoopIndex ? 0 : -1}
+              data-bead
+              data-bead-id={item.id}
+            >
+              <span class="bead__gem">
+                <span class="bead__initial">{item.name.slice(0, 1)}</span>
+              </span>
+              <span class="sr-only">{item.name}</span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="bead-slider__content" data-bead-content aria-live="polite">
+    {
+      items.map((item) => (
+        <div class="bead-panel" data-bead-panel={item.id} hidden={item.id !== activeId}>
+          <div class="bead-panel__layout">
+            <div class="bead-panel__identity">
+              <div class="bead-panel__badge" aria-hidden="true">
+                <span class="bead-panel__badge-letter">{item.name.slice(0, 1)}</span>
+              </div>
+
+              <h3 class="bead-panel__name">{item.name}</h3>
+              {item.epithet && <p class="bead-panel__epithet">{item.epithet}</p>}
+
+              {
+                item.sphere && (
+                  <div class="bead-panel__deity">
+                    <span class="bead-panel__deity-name">{item.sphere}</span>
+                    {deitySymbols[item.sphere] && (
+                      <img
+                        class="bead-panel__deity-symbol"
+                        src={deitySymbols[item.sphere]}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    )}
+                  </div>
+                )
+              }
+            </div>
+
+            <div class="bead-panel__body">
+              <p class="bead-panel__text">{item.text}</p>
+              {
+                item.quote && (
+                  <div class="bead-panel__quote">
+                    <ItQuoteBlock
+                      variant={item.quote.variant ?? 'quote'}
+                      source={item.quote.source}
+                      dropcap={false}
+                      align="center"
+                    >
+                      <p>{item.quote.text}</p>
+                    </ItQuoteBlock>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .bead-slider {
+    margin: 2.2rem 0;
+  }
+
+  .bead-slider__kicker {
+    margin: 0 0 0.9rem;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    text-align: center;
+    color: rgba(159, 72, 39, 0.95);
+  }
+
+  .bead-slider__nav {
+    display: block;
+    /*
+      Elemente mit Scroll-Overflow bekommen als "automatic minimum size"
+      sonst die Min-Content-Breite ihres Inhalts – bei 20-30 Perlen (x3 fürs
+      endlose Scrollen) ist das riesig und hat die Sektion über die Seite
+      hinaus bis zum rechten Bildschirmrand gedrückt, obwohl
+      .bead-slider__track selbst overflow-x:auto hat. min-width:0 erzwingt,
+      dass sich die Spalte am verfügbaren Platz orientiert statt am Inhalt.
+    */
+    min-width: 0;
+  }
+
+  .bead-slider__viewport {
+    overflow: visible;
+    min-width: 0;
+  }
+
+  /*
+    scroll-snap übernimmt das Einrasten nativ (performant, auch auf Mobile
+    ohne eigene Drag-Physik). --bead-size steuert Perlengröße zentral, damit
+    Track-Padding/Cord/Beads konsistent bleiben.
+
+    Die Kette liegt als echtes, sich wiederholendes Bild
+    (tilable_chain.webp) direkt im Hintergrund des Tracks statt als
+    separat positioniertes Element – background-attachment:local sorgt
+    dafür, dass der Hintergrund mit dem Inhalt mitscrollt (Browser-Default
+    "scroll" würde ihn im sichtbaren Ausschnitt fixieren). Kein JS-Messen
+    von Breiten mehr nötig, der Browser kachelt automatisch über die
+    komplette scrollbare Breite.
+
+    WICHTIG: overflow-x:auto zwingt laut CSS-Spezifikation auch die
+    berechnete overflow-y auf "auto" (ein Wert kann nicht "visible" bleiben,
+    wenn die andere Achse scrollt) – der Schlagschatten der Perlen wird also
+    immer an der Padding-Box dieses Elements gekappt, egal was der
+    Eltern-Viewport macht. Daher hier ausreichend padding-block einplanen,
+    statt zu versuchen, das Clipping zu vermeiden.
+  */
+  .bead-slider__track {
+    --bead-size: 3.2rem;
+    --bead-gap: 1.1rem;
+
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--bead-gap);
+    /*
+      Zusätzlich zur reinen Zentrierungs-Formel (50% - halbe Perlengröße)
+      noch etwas extra Platz, der nur mit Kette gefüllt ist – so läuft die
+      Kette an beiden Enden sichtbar weiter, statt genau an der ersten/
+      letzten Perle "aufzuhören" (soll endlos wirken, kein sichtbares Ende).
+    */
+    padding-inline: calc(50% - var(--bead-size) / 2 + 3rem);
+    padding-block: 2.4rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    cursor: grab;
+    min-width: 0;
+    background-image: var(--chain-image);
+    background-repeat: repeat-x;
+    background-position: center center;
+    background-size: auto 17%;
+    background-attachment: local;
+  }
+
+  .bead-slider__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Aktiv während des Maus-Drags: kein Snap-Ruckeln, kein Text markieren. */
+  .bead-slider__track.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
+  }
+
+  /*
+    WICHTIG: Die Perlengröße für Layout-Zwecke (width/height) bleibt für
+    alle Perlen konstant – nur so bleiben die Positionen aller Perlen
+    (und damit Scroll-Snap-Ziele + die berechnete Kette) beim Auswählen
+    stabil. Das "Größerwerden" der aktiven Perle passiert rein optisch
+    über transform:scale (siehe .bead.is-active), das die umliegenden
+    Flex-Geschwister nicht verschiebt. Vorher wurde dafür --bead-size
+    selbst verändert, was gleichzeitig mit dem Scroll-zu-Perle-Sprung
+    einen ruckelnden "Offroad"-Effekt erzeugt hat.
+  */
+  .bead {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    width: var(--bead-size);
+    height: var(--bead-size);
+    scroll-snap-align: center;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: transform 200ms ease;
+  }
+
+  /*
+    Perlenbild (public/images/it/helper/kranz_bead.webp) als Basis-Textur.
+    Pfad kommt als CSS-Variable vom Astro-Frontmatter (withBase()), damit er
+    auch unter einem Unterpfad (GitHub Pages) korrekt aufgelöst wird.
+  */
+  .bead__gem {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--bead-image) center / cover no-repeat;
+    transition: transform 180ms ease;
+  }
+
+  .bead__gem img {
+    width: 56%;
+    height: 56%;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.85));
+  }
+
+  .bead__initial {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #f8ecd2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 5px rgba(0, 0, 0, 0.55);
+  }
+
+  .bead:hover .bead__gem,
+  .bead:focus-visible .bead__gem {
+    transform: scale(1.08);
+  }
+
+  .bead.is-active {
+    z-index: 2;
+    transform: scale(1.43);
+  }
+
+  .bead.is-active .bead__initial {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(139, 42, 28, 0.7);
+  }
+
+  .bead-slider__content {
+    margin-top: 1.4rem;
+    padding: 1.4rem 1.6rem;
+    border-top: 3px double rgba(45, 30, 18, 0.86);
+    border-bottom: 3px double rgba(45, 30, 18, 0.86);
+    min-height: 8rem;
+  }
+
+  /*
+    Zweispaltiges "Dossier"-Layout: links ein Medaillon-Steckbrief
+    (Initiale, Name, Beiname, Hauptgott-Box), rechts der Fließtext samt
+    Zitat. Auf schmalen Screens fällt das auf eine Spalte zusammen.
+  */
+  .bead-panel__layout {
+    display: grid;
+    grid-template-columns: minmax(11rem, 13rem) 1fr;
+    gap: 1.6rem;
+    align-items: start;
+  }
+
+  .bead-panel__identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.9rem 0.8rem 1.1rem;
+    text-align: center;
+    border-right: 1px solid rgba(92, 55, 31, 0.3);
+  }
+
+  .bead-panel__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 5.2rem;
+    height: 5.2rem;
+    border-radius: 50%;
+    background-image: var(--bead-image);
+    background-size: cover;
+    background-position: center;
+    box-shadow:
+      0 3px 8px rgba(20, 12, 7, 0.55),
+      inset 0 0 0 2px rgba(244, 236, 224, 0.5);
+  }
+
+  .bead-panel__badge-letter {
+    font-family: var(--font-heading);
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #f8ecd2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.55);
+  }
+
+  .bead-panel__name {
+    margin: 0.2rem 0 0;
+    font-family: var(--font-heading);
+    text-align: center;
+  }
+
+  .bead-panel__name::after {
+    display: none;
+  }
+
+  .bead-panel__epithet {
+    margin: 0;
+    font-family: var(--font-ui);
+    font-style: italic;
+    font-size: 0.94rem;
+    color: rgba(139, 42, 28, 0.88);
+  }
+
+  /*
+    Hauptgott-Zeile: Name (Sphäre) links, Siegel rechts, in einer
+    gemeinsamen Box mit dünner Trennlinie dazwischen – greift die
+    Doppellinien-/Rahmen-Optik der Seite auf (vgl. .bead-slider__content,
+    .it-verse__body), nur zurückhaltender und kompakter.
+  */
+  .bead-panel__deity {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    margin: 0.3rem auto 0;
+    border: 2px solid rgba(92, 55, 31, 0.45);
+    border-radius: var(--radius-sm);
+    background: rgba(244, 236, 224, 0.4);
+    overflow: hidden;
+  }
+
+  .bead-panel__deity-name {
+    padding: 0.4rem 0.8rem;
+    font-family: var(--font-ui);
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(69, 45, 26, 0.82);
+  }
+
+  .bead-panel__deity-symbol {
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0.3rem 0.5rem;
+    object-fit: contain;
+    border-left: 1px solid rgba(92, 55, 31, 0.35);
+    background: rgba(92, 55, 31, 0.06);
+  }
+
+  .bead-panel__body {
+    padding-top: 0.2rem;
+    text-align: left;
+  }
+
+  .bead-panel__text {
+    margin: 0;
+    font-family: var(--font-body);
+    line-height: 1.75;
+    text-indent: 1.4em;
+  }
+
+  .bead-panel__text:first-letter {
+    font-family: var(--font-heading);
+    font-size: 1.5em;
+    color: rgba(139, 42, 28, 0.88);
+  }
+
+  @media (max-width: 640px) {
+    .bead-panel__layout {
+      grid-template-columns: 1fr;
+    }
+
+    .bead-panel__identity {
+      border-right: 0;
+      border-bottom: 1px solid rgba(92, 55, 31, 0.3);
+      padding-bottom: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .bead-panel__body {
+      text-align: left;
+    }
+  }
+
+  /*
+    Dezentere Variante des ItQuoteBlock speziell für den Perlen-Inhalt:
+    kleiner, leichter und mit etwas Buchstabenspreizung statt der vollen,
+    kräftigen Zitat-Optik von der restlichen Seite – wirkt hier eher wie
+    eine leise eingestreute Redewendung als ein eigenständiges Herzstück.
+  */
+  .bead-panel__quote {
+    margin-top: 1.1rem;
+  }
+
+  .bead-panel__quote :global(.it-verse) {
+    margin: 0 auto;
+    max-width: 32rem;
+  }
+
+  .bead-panel__quote :global(.it-verse__body) {
+    padding: 0.9rem 1.4rem;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-color: rgba(45, 30, 18, 0.5);
+  }
+
+  .bead-panel__quote :global(.it-verse__body::before),
+  .bead-panel__quote :global(.it-verse__body::after) {
+    font-size: 0.82rem;
+    color: rgba(139, 42, 28, 0.55);
+  }
+
+  .bead-panel__quote :global(.it-verse__body p) {
+    font-size: 0.92rem;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: 0.015em;
+    line-height: 1.6;
+    color: rgba(45, 30, 18, 0.82);
+  }
+
+  .bead-panel__quote :global(.it-verse__source) {
+    font-size: 0.78rem;
+    color: rgba(69, 45, 26, 0.65);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 640px) {
+    .bead-slider__track {
+      --bead-size: 2.7rem;
+      --bead-gap: 0.85rem;
+      padding-block: 2rem;
+    }
+
+    .bead.is-active {
+      transform: scale(1.35);
+    }
+
+    .bead-slider__content {
+      padding: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bead-slider__track {
+      scroll-behavior: auto;
+    }
+
+    .bead,
+    .bead__gem {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function initBeadSliders() {
+    document.querySelectorAll<HTMLElement>('[data-bead-slider]').forEach((root) => {
+      if (root.dataset.beadInitialized === 'true') return;
+      root.dataset.beadInitialized = 'true';
+
+      const track = root.querySelector<HTMLElement>('[data-bead-track]');
+      const beads = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-bead]'));
+      const panels = Array.from(root.querySelectorAll<HTMLElement>('[data-bead-panel]'));
+
+      if (!track || beads.length === 0) return;
+
+      // Die Perlen liegen dreifach im DOM (Kopie 0/1/2, siehe Frontmatter).
+      // "Endlos" wird simuliert, indem man in der mittleren Kopie startet
+      // und, sobald man sich einer äußeren Kopie nähert, unsichtbar (ohne
+      // Smooth-Scroll, exakt um eine Kopie-Breite) zurück in die Mitte
+      // springt – siehe maybeRecenter().
+      const perCopyCount = Math.floor(beads.length / 3) || beads.length;
+
+      let cycleWidth = 0;
+      const computeCycleWidth = () => {
+        if (beads.length < perCopyCount * 2 + 1) {
+          cycleWidth = 0;
+          return;
+        }
+        cycleWidth = beads[perCopyCount].offsetLeft - beads[0].offsetLeft;
+      };
+
+      computeCycleWidth();
+
+      if (typeof ResizeObserver !== 'undefined') {
+        const resizeObserver = new ResizeObserver(() => computeCycleWidth());
+        resizeObserver.observe(track);
+      } else {
+        window.addEventListener('resize', computeCycleWidth);
+      }
+
+      let activeIndex = beads.findIndex((bead) => bead.classList.contains('is-active'));
+      if (activeIndex < 0) activeIndex = 0;
+
+      let rafId: number | null = null;
+
+      const prefersReducedMotion = () =>
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Während eine gezielt ausgelöste (Klick/Tastatur) Scroll-Animation
+      // noch läuft, würde der scroll-Event-Listener unten sonst bei jedem
+      // Zwischenschritt die jeweils näheste Perle als "aktiv" durchreichen
+      // – man würde also beim Klick auf Perle 11 kurz durch 7, 8, 9, 10
+      // "durchflackern", bevor 11 ankommt. Deshalb blenden wir die
+      // laufende Erkennung währenddessen aus; erst wenn der Scroll wirklich
+      // zur Ruhe gekommen ist, läuft der finale Abgleich wieder normal.
+      let suppressSync = false;
+      let suppressSyncTimeout: number | undefined;
+
+      const setActive = (
+        index: number,
+        {
+          scroll = true,
+          instant = false,
+          updateContent = true,
+        }: { scroll?: boolean; instant?: boolean; updateContent?: boolean } = {},
+      ) => {
+        const clamped = Math.max(0, Math.min(index, beads.length - 1));
+        activeIndex = clamped;
+        const activeId = beads[clamped].dataset.beadId;
+
+        beads.forEach((bead, i) => {
+          const isActive = i === clamped;
+          bead.classList.toggle('is-active', isActive);
+          bead.setAttribute('aria-selected', String(isActive));
+          bead.tabIndex = isActive ? 0 : -1;
+        });
+
+        // WICHTIG: Beim freien Wischen wird diese Funktion bei jedem
+        // Zwischenschritt aufgerufen (Perle 6 → 7 → 8 → ... → 11). Würde
+        // dabei jedes Mal auch der Panel-Inhalt getauscht, ändert sich bei
+        // jedem Zwischenschritt die Höhe des Content-Blocks – das erzeugt
+        // spürbares Layout-Ruckeln während des Wischens. Der Perlen-Fokus
+        // selbst darf trotzdem live mitlaufen (rein optisch, kein
+        // Layout-Einfluss); nur der Textwechsel wird zurückgehalten, bis
+        // das Scrollen wirklich steht (siehe scheduleSettleCheck/endDrag).
+        if (updateContent) {
+          panels.forEach((panel) => {
+            panel.hidden = panel.dataset.beadPanel !== activeId;
+          });
+        }
+
+        if (scroll) {
+          suppressSync = true;
+          // Sicherheitsnetz: falls aus irgendeinem Grund kein einziges
+          // scroll-Event nachkommt (z. B. Zielposition == aktuelle
+          // Position), würde suppressSync sonst für immer hängen bleiben
+          // und jede weitere Scroll-basierte Erkennung lahmlegen.
+          window.clearTimeout(suppressSyncTimeout);
+          suppressSyncTimeout = window.setTimeout(() => {
+            suppressSync = false;
+          }, 500);
+
+          beads[clamped].scrollIntoView({
+            behavior: instant || prefersReducedMotion() ? 'auto' : 'smooth',
+            inline: 'center',
+            block: 'nearest',
+          });
+        }
+      };
+
+      // Springt unsichtbar um genau eine Kopie-Breite (Index + Pixel
+      // gemeinsam), sodass die sichtbare Position auf dem Bildschirm
+      // dieselbe bleibt – der Nutzer merkt vom Sprung nichts, kann aber in
+      // beide Richtungen unbegrenzt weiterscrollen.
+      const jumpByOneCopy = (direction: 1 | -1) => {
+        if (cycleWidth === 0) return;
+
+        const previousBehavior = track.style.scrollBehavior;
+        track.style.scrollBehavior = 'auto';
+        track.scrollLeft += direction * cycleWidth;
+        activeIndex += direction * perCopyCount;
+
+        beads.forEach((bead, i) => {
+          const isActive = i === activeIndex;
+          bead.classList.toggle('is-active', isActive);
+          bead.setAttribute('aria-selected', String(isActive));
+          bead.tabIndex = isActive ? 0 : -1;
+        });
+
+        requestAnimationFrame(() => {
+          track.style.scrollBehavior = previousBehavior;
+        });
+      };
+
+      const maybeRecenter = () => {
+        if (activeIndex < perCopyCount) {
+          jumpByOneCopy(1);
+        } else if (activeIndex >= perCopyCount * 2) {
+          jumpByOneCopy(-1);
+        }
+      };
+
+      // Beim freien Scrollen/Wischen die Perle bestimmen, die dem
+      // Track-Zentrum am nächsten liegt, und sie als aktiv markieren –
+      // ohne dabei erneut zu scrollen (verhindert ein "Kämpfen" mit der
+      // nativen scroll-snap-Bewegung). updateContent=false während einer
+      // laufenden Wisch-Geste (nur der Perlen-Fokus läuft live mit, der
+      // Panel-Text wird erst am Ende nachgezogen, siehe oben in setActive).
+      const syncActiveFromScroll = (updateContent = false) => {
+        rafId = null;
+        const trackRect = track.getBoundingClientRect();
+        const center = trackRect.left + trackRect.width / 2;
+
+        let closestIndex = activeIndex;
+        let closestDistance = Infinity;
+
+        beads.forEach((bead, i) => {
+          const rect = bead.getBoundingClientRect();
+          const beadCenter = rect.left + rect.width / 2;
+          const distance = Math.abs(beadCenter - center);
+
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestIndex = i;
+          }
+        });
+
+        if (closestIndex !== activeIndex) {
+          setActive(closestIndex, { scroll: false, updateContent });
+        } else if (updateContent) {
+          // Perle hat sich seit dem letzten Live-Update nicht mehr
+          // verändert, aber der Panel-Text könnte noch vom vorherigen
+          // (content-losen) Zwischenstand stammen – hier einmalig
+          // nachziehen.
+          setActive(closestIndex, { scroll: false, updateContent: true });
+        }
+      };
+
+      // Erst wenn der Scroll wirklich zur Ruhe gekommen ist (kein weiteres
+      // scroll-Event für ~160ms), wird geprüft, ob wir in eine äußere Kopie
+      // gerutscht sind und ggf. neu zentriert – so unterbricht der Sprung
+      // nie eine laufende Wisch-/Momentum-Bewegung.
+      let settleTimeout: number | undefined;
+      const scheduleSettleCheck = () => {
+        window.clearTimeout(settleTimeout);
+        settleTimeout = window.setTimeout(() => {
+          // Egal ob durch Klick oder freies Wischen ausgelöst: sobald der
+          // Scroll wirklich steht, wieder normal abgleichen/freigeben und
+          // den Panel-Text final nachziehen.
+          suppressSync = false;
+          syncActiveFromScroll(true);
+          maybeRecenter();
+        }, 160);
+      };
+
+      track.addEventListener('scroll', () => {
+        if (!suppressSync && rafId === null) {
+          rafId = requestAnimationFrame(syncActiveFromScroll);
+        }
+        scheduleSettleCheck();
+      });
+
+      // Der Wisch-Effekt greift dank overflow-x:auto + touch-scrolling
+      // schon nativ auf Mobile. Auf Desktop gibt es ohne Trackpad aber kein
+      // Wischen per Maus – daher hier Klick-und-Ziehen (Pointer Events)
+      // nachbauen, nur für Maus (Touch/Pen übernimmt weiterhin die native
+      // Scroll-Geste, sonst würde es sich doppeln/ruckeln).
+      let isDragging = false;
+      let dragMoved = false;
+      let dragStartX = 0;
+      let dragScrollStart = 0;
+      let dragPointerId: number | null = null;
+      let dragPointerX: number | null = null;
+      let dragRafId: number | null = null;
+      let dragPreviousScrollBehavior = '';
+
+      // Erst wenn die Bewegung den Schwellwert überschreitet, wird daraus
+      // ein "echter" Drag: Cursor, Pointer-Capture und das Abschalten von
+      // scroll-snap greifen erst dann.
+      //
+      // WICHTIG (gefundener Bug): setPointerCapture() wurde vorher direkt
+      // bei jedem pointerdown gesetzt, auch bei einem reinen Klick ohne
+      // jede Bewegung. Sobald ein Element den Pointer capturet, leitet der
+      // Browser das daraus resultierende "click"-Event an den Capture-
+      // Halter (den Track) statt an das ursprünglich angeklickte Element
+      // (die Perle) weiter – der eigene Klick-Handler der Perle wurde
+      // dadurch nie erreicht ("Klick bleibt ohne Auswirkung"). Deshalb
+      // capturen wir jetzt erst, sobald wir sicher sind, dass es sich um
+      // einen Drag und keinen Klick handelt.
+      const beginDragIfMoved = () => {
+        if (dragMoved || dragPointerId === null) return;
+
+        dragMoved = true;
+        track.setPointerCapture(dragPointerId);
+        track.classList.add('is-dragging');
+        dragPreviousScrollBehavior = track.style.scrollBehavior;
+        track.style.scrollBehavior = 'auto';
+      };
+
+      const applyDrag = () => {
+        dragRafId = null;
+        if (!isDragging || dragPointerX === null) return;
+
+        const delta = dragPointerX - dragStartX;
+
+        if (Math.abs(delta) > 3) beginDragIfMoved();
+
+        if (dragMoved) {
+          track.scrollLeft = dragScrollStart - delta;
+        }
+      };
+
+      track.addEventListener('pointerdown', (event) => {
+        if (event.pointerType !== 'mouse') return;
+
+        isDragging = true;
+        dragMoved = false;
+        dragStartX = event.clientX;
+        dragScrollStart = track.scrollLeft;
+        dragPointerId = event.pointerId;
+      });
+
+      // Nur die letzte Mausposition merken, den tatsächlichen Scroll aber
+      // maximal einmal pro Frame anwenden (rAF) – vermeidet unnötige,
+      // synchrone Scroll-/Layout-Arbeit bei sehr häufig feuernden
+      // pointermove-Events.
+      track.addEventListener('pointermove', (event) => {
+        if (!isDragging) return;
+
+        dragPointerX = event.clientX;
+
+        if (dragRafId === null) {
+          dragRafId = requestAnimationFrame(applyDrag);
+        }
+      });
+
+      const endDrag = (event: PointerEvent) => {
+        if (!isDragging) return;
+
+        isDragging = false;
+        dragPointerX = null;
+
+        if (dragRafId !== null) {
+          cancelAnimationFrame(dragRafId);
+          dragRafId = null;
+        }
+
+        if (dragMoved) {
+          track.classList.remove('is-dragging');
+          track.style.scrollBehavior = dragPreviousScrollBehavior;
+        }
+
+        if (track.hasPointerCapture(event.pointerId)) {
+          track.releasePointerCapture(event.pointerId);
+        }
+
+        dragPointerId = null;
+
+        // Nach dem Loslassen greift scroll-snap wieder normal und rastet
+        // in die nächstgelegene Perle ein; danach ggf. unsichtbar zurück
+        // in die mittlere Kopie springen, falls wir zu weit an den Rand
+        // gewischt haben. Panel-Text jetzt final nachziehen.
+        syncActiveFromScroll(true);
+        maybeRecenter();
+      };
+
+      track.addEventListener('pointerup', endDrag);
+      track.addEventListener('pointercancel', endDrag);
+      track.addEventListener('pointerleave', (event) => {
+        if (isDragging) endDrag(event);
+      });
+
+      // Verhindert, dass ein Drag am Ende versehentlich als Klick auf die
+      // darunterliegende Perle gewertet wird (würde sonst zusätzlich zum
+      // Drag ungewollt eine andere Perle aktivieren).
+      track.addEventListener(
+        'click',
+        (event) => {
+          if (dragMoved) {
+            event.preventDefault();
+            event.stopPropagation();
+            dragMoved = false;
+          }
+        },
+        true,
+      );
+
+      beads.forEach((bead, i) => {
+        bead.addEventListener('click', () => {
+          setActive(i);
+          // tabIndex=-1 verhindert nur, dass die Perle per Tab erreichbar
+          // ist – ein Klick darf sie trotzdem fokussieren (und tut das per
+          // Default meist schon). Hier explizit erzwungen, damit das auch
+          // dann zuverlässig klappt, wenn setPointerCapture beim Drag den
+          // Standard-Fokus in manchen Browsern durcheinanderbringt.
+          bead.focus();
+        });
+      });
+
+      track.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          setActive(activeIndex + 1);
+        } else if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          setActive(activeIndex - 1);
+        }
+      });
+
+      // Initial ohne Smooth-Scroll zentrieren (sonst würde man beim Laden
+      // einmal quer durch alle drei Perlen-Kopien scrollen sehen).
+      requestAnimationFrame(() => setActive(activeIndex, { scroll: true, instant: true }));
+    });
+  }
+
+  initBeadSliders();
+  document.addEventListener('astro:page-load', initBeadSliders);
+</script>
