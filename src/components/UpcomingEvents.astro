@@ -1,0 +1,334 @@
+---
+import type { AloyEvent } from '../data/events';
+import { events as defaultEvents } from '../data/events';
+
+interface Props {
+  events?: AloyEvent[];
+}
+
+const { events = defaultEvents } = Astro.props;
+
+const todayIso = new Date().toISOString().slice(0, 10);
+
+const upcoming = [...events]
+  .filter((event) => (event.dateEnd ?? event.dateStart) >= todayIso)
+  .sort((a, b) => a.dateStart.localeCompare(b.dateStart));
+
+const past = [...events]
+  .filter((event) => (event.dateEnd ?? event.dateStart) < todayIso)
+  .sort((a, b) => b.dateStart.localeCompare(a.dateStart));
+
+const [nextEvent, ...restUpcoming] = upcoming;
+
+const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' });
+
+const formatRange = (event: AloyEvent) =>
+  event.dateEnd && event.dateEnd !== event.dateStart
+    ? `${formatDate(event.dateStart)} – ${formatDate(event.dateEnd)}`
+    : formatDate(event.dateStart);
+---
+
+<div class="upcoming-events">
+  {
+    nextEvent && (
+      <section class="event-highlight" aria-label="Nächste Veranstaltung">
+        <p class="event-highlight__kicker">Nächste Veranstaltung</p>
+        <h2 class="event-highlight__title">{nextEvent.title}</h2>
+        <p class="event-highlight__meta">
+          {formatRange(nextEvent)}
+          {nextEvent.location && <span> · {nextEvent.location}</span>}
+        </p>
+
+        <div class="event-countdown" data-countdown={nextEvent.dateStart} aria-live="polite">
+          <div class="event-countdown__unit">
+            <span class="event-countdown__value" data-unit="days">–</span>
+            <span class="event-countdown__label">Tage</span>
+          </div>
+          <div class="event-countdown__unit">
+            <span class="event-countdown__value" data-unit="hours">–</span>
+            <span class="event-countdown__label">Std.</span>
+          </div>
+          <div class="event-countdown__unit">
+            <span class="event-countdown__value" data-unit="minutes">–</span>
+            <span class="event-countdown__label">Min.</span>
+          </div>
+          <div class="event-countdown__unit">
+            <span class="event-countdown__value" data-unit="seconds">–</span>
+            <span class="event-countdown__label">Sek.</span>
+          </div>
+        </div>
+
+        {nextEvent.description && <p class="event-highlight__desc">{nextEvent.description}</p>}
+
+        {
+          nextEvent.registrationUrl && (
+            <a class="btn" href={nextEvent.registrationUrl}>
+              Zur Anmeldung
+            </a>
+          )
+        }
+      </section>
+    )
+  }
+
+  {
+    restUpcoming.length > 0 && (
+      <section class="event-list" aria-label="Weitere anstehende Termine">
+        <h3>Weitere Termine</h3>
+        <ul>
+          {restUpcoming.map((event) => (
+            <li class="event-card">
+              <span class="event-card__date">{formatRange(event)}</span>
+              <span class="event-card__title">{event.title}</span>
+              {event.location && <span class="event-card__location">{event.location}</span>}
+              {event.description && <p class="event-card__desc">{event.description}</p>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    !nextEvent && (
+      <section class="event-empty" aria-label="Keine anstehenden Termine">
+        <p>Aktuell sind keine Termine eingetragen. Schau bald wieder vorbei.</p>
+      </section>
+    )
+  }
+
+  {
+    past.length > 0 && (
+      <details class="event-past">
+        <summary>Vergangene Veranstaltungen ({past.length})</summary>
+        <ul>
+          {past.map((event) => (
+            <li class="event-card event-card--past">
+              <span class="event-card__date">{formatRange(event)}</span>
+              <span class="event-card__title">{event.title}</span>
+              {event.location && <span class="event-card__location">{event.location}</span>}
+            </li>
+          ))}
+        </ul>
+      </details>
+    )
+  }
+</div>
+
+<script>
+  function initCountdowns() {
+    document.querySelectorAll<HTMLElement>('[data-countdown]').forEach((el) => {
+      if (el.dataset.countdownInitialized === 'true') return;
+      el.dataset.countdownInitialized = 'true';
+
+      const target = new Date(`${el.dataset.countdown}T00:00:00`).getTime();
+
+      const dayEl = el.querySelector<HTMLElement>('[data-unit="days"]');
+      const hourEl = el.querySelector<HTMLElement>('[data-unit="hours"]');
+      const minuteEl = el.querySelector<HTMLElement>('[data-unit="minutes"]');
+      const secondEl = el.querySelector<HTMLElement>('[data-unit="seconds"]');
+
+      function tick() {
+        const diff = target - Date.now();
+
+        if (diff <= 0) {
+          if (dayEl) dayEl.textContent = '0';
+          if (hourEl) hourEl.textContent = '0';
+          if (minuteEl) minuteEl.textContent = '0';
+          if (secondEl) secondEl.textContent = '0';
+          window.clearInterval(intervalId);
+          return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        if (dayEl) dayEl.textContent = String(days);
+        if (hourEl) hourEl.textContent = String(hours);
+        if (minuteEl) minuteEl.textContent = String(minutes);
+        if (secondEl) secondEl.textContent = String(seconds);
+      }
+
+      tick();
+      const intervalId = window.setInterval(tick, 1000);
+    });
+  }
+
+  initCountdowns();
+  document.addEventListener('astro:page-load', initCountdowns);
+</script>
+
+<style>
+  .upcoming-events {
+    display: grid;
+    gap: 1.75rem;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+
+  .event-highlight {
+    text-align: center;
+    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(177, 146, 104, 0.55);
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 24px rgba(20, 11, 7, 0.12);
+  }
+
+  .event-highlight__kicker {
+    margin: 0 0 0.35rem;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--brand-1);
+  }
+
+  .event-highlight__title {
+    margin: 0;
+  }
+
+  .event-highlight__meta {
+    margin: 0.4rem 0 0;
+    color: var(--ink-2);
+    font-family: var(--font-ui);
+  }
+
+  .event-countdown {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.4rem 0;
+  }
+
+  .event-countdown__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 3.6rem;
+    padding: 0.6rem 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(177, 146, 104, 0.56);
+    background: linear-gradient(135deg, rgba(255, 248, 232, 0.72), rgba(230, 210, 166, 0.48));
+  }
+
+  .event-countdown__value {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--brand-0);
+    line-height: 1.1;
+  }
+
+  .event-countdown__label {
+    font-family: var(--font-ui);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+
+  .event-highlight__desc {
+    max-width: 60ch;
+    margin: 0.9rem auto 0;
+    color: var(--ink-1);
+  }
+
+  .event-highlight .btn {
+    margin-top: 1.2rem;
+  }
+
+  .event-list h3 {
+    text-align: center;
+
+  }
+
+  .event-list ul,
+  .event-past ul {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .event-card,
+  .event-list h3 {
+    display: grid;
+    gap: 0.2rem;
+     padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(177, 146, 104, 0.55);
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 24px rgba(20, 11, 7, 0.12);
+  }
+
+  .event-card--past {
+    opacity: 0.75;
+  }
+
+  .event-card__date {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--brand-1);
+  }
+
+  .event-card__title {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+  }
+
+  .event-card__location {
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+
+  .event-card__desc {
+    margin: 0.3rem 0 0;
+    font-size: 0.92rem;
+    color: var(--ink-1);
+  }
+
+  .event-empty {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px dashed rgba(177, 146, 104, 0.6);
+    color: var(--ink-2);
+  }
+
+  .event-past {
+    text-align: left;
+  }
+
+  .event-past summary {
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--font-ui);
+    font-weight: 700;
+    color: var(--ink-2);
+  }
+
+  @media (max-width: 480px) {
+    .event-countdown {
+      gap: 0.6rem;
+    }
+
+    .event-countdown__unit {
+      min-width: 3rem;
+      padding: 0.5rem 0.35rem;
+    }
+
+    .event-countdown__value {
+      font-size: 1.3rem;
+    }
+  }
+</style>

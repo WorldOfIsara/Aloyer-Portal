@@ -1,0 +1,23 @@
+---
+// Onepager-Baustein "Partnergruppen". Heißt bewusst nicht partner.astro,
+// weil dieser Slug schon von der eigenständigen Seite /ot/partner belegt
+// ist. Wird von willkommen.astro als Komponente eingebunden
+// (<PartnerBlock />). Gleiche Struktur wie aktuelles.astro: die Einleitung
+// ist eine kleine <section class="surface onepager-block">, die Karten aus
+// PartnerGrid.astro (liest src/data/partners.ts) liegen als eigenes
+// Geschwister-Element daneben, weil Karten nicht in die Fließtext-Optik
+// von .onepager-block passen.
+import PartnerGrid from '../../components/PartnerGrid.astro';
+---
+
+<section id="partner" class="surface onepager-block">
+  <div data-reveal data-reveal-repeat style="--reveal-delay:0ms">
+    <h2>Partnergruppen</h2>
+    <p>
+      Aloy steht nicht allein in den Splitterlanden. Hier findest du Gruppen, mit denen wir befreundet sind oder
+      regelm&auml;&szlig;ig zusammenspielen.
+    </p>
+  </div>
+</section>
+
+<PartnerGrid />

@@ -1,0 +1,172 @@
+---
+// Liste der Partnergruppen. Wird sowohl von der eigenständigen Seite
+// /ot/partner als auch vom entsprechenden Onepager-Block
+// (pages/ot/partner-block.astro) verwendet, damit die Reihen nicht doppelt
+// gepflegt werden müssen. Inhalte kommen aus src/data/partners.ts.
+//
+// Layout: eine Zeile pro Gruppe, Bild/Text im 30/70-Verhältnis, abwechselnd
+// Bild-links/Bild-rechts. Bild und Überschrift sind der Link zur Gruppe,
+// die Beschreibung bleibt reiner Text. Jede Zeile blendet wie die h3-Blöcke
+// der Onepager-Themen per Scroll-Reveal ein/aus.
+import { partnerGroups } from '../data/partners';
+---
+
+<div class="partner-list">
+  {
+    partnerGroups.map((partner, index) => {
+      const reversed = index % 2 === 1;
+      const initial = partner.name.trim().charAt(0).toUpperCase();
+
+      return (
+        <div
+          class:list={['partner-row', { 'partner-row--reverse': reversed }]}
+          data-reveal
+          data-reveal-repeat
+          style={`--reveal-delay:${index * 90}ms`}
+        >
+          <a class="partner-row__media" href={partner.url} target="_blank" rel="noopener noreferrer">
+            {partner.logoSrc ? (
+              <img src={partner.logoSrc} alt="" loading="lazy" decoding="async" />
+            ) : (
+              <span class="partner-row__media-fallback" aria-hidden="true">
+                {initial}
+              </span>
+            )}
+          </a>
+          <div class="partner-row__body">
+            <h3 class="partner-row__name">
+              <a href={partner.url} target="_blank" rel="noopener noreferrer">
+                {partner.name}
+              </a>
+            </h3>
+            <p class="partner-row__desc">{partner.description}</p>
+          </div>
+        </div>
+      );
+    })
+  }
+</div>
+
+<style>
+  .partner-list {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 980px;
+    margin: 0 auto;
+
+    /*
+      container-type statt @media: .surface ist nur 70% der Viewport-Breite
+      (siehe body.ot-modern .surface in global.css), deshalb würde ein
+      Viewport-basierter Breakpoint schon bei "Desktop-breiten" Fenstern
+      fälschlich auf Mobile-Stapelung umschalten. Die @container-Regel
+      unten misst stattdessen die tatsächliche Breite dieses Elements.
+    */
+    container-type: inline-size;
+  }
+
+  .partner-row {
+    display: grid;
+    /*
+      calc(...% - Gap-Hälfte) statt reinem %: 30% + 70% summieren sich
+      exakt auf 100%, aber der column-gap kommt bei Grid oben drauf, nicht
+      von den Spaltenbreiten abgezogen. Ohne den Abzug hier läuft die
+      letzte Spalte um genau den gap-Wert über den rechten Rand hinaus.
+    */
+    grid-template-columns: calc(30% - 0.75rem) calc(70% - 0.75rem);
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(177, 146, 104, 0.55);
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 24px rgba(20, 11, 7, 0.12);
+  }
+
+  .partner-row--reverse {
+    grid-template-columns: calc(70% - 0.75rem) calc(30% - 0.75rem);
+  }
+
+  .partner-row--reverse .partner-row__media {
+    order: 2;
+  }
+
+  .partner-row--reverse .partner-row__body {
+    order: 1;
+  }
+
+  .partner-row__media {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255, 248, 232, 0.9), rgba(230, 210, 166, 0.7));
+    
+  }
+
+  .partner-row__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .partner-row__media-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0.75rem;
+    font-family: var(--font-heading);
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--brand-0);
+  }
+
+  .partner-row__body {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .partner-row__name {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+  }
+
+  .partner-row__name a {
+    color: var(--brand-0);
+    text-decoration: none;
+  }
+
+  .partner-row__name a:hover,
+  .partner-row__name a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .partner-row__desc {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--ink-1);
+  }
+
+  @container (max-width: 640px) {
+    .partner-row,
+    .partner-row--reverse {
+      grid-template-columns: 1fr;
+    }
+
+    .partner-row__media,
+    .partner-row__body,
+    .partner-row--reverse .partner-row__media,
+    .partner-row--reverse .partner-row__body {
+      grid-column: 1;
+    }
+
+    .partner-row__media {
+      max-width: 220px;
+      margin-inline: auto;
+    }
+  }
+</style>

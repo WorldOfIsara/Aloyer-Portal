@@ -1,0 +1,119 @@
+---
+// Gleiches Grundgerüst wie packliste.astro (BaseLayout mit portalNav,
+// zentrierte Intro-Section im "surface"-Look). Inhalte unten sind
+// Platzhalter (§5 TMG/Anbieterkennzeichnung + Datenschutzhinweise) - bitte
+// mit den echten Angaben der Reulos-Orga befüllen, bevor die Seite live geht.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  portalNav,
+  portalBrandText,
+  portalBrandAlt,
+  portalFooterTitle,
+  portalFooterDescription,
+} from '../../data/portal';
+
+const pageDescription = 'Impressum und Datenschutzerklärung der Aloyer Söldner.';
+---
+
+<BaseLayout
+  title="Impressum & Datenschutz"
+  description={pageDescription}
+  nav={portalNav}
+  headerBrandText={portalBrandText}
+  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
+  headerBrandLogoAlt={portalBrandAlt}
+  headerBrandLogoFreestanding={true}
+  footerTitle={portalFooterTitle}
+  footerDescription={portalFooterDescription}
+  bodyClass="portal-welcome ot-modern"
+>
+  <section class="surface onepager-block">
+    <h1>Impressum &amp; Datenschutz</h1>
+    <p>Anbieterkennzeichnung nach §5 TMG und Hinweise zum Umgang mit deinen Daten auf dieser Seite.</p>
+  </section>
+
+  <section class="surface onepager-block">
+    <h2>Angaben gem&auml;&szlig; §5 TMG</h2>
+    <p class="placeholder">
+      [Platzhalter: Name/Verein, ladungsf&auml;hige Anschrift, Vertretungsberechtigte Person]
+    </p>
+    <p class="placeholder">[Platzhalter: Kontakt - Telefon, E-Mail]</p>
+  </section>
+
+  <section class="surface onepager-block">
+    <h2>Verantwortlich f&uuml;r den Inhalt (§18 Abs. 2 MStV)</h2>
+    <p class="placeholder">[Platzhalter: Name und Anschrift der verantwortlichen Person]</p>
+  </section>
+
+  <section class="surface onepager-block">
+    <h2>Datenschutz</h2>
+    <p>
+      Diese Seite l&auml;uft als statische Website ohne eigene Server-Datenbank. Es werden keine
+      HTTP-Cookies gesetzt und keine Analyse- oder Tracking-Dienste eingebunden.
+    </p>
+    <p>
+      <strong>Schriftarten:</strong> Alle verwendeten Schriftarten werden lokal von diesem Server
+      ausgeliefert, nicht von Google Fonts oder einem anderen Drittanbieter. Beim Aufruf dieser Seite
+      werden also keine Daten an externe Font-Anbieter &uuml;bertragen.
+    </p>
+    <p>
+      <strong>Lokale Speicherung (localStorage):</strong> Die <a href="/ot/packliste">Packliste</a> speichert
+      deinen Häkchen-Status ausschlie&szlig;lich lokal in deinem Browser, damit die Liste beim n&auml;chsten
+      Besuch weitermacht. Diese Daten verlassen deinen Browser nicht.
+    </p>
+    <p class="placeholder">[Platzhalter: ggf. weitere Angaben, falls zuk&uuml;nftig weitere Dienste eingebunden werden]</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .impressum-intro,
+  .impressum-block {
+    text-align: left;
+    max-width: 780px;
+    margin-inline: auto;
+    /*
+      .surface hat im OT-Bereich nur 2rem (var(--space-5)) Innenpadding,
+      der weiche Rand (mask-image, siehe global.css) blendet aber die
+      ersten 48px ab der Kante aus. Linksbündiger Text startete dadurch
+      genau in dieser Ausblend-Zone und wirkte "verwaschen"/nicht sauber
+      an der Kante positioniert. Zusätzliches Innenpadding schiebt den
+      Text sicher hinter die 48px-Zone.
+    */
+    padding-inline: 1.5rem;
+    box-sizing: border-box;
+  }
+
+  .impressum-intro {
+    text-align: center;
+    padding-inline: 0;
+  }
+
+  .impressum-intro p {
+    max-width: 72ch;
+    margin-inline: auto;
+  }
+
+  .impressum-block + .impressum-block {
+    margin-top: 1.5rem;
+  }
+
+  .impressum-block h2 {
+    margin-top: 0;
+  }
+
+  .impressum-block p + p {
+    margin-top: 0.75rem;
+  }
+
+  .placeholder {
+    color: var(--brand-1);
+    font-style: italic;
+  }
+
+  code {
+    font-family: monospace;
+    background: rgba(177, 146, 104, 0.18);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+</style>

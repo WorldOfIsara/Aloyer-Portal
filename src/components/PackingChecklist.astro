@@ -1,0 +1,295 @@
+---
+interface ChecklistItem {
+  id: string;
+  label: string;
+}
+
+interface ChecklistCategory {
+  title: string;
+  items: ChecklistItem[];
+}
+
+/*
+  Allgemeine LARP-Standard-Packliste als Ausgangspunkt. Kein
+  gruppenspezifisches Sonderwissen, sondern übliche Grundausstattung –
+  bei Bedarf hier Kategorien/Punkte ergänzen oder anpassen.
+*/
+const categories: ChecklistCategory[] = [
+  {
+    title: 'Gewandung',
+    items: [
+      { id: 'gewandung-grund', label: 'Grundgewandung (Hemd/Wams, Hose, Gürtel)' },
+      { id: 'gewandung-wechsel', label: 'Wechselkleidung' },
+      { id: 'gewandung-schuhe', label: 'Festes, larpgerechtes Schuhwerk' },
+      { id: 'gewandung-wetter', label: 'Wetterfeste Überbekleidung (Mantel/Umhang)' },
+      { id: 'gewandung-kopf', label: 'Kopfbedeckung' },
+      { id: 'gewandung-handschuhe', label: 'Handschuhe für kalte Nächte' },
+    ],
+  },
+  {
+    title: 'Schlafausrüstung',
+    items: [
+      { id: 'schlaf-zelt', label: 'Zelt bzw. Lagerbau passend zum Gewandungsbild' },
+      { id: 'schlaf-sack', label: 'Schlafsack oder Bettzeug' },
+      { id: 'schlaf-matte', label: 'Isomatte oder andere Unterlage' },
+      { id: 'schlaf-kissen', label: 'Kissen' },
+      { id: 'schlaf-decke', label: 'Zusätzliche warme Decke' },
+    ],
+  },
+  {
+    title: 'Hygiene & Gesundheit',
+    items: [
+      { id: 'hygiene-zahn', label: 'Zahnputzzeug' },
+      { id: 'hygiene-handtuch', label: 'Handtuch' },
+      { id: 'hygiene-medikamente', label: 'Persönliche Medikamente' },
+      { id: 'hygiene-erstehilfe', label: 'Kleine Reiseapotheke / Erste-Hilfe-Set' },
+      { id: 'hygiene-sonnenschutz', label: 'Sonnenschutz' },
+      { id: 'hygiene-insekten', label: 'Insektenschutz' },
+      { id: 'hygiene-feuchttuecher', label: 'Feuchttücher' },
+    ],
+  },
+  {
+    title: 'Lager & Ausrüstung',
+    items: [
+      { id: 'lager-trinkflasche', label: 'Larpgerechte Trinkflasche oder Becher' },
+      { id: 'lager-geschirr', label: 'Essgeschirr und Besteck' },
+      { id: 'lager-licht', label: 'Taschenlampe oder Laterne' },
+      { id: 'lager-regen', label: 'Regenschutz' },
+      { id: 'lager-tasche', label: 'Tasche/Rucksack fürs Gepäck' },
+      { id: 'lager-bargeld', label: 'Bargeld / Kleingeld' },
+    ],
+  },
+  {
+    title: 'Sonstiges',
+    items: [
+      { id: 'sonst-ausweis', label: 'Ausweis und Notfallkontakt' },
+      { id: 'sonst-powerbank', label: 'Ladegerät / Powerbank' },
+      { id: 'sonst-ohrstoepsel', label: 'Ohrstöpsel' },
+      { id: 'sonst-muell', label: 'Müllbeutel' },
+      { id: 'sonst-brille', label: 'Ersatzbrille oder -kontaktlinsen' },
+    ],
+  },
+];
+
+const totalItems = categories.reduce((sum, category) => sum + category.items.length, 0);
+---
+
+<div class="packing-list" data-packing-list>
+  <div class="packing-list__progress" role="status" aria-live="polite">
+    <div class="packing-list__progress-bar">
+      <div class="packing-list__progress-fill" data-progress-fill style="width: 0%"></div>
+    </div>
+    <p class="packing-list__progress-label">
+      <span data-progress-count>0</span> / {totalItems} eingepackt
+    </p>
+  </div>
+
+  <div class="packing-list__categories">
+    {
+      categories.map((category) => {
+        const titleId = `packing-title-${category.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+        return (
+          <div class="packing-category" role="group" aria-labelledby={titleId}>
+            <p class="packing-category__title" id={titleId}>
+              {category.title}
+            </p>
+            <ul>
+              {category.items.map((item) => (
+                <li>
+                  <label class="packing-item">
+                    <input type="checkbox" data-packing-item={item.id} />
+                    <span>{item.label}</span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        );
+      })
+    }
+  </div>
+
+  <button type="button" class="btn-secondary packing-list__reset" data-packing-reset>
+    Häkchen zurücksetzen
+  </button>
+</div>
+
+<script>
+  const STORAGE_KEY = 'aloy-packliste-v1';
+
+  function loadState(): Record<string, boolean> {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function saveState(state: Record<string, boolean>) {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // localStorage evtl. nicht verfügbar (privater Modus etc.) – dann
+      // funktioniert die Liste weiterhin, merkt sich den Stand nur nicht.
+    }
+  }
+
+  function initPackingList(root: HTMLElement) {
+    if (root.dataset.packingInitialized === 'true') return;
+    root.dataset.packingInitialized = 'true';
+
+    const checkboxes = Array.from(root.querySelectorAll<HTMLInputElement>('[data-packing-item]'));
+    const fill = root.querySelector<HTMLElement>('[data-progress-fill]');
+    const count = root.querySelector<HTMLElement>('[data-progress-count]');
+    const resetButton = root.querySelector<HTMLButtonElement>('[data-packing-reset]');
+
+    function updateProgress() {
+      const checked = checkboxes.filter((box) => box.checked).length;
+      if (count) count.textContent = String(checked);
+      if (fill) fill.style.width = `${checkboxes.length ? (checked / checkboxes.length) * 100 : 0}%`;
+    }
+
+    const state = loadState();
+    checkboxes.forEach((box) => {
+      const id = box.dataset.packingItem;
+      if (id && state[id]) box.checked = true;
+
+      box.addEventListener('change', () => {
+        const currentState = loadState();
+        if (id) currentState[id] = box.checked;
+        saveState(currentState);
+        updateProgress();
+      });
+    });
+
+    resetButton?.addEventListener('click', () => {
+      checkboxes.forEach((box) => {
+        box.checked = false;
+      });
+      saveState({});
+      updateProgress();
+    });
+
+    updateProgress();
+  }
+
+  function initAll() {
+    document.querySelectorAll<HTMLElement>('[data-packing-list]').forEach(initPackingList);
+  }
+
+  initAll();
+  document.addEventListener('astro:page-load', initAll);
+</script>
+
+<style>
+  .packing-list {
+    display: grid;
+    gap: 1.6rem;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+
+  .packing-list__progress {
+    text-align: center;
+  }
+
+  .packing-list__progress-bar {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(177, 146, 104, 0.28);
+    overflow: hidden;
+  }
+
+  .packing-list__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-0), var(--brand-2));
+    transition: width 200ms ease;
+  }
+
+  .packing-list__progress-label {
+    margin: 0.5rem 0 0;
+    font-family: var(--font-ui);
+    font-size: 0.85rem;
+    color: var(--ink-2);
+  }
+
+  .packing-list__categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .packing-category {
+    /*
+      fieldset hat browserseitig ein implizites min-width:auto und
+      schrumpft dadurch in Grid/Flex-Containern nicht unter seine
+      Inhaltsbreite - dadurch sprengte die Karte bei langen Labels ihre
+      Grid-Spalte und wurde durch html{overflow-x:hidden} abgeschnitten.
+      min-width:0 erzwingt normales Schrumpfen/Umbrechen.
+    */
+    min-width: 0;
+    margin: 0;
+    padding: 1rem 1.1rem 1.15rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(177, 146, 104, 0.55);
+    background: rgba(255, 255, 255, 0.45);
+  }
+
+  .packing-category__title {
+    /*
+      Bewusst kein <legend> mehr: legend wird vom Browser speziell auf der
+      oberen Rahmenkante des fieldset positioniert (rittlings, halb
+      außerhalb der Box) statt normal im Innenraum zu fließen - dadurch
+      wurde der Titel von der abgerundeten Kartenkante angeschnitten und
+      lag über dem Hintergrundfoto statt auf der Kartenfläche. Ein
+      normaler <p> mit role="group"/aria-labelledby auf dem Elternelement
+      verhält sich wie ein gewöhnliches Element und bleibt zugänglich.
+    */
+    margin: 0 0 0.4rem;
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    color: var(--ink-1);
+    overflow-wrap: break-word;
+  }
+
+  .packing-category ul {
+    list-style: none;
+    margin: 0.4rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .packing-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-family: var(--font-ui);
+    font-size: 0.92rem;
+    line-height: 1.35;
+    cursor: pointer;
+  }
+
+  .packing-item span {
+    min-width: 0;
+  }
+
+  .packing-item input {
+    margin-top: 0.2rem;
+    width: 1.05rem;
+    height: 1.05rem;
+    accent-color: var(--brand-0);
+    flex: 0 0 auto;
+  }
+
+  .packing-item:has(input:checked) span {
+    color: var(--ink-2);
+    text-decoration: line-through;
+    text-decoration-color: rgba(159, 72, 39, 0.55);
+  }
+
+  .packing-list__reset {
+    justify-self: center;
+  }
+</style>

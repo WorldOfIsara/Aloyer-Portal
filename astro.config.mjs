@@ -11,8 +11,12 @@ export default defineConfig({
   redirects: {
     '/intime/aloyer-gotterwelt': '/welt-lore/goetterwelt',
     '/intime': '/welt-lore',
-    '/start': '/portal',
+    '/start': '/ot/willkommen',
     '/ot': '/ot/willkommen',
     '/it/aloy/umseck-weitfurth': '/it/aloy/umseck-waidfuath',
+    '/kernregeln': '/ot/willkommen#regelwerk',
+    '/kontakt': '/ot/kontakt',
+    '/mitspielen': '/ot/willkommen',
+    '/ueber-aloy': '/ot/willkommen',
   },
 });

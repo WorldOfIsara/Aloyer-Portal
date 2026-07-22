@@ -1,0 +1,104 @@
+/*
+  Lokal gehostete Schriften statt Google Fonts CDN (kein IP-Transfer an
+  Google mehr, kein Cookie-Consent für Fonts nötig). Die Dateien selbst
+  liegen NICHT im Repo, sondern müssen manuell nach public/fonts/ gelegt
+  werden - siehe Anleitung/Dateiliste im Chat. font-display: swap sorgt
+  dafür, dass Text sofort mit der Fallback-Schrift sichtbar ist und beim
+  Laden nur nachträglich auf die Zielschrift wechselt (kein "unsichtbarer
+  Text"-Flackern).
+
+  Erwartete Dateien unter public/fonts/ (Format: woff2):
+    alegreya-400.woff2, alegreya-500.woff2, alegreya-700.woff2
+    cinzel-500.woff2, cinzel-700.woff2
+    im-fell-english-400.woff2, im-fell-english-400-italic.woff2
+    source-sans-3-500.woff2, source-sans-3-600.woff2, source-sans-3-700.woff2
+    unifrakturcook-700.woff2
+*/
+
+@font-face {
+  font-family: 'Alegreya';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/alegreya-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Alegreya';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/alegreya-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Alegreya';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/alegreya-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/cinzel-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/cinzel-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IM Fell English';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/im-fell-english-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IM Fell English';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/im-fell-english-400-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'UnifrakturCook';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/unifrakturcook-700.woff2') format('woff2');
+}

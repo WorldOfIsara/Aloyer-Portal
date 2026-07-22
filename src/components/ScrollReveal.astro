@@ -3,6 +3,9 @@
 // Jedes Element mit [data-reveal] blendet beim Hereinscrollen sanft ein.
 // Varianten: data-reveal="up" (Standard) | "fade" | "left" | "right".
 // Verzögerung/Stagger über inline-style --reveal-delay (z. B. style="--reveal-delay:120ms").
+// Standard: einmaliges Einblenden, bleibt danach sichtbar (unobserve nach Reveal).
+// Mit zusätzlichem [data-reveal-repeat]: blendet auch wieder aus, wenn das
+// Element den Viewport wieder verlässt (in beide Scrollrichtungen).
 ---
 
 <script is:inline>
@@ -17,13 +20,17 @@
     root.classList.add('reveal-active');
 
     const reveal = (el) => el.classList.add('is-visible');
+    const hide = (el) => el.classList.remove('is-visible');
 
     const observer = new IntersectionObserver(
       (entries, obs) => {
         entries.forEach((entry) => {
+          const repeat = entry.target.hasAttribute('data-reveal-repeat');
           if (entry.isIntersecting) {
             reveal(entry.target);
-            obs.unobserve(entry.target);
+            if (!repeat) obs.unobserve(entry.target);
+          } else if (repeat) {
+            hide(entry.target);
           }
         });
       },

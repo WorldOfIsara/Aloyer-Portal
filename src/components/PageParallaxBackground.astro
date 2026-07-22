@@ -1,0 +1,135 @@
+---
+// Echte Parallax-Hintergrundebene für den ganzen OT-Bereich.
+//
+// Ansatz: die Gesamtlänge des Contents ist berechenbar (scrollHeight der
+// Seite). Statt das Hintergrundbild endlos zu kacheln, wird sein
+// Scroll-Weg exakt auf die tatsächliche Bildhöhe begrenzt: bei
+// Seitenanfang zeigt es seinen oberen Rand, bei Seitenende exakt seinen
+// unteren Rand – dazwischen linear interpoliert nach Scroll-Fortschritt
+// (scrollY / maxScroll). Dadurch gibt es nie einen sichtbaren
+// Kachel-Übergang, weil das Bild nie über seine eigenen Grenzen hinaus
+// verschoben wird.
+---
+
+<div class="page-parallax-bg" data-page-parallax-bg aria-hidden="true">
+  <img
+    class="page-parallax-bg__photo"
+    data-parallax-bg-clamped
+    src="/backgrounds/layer3_bg.webp"
+    alt=""
+    loading="eager"
+    decoding="async"
+  />
+  <div class="page-parallax-bg__layer page-parallax-bg__layer--wash"></div>
+</div>
+
+<script>
+  function clampedOffset(img: HTMLImageElement): number {
+    const viewportHeight = window.innerHeight;
+    const imgHeight = img.getBoundingClientRect().height;
+    const scrollRange = Math.max(0, imgHeight - viewportHeight);
+
+    const maxScroll = Math.max(
+      1,
+      document.documentElement.scrollHeight - viewportHeight,
+    );
+    const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+
+    return Math.round(-progress * scrollRange);
+  }
+
+  function updatePageParallaxBg() {
+    document.querySelectorAll<HTMLImageElement>('[data-parallax-bg-clamped]').forEach((img) => {
+      img.style.transform = `translate3d(0, ${clampedOffset(img)}px, 0)`;
+    });
+  }
+
+  let ticking = false;
+  function scheduleUpdate() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      updatePageParallaxBg();
+      ticking = false;
+    });
+  }
+
+  function initPageParallaxBg() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    const images = document.querySelectorAll<HTMLImageElement>('[data-parallax-bg-clamped]');
+    images.forEach((img) => {
+      if (img.complete) {
+        updatePageParallaxBg();
+      } else {
+        img.addEventListener('load', updatePageParallaxBg, { once: true });
+      }
+    });
+
+    updatePageParallaxBg();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+
+    // Contentlänge kann sich nach dem Laden von Bildern/Fonts noch
+    // ändern (scrollHeight wächst) – kurz danach nochmal neu berechnen.
+    window.setTimeout(scheduleUpdate, 400);
+    document.fonts?.ready.then(scheduleUpdate);
+  }
+
+  initPageParallaxBg();
+  document.addEventListener('astro:page-load', initPageParallaxBg);
+</script>
+
+<style>
+  .page-parallax-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .page-parallax-bg__photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    display: block;
+    will-change: transform;
+    filter: brightness(0.6) saturate(0.95);
+  }
+
+  .page-parallax-bg__layer {
+    position: absolute;
+    inset: 0;
+  }
+
+  .page-parallax-bg__layer--wash {
+    background: linear-gradient(190deg, rgba(18, 11, 8, 0.15) 0%, rgba(18, 11, 8, 0.55) 55%, rgba(18, 11, 8, 0.75) 100%),
+      radial-gradient(1100px 700px at 15% 10%, rgba(230, 155, 107, 0.18), transparent 60%),
+      radial-gradient(900px 900px at 85% 90%, rgba(159, 72, 39, 0.22), transparent 65%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-parallax-bg__photo {
+      transform: none !important;
+    }
+  }
+
+  /*
+    Mobile: kein Hintergrundfoto (spart Datenvolumen/Ladezeit auf kleinen
+    Screens und das Parallax-Scrollen wirkt dort ohnehin nicht) - stattdessen
+    einfach ein schwarzer Hintergrund per :global(body.ot-modern).
+  */
+  @media (max-width: 760px) {
+    .page-parallax-bg__photo {
+      display: none;
+    }
+
+    .page-parallax-bg__layer--wash {
+      background: #000;
+    }
+  }
+</style>

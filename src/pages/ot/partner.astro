@@ -1,0 +1,23 @@
+---
+// Übersichtsseite mit Links zu befreundeten LARP-Gruppen. Die Karten selbst
+// stecken in PartnerGrid.astro (gemeinsam genutzt mit dem Onepager-Block
+// in willkommen.astro), Inhalte kommen aus src/data/partners.ts.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PartnerGrid from '../../components/PartnerGrid.astro';
+---
+
+<BaseLayout title="Partnergruppen" description="Befreundete LARP-Gruppen, mit denen die Aloyer Söldner verbunden sind.">
+  <Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Partnergruppen', href: '/ot/partner' }]} />
+
+  <section class="surface">
+    <p class="kicker">Partnergruppen</p>
+    <h1>Wer noch mit uns unterwegs ist</h1>
+    <p>
+      Aloy steht nicht allein in den Splitterlanden. Hier findest du Gruppen, mit denen wir befreundet sind oder
+      regelmäßig zusammenspielen.
+    </p>
+
+    <PartnerGrid />
+  </section>
+</BaseLayout>

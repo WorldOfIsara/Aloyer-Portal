@@ -1,0 +1,44 @@
+---
+// Wiederverwendbare Parallax-Bühne: Elemente mit data-parallax-speed
+// innerhalb eines [data-parallax-scene]-Containers verschieben sich beim
+// Scrollen unterschiedlich schnell (kleinere Werte = wirkt weiter weg/
+// langsamer, größere Werte nahe an normalem Scrollen = wirkt vorne/nah).
+// Wird sowohl für den Hero oben als auch für weitere Bereiche der Seite
+// genutzt, daher als eigene Komponente statt Inline-Script pro Seite.
+---
+
+<script>
+  function updateParallax() {
+    document.querySelectorAll<HTMLElement>('[data-parallax-scene]').forEach((scene) => {
+      const rect = scene.getBoundingClientRect();
+
+      scene.querySelectorAll<HTMLElement>('[data-parallax-speed]').forEach((layer) => {
+        const speed = Number.parseFloat(layer.dataset.parallaxSpeed ?? '0');
+        const offset = Math.round(rect.top * speed);
+        layer.style.transform = `translate3d(0, ${offset}px, 0)`;
+      });
+    });
+  }
+
+  let ticking = false;
+  function scheduleUpdate() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(() => {
+      updateParallax();
+      ticking = false;
+    });
+  }
+
+  function initParallax() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    updateParallax();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+  }
+
+  initParallax();
+  document.addEventListener('astro:page-load', initParallax);
+</script>

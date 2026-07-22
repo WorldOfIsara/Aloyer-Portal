@@ -1,103 +1,68 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import {
-  portalNav,
-  portalBrandText,
-  portalBrandAlt,
-  portalFooterTitle,
-  portalFooterDescription,
-} from '../../data/portal';
-
-const pageDescription = 'Wer die Aloyer S\u00f6ldner sind und wof\u00fcr ihre Gruppe steht.';
+// Onepager-Baustein "Wer wir sind". Wird von willkommen.astro als
+// Komponente eingebunden (<WerWirSind />) und rendert dort genau ein
+// <section class="surface onepager-block">. Direkt aufgerufen unter
+// /ot/wir liefert diese Datei nur den nackten Abschnitt ohne
+// Header/Footer, da sie keine BaseLayout-Hülle hat - das ist so
+// gewollt, es gibt keine internen Links auf /ot/wir.
 ---
 
-<BaseLayout
-  title="Wer wir sind"
-  description={pageDescription}
-  nav={portalNav}
-  headerBrandText={portalBrandText}
-  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
-  headerBrandLogoAlt={portalBrandAlt}
-  headerBrandLogoFreestanding={true}
-  footerTitle={portalFooterTitle}
-  footerDescription={portalFooterDescription}
-  bodyClass="portal-welcome"
->
-  <section class="surface profile-intro">
-    <h1>Die Aloyer S&ouml;ldner</h1>
+<section id="wer-wir-sind" class="surface onepager-block">
+  <div data-reveal data-reveal-repeat style="--reveal-delay:0ms">
+    <h2>Wer wir sind</h2>
     <p>
-      Wir sind die Aloyer S&ouml;ldner, eine LARP-Gruppe mit Schwerpunkt auf stimmigem Ambiente, gemeinsamem Spiel und
-      einer lebendigen Darstellung unseres bespielten Landes Aloy. Auch wenn wir im Spiel einen S&ouml;ldnertrupp
-      darstellen, verstehen wir uns nicht als reine Kampfgruppe. F&uuml;r uns stehen das Miteinander im Lager,
-      sch&ouml;nes Charakterspiel, glaubw&uuml;rdige Darstellung und gemeinsames Weiterentwickeln unseres Hintergrundes
-      im Vordergrund.
+      Wir sind die Aloyer S&ouml;ldner, eine LARP-Gruppe mit Schwerpunkt auf stimmigem Ambiente, gemeinsamem Spiel
+      und einer lebendigen Darstellung unseres bespielten Landes Aloy. Auch wenn wir im Spiel einen
+      S&ouml;ldnertrupp darstellen, verstehen wir uns nicht als reine Kampfgruppe. F&uuml;r uns stehen das
+      Miteinander im Lager, sch&ouml;nes Charakterspiel, glaubw&uuml;rdige Darstellung und gemeinsames
+      Weiterentwickeln unseres Hintergrundes im Vordergrund.
     </p>
     <p>
-      Unsere Gruppe besteht aus Spielerinnen und Spielern, die Freude daran haben, ein gemeinsames Konzept aufzubauen
-      und es auf Cons mit Leben zu f&uuml;llen. Viele von uns kommen aus dem Gro&szlig;raum Passau, daneben sind auch
-      Mitglieder aus anderen Regionen wie Regensburg und W&uuml;rzburg vertreten. Wir sind eine wachsende Gruppe und
-      freuen uns grunds&auml;tzlich &uuml;ber Menschen, die zu unserem Spielstil passen und Lust haben, Teil Aloys zu
-      werden.
+      Unsere Gruppe besteht aus Spielerinnen und Spielern, die Freude daran haben, ein gemeinsames Konzept
+      aufzubauen und es auf Cons mit Leben zu f&uuml;llen. Viele von uns kommen aus dem Gro&szlig;raum Passau,
+      daneben sind auch Mitglieder aus anderen Regionen wie Regensburg und W&uuml;rzburg vertreten. Wir sind eine
+      wachsende Gruppe und freuen uns grunds&auml;tzlich &uuml;ber Menschen, die zu unserem Spielstil passen und
+      Lust haben, Teil Aloys zu werden.
     </p>
-  </section>
+  </div>
 
-  <section class="surface profile-block">
-    <h2>Darstellung und Stil</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:90ms">
+    <h3>Darstellung und Stil</h3>
     <p>
-      In unserer Darstellung orientieren wir uns grob am niederbayerischen Sp&auml;tmittelalter um 1480, erg&auml;nzt
-      durch Einfl&uuml;sse des Landsknechtwesens. Dabei geht es uns nicht um streng historische
-      Reenactment-Genauigkeit, sondern um ein glaubw&uuml;rdiges, geschlossenes Bild, das auf
-      LARP-Veranstaltungen funktioniert und gemeinsam weiterentwickelt werden kann.
+      In unserer Darstellung orientieren wir uns grob am niederbayerischen Sp&auml;tmittelalter um 1480,
+      erg&auml;nzt durch Einfl&uuml;sse des Landsknechtwesens. Dabei geht es uns nicht um streng historische
+      Reenactment-Genauigkeit, sondern um ein glaubw&uuml;rdiges, geschlossenes Bild, das auf LARP-Veranstaltungen
+      funktioniert und gemeinsam weiterentwickelt werden kann.
     </p>
-  </section>
+  </div>
 
-  <section class="surface profile-block">
-    <h2>Spielverst&auml;ndnis</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:180ms">
+    <h3>Spielverst&auml;ndnis</h3>
     <p>
-      Unser Spiel folgt dem Grundsatz DKWDDK/DKWDK: Du kannst, was du darstellen kannst. Uns ist wichtig, dass
-      Handlungen ausgespielt werden, dass R&uuml;cksicht auf Mitspielende genommen wird und dass alle Beteiligten
-      gemeinsam eine gute Szene erschaffen. K&auml;mpfe und Schlachten k&ouml;nnen Teil unseres Spiels sein, sind aber
-      nicht unser alleiniger Mittelpunkt.
+      Unser Spiel folgt dem Grundsatz DKWDDK: Du kannst, was du darstellen kannst. Kämpfe und Schlachten können
+      Teil unseres Spiels sein, sind aber nicht unser alleiniger Mittelpunkt. Die ausführliche Erklärung findest
+      du im <a href="/ot/willkommen#regelwerk">Regelwerk-Abschnitt</a>.
     </p>
-  </section>
+  </div>
 
-  <section class="surface profile-block">
-    <h2>Welt und Figuren</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:270ms">
+    <h3>Welt und Figuren</h3>
     <p>
       Der Hintergrund Aloys ist bewusst als Low Fantasy angelegt. Magie existiert, ist aber selten, schwer
       zug&auml;nglich und nicht allt&auml;glich. Derzeit bespielen wir vor allem menschliche Charaktere; andere
       V&ouml;lker und magiebegabte Figuren existieren im Hintergrund, sind aber nicht der Kern unserer aktuellen
       Gruppendarstellung.
     </p>
-  </section>
+  </div>
 
-  <section class="surface profile-block">
-    <h2>Wer zu uns passt</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:360ms">
+    <h3>Wer zu uns passt</h3>
     <p>
       Wer bei uns mitspielen m&ouml;chte, sollte Freude an gemeinsamer Darstellung, verl&auml;sslichem Zusammenspiel
-      und einer gewissen Bodenst&auml;ndigkeit im Charakterkonzept mitbringen. Wir suchen keine Einzelhelden, sondern
-      Mitspielerinnen und Mitspieler, die Lust haben, Aloy als Gruppe nach au&szlig;en zu tragen: als S&ouml;ldner,
-      Handwerker, Gelehrte, Trossangeh&ouml;rige, Diplomaten oder einfache Leute aus einem freien Land ohne Adel.
+      und einer gewissen Bodenst&auml;ndigkeit im Charakterkonzept mitbringen. Wir suchen keine Einzelhelden,
+      sondern Mitspielerinnen und Mitspieler, die Lust haben, Aloy als Gruppe nach au&szlig;en zu tragen: als
+      S&ouml;ldner, Handwerker, Gelehrte, Trossangeh&ouml;rige, Diplomaten oder einfache Leute aus einem freien Land
+      ohne Adel.
     </p>
-  </section>
-</BaseLayout>
-
-<style>
-  .profile-intro,
-  .profile-block {
-    text-align: center;
-    max-width: 980px;
-    margin-inline: auto;
-  }
-
-  .profile-intro p,
-  .profile-block p {
-    max-width: 72ch;
-    margin-inline: auto;
-  }
-
-  .profile-intro p + p,
-  .profile-block p + p {
-    margin-top: 1rem;
-  }
-</style>
+  </div>
+</section>

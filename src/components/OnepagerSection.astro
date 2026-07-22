@@ -1,0 +1,66 @@
+---
+/*
+  Ein Thema des OT-Onepagers (z. B. "Wer wir sind") als EIN Content-Block.
+  Vorher: jedes Unterthema war eine eigene <section class="surface ...">
+  (viele kleine Divs mit wenig Inhalt). Jetzt: eine Karte pro Thema, in die
+  beliebig viele Unterabschnitte (h3 + p, Listen, ...) per Slot
+  reingeparst werden, statt sie einzeln zu wrappen.
+*/
+interface Props {
+  id: string;
+  title: string;
+  lead?: string;
+}
+
+const { id, title, lead } = Astro.props;
+---
+
+<section id={id} class="surface onepager-section">
+  <h2>{title}</h2>
+  {lead && <p class="onepager-section__lead">{lead}</p>}
+  <div class="onepager-section__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .onepager-section {
+    text-align: center;
+  }
+
+  .onepager-section__lead {
+    max-width: 72ch;
+    margin: 0.75rem auto 0;
+  }
+
+  .onepager-section__body {
+    display: grid;
+    gap: 2.25rem;
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .onepager-section__body :global(h3) {
+    text-align: center;
+    margin: 0 0 0.6rem;
+  }
+
+  .onepager-section__body :global(p) {
+    max-width: 72ch;
+    margin-inline: auto;
+  }
+
+  .onepager-section__body :global(p + p) {
+    margin-top: 1rem;
+  }
+
+  .onepager-section__body :global(ul) {
+    max-width: 72ch;
+    margin-inline: auto;
+    padding-left: 1.4rem;
+  }
+
+  .onepager-section__body :global(li + li) {
+    margin-top: 0.7rem;
+  }
+</style>

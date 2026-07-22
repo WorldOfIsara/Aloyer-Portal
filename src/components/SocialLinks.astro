@@ -1,0 +1,93 @@
+---
+// Reine Icon-Links zu Social-Media-Profilen, für die Navbar (SiteHeader).
+// URLs kommen aus siteConfig.social (src/data/site.ts) - "#" ist
+// Platzhalter, bis die echten Profil-Links feststehen.
+import { siteConfig } from '../data/site';
+
+const { instagram, facebook, discord } = siteConfig.social;
+---
+
+<ul class="social-links">
+  {
+    instagram && (
+      <li>
+        <a href={instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2" />
+            <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2" />
+            <circle cx="17.3" cy="6.7" r="1.15" fill="currentColor" />
+          </svg>
+        </a>
+      </li>
+    )
+  }
+  {
+    facebook && (
+      <li>
+        <a href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path
+              d="M14.5 8.5h2V5.4c-.35-.05-1.54-.15-2.93-.15-2.9 0-4.88 1.78-4.88 5.05v2.7H5.9v3.5h2.79V21h3.62v-4.5h2.68l.43-3.5h-3.11v-2.36c0-1.01.27-1.7 1.19-1.7Z"
+              fill="currentColor"
+            />
+          </svg>
+        </a>
+      </li>
+    )
+  }
+  {
+    discord && (
+      <li>
+        <a href={discord} target="_blank" rel="noopener noreferrer" aria-label="Discord">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path
+              d="M8.5 15.3c3 1.7 4 1.7 7 0M9 9.6c-.3 0-2.2.6-2.2 3.4 0 3 2 4.6 2 4.6M15 9.6c.3 0 2.2.6 2.2 3.4 0 3-2 4.6-2 4.6M9.3 8.3C11.5 7.6 12.5 7.6 14.7 8.3M9.4 15.9c-1.5.4-3.2.5-4.4-.3-1.1-2.7-1.1-6.3.6-9.8 1.2-.8 2.6-1.3 4-1.5l.5 1M14.6 15.9c1.5.4 3.2.5 4.4-.3 1.2-2.9 1-6.3-.6-9.8-1.2-.8-2.6-1.3-4-1.5l-.5 1"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </li>
+    )
+  }
+</ul>
+
+<style>
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    /*
+      --header-ink kommt vom SiteHeader-Wrapper: hell auf dem dunklen
+      IT-Header (mode-it/mode-ot), dunkel auf dem hellen ot-modern-Glas-
+      Header - Fallback auf --ink-1 falls die Komponente mal außerhalb
+      des Headers verwendet wird.
+    */
+    color: var(--header-ink, var(--ink-1));
+    transition:
+      background 160ms ease,
+      color 160ms ease;
+  }
+
+  .social-links a:hover,
+  .social-links a:focus-visible {
+    background: color-mix(in srgb, var(--header-ink, var(--ink-1)) 18%, transparent);
+    color: var(--brand-2);
+    text-decoration: none;
+  }
+</style>

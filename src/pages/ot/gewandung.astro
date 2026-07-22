@@ -1,119 +1,82 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import {
-  portalNav,
-  portalBrandText,
-  portalBrandAlt,
-  portalFooterTitle,
-  portalFooterDescription,
-} from '../../data/portal';
-
-const pageDescription = 'Gewandung und Darstellung der Aloyer S\u00f6ldner.';
+// Onepager-Baustein "Gewandung und Darstellung". Wird von willkommen.astro
+// als Komponente eingebunden (<Gewandung />) und rendert dort genau ein
+// <section class="surface onepager-block">.
 ---
 
-<BaseLayout
-  title="Gewandung und Darstellung"
-  description={pageDescription}
-  nav={portalNav}
-  headerBrandText={portalBrandText}
-  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
-  headerBrandLogoAlt={portalBrandAlt}
-  headerBrandLogoFreestanding={true}
-  footerTitle={portalFooterTitle}
-  footerDescription={portalFooterDescription}
-  bodyClass="portal-welcome"
->
-  <section class="surface attire-intro">
-    <h1>Gewandung und Darstellung</h1>
+<section id="gewandung" class="surface onepager-block">
+  <div data-reveal data-reveal-repeat style="--reveal-delay:0ms">
+    <h2>Gewandung und Darstellung</h2>
     <p>
-      Unsere Gewandung orientiert sich an einem sp&auml;tmittelalterlich-fr&uuml;hneuzeitlichen Bild Mitteleuropas rund
-      um das Jahr 1500, mit erkennbarem Schwerpunkt auf landsknechttypischen Einfl&uuml;ssen. Dabei geht es uns nicht
-      um streng historisches Reenactment, sondern um eine stimmige, gemeinsame Darstellung, die auf
+      Unsere Gewandung orientiert sich an einem sp&auml;tmittelalterlich-fr&uuml;hneuzeitlichen Bild Mitteleuropas
+      rund um das Jahr 1500, mit erkennbarem Schwerpunkt auf landsknechttypischen Einfl&uuml;ssen. Dabei geht es
+      uns nicht um streng historisches Reenactment, sondern um eine stimmige, gemeinsame Darstellung, die auf
       LARP-Veranstaltungen funktioniert und als Aloy wiedererkennbar bleibt.
     </p>
-  </section>
+  </div>
 
-  <section class="surface attire-block">
-    <h2>Grundbild der Gewandung</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:90ms">
+    <h3>Grundbild der Gewandung</h3>
     <p>
       Typisch f&uuml;r unsere Darstellung sind einfache bis auff&auml;llige Gewandungen, wie sie in einem
-      S&ouml;ldner-, Tross- und Lagerumfeld denkbar sind: W&auml;mser, Hemden, Hosen, Beinlinge, Bundhauben, H&uuml;te,
-      einfache M&auml;ntel, Lederzeug, G&uuml;rtel, Taschen und zweckm&auml;&szlig;ige Ausr&uuml;stung.
+      S&ouml;ldner-, Tross- und Lagerumfeld denkbar sind: W&auml;mser, Hemden, Hosen, Beinlinge, Bundhauben,
+      H&uuml;te, einfache M&auml;ntel, Lederzeug, G&uuml;rtel, Taschen und zweckm&auml;&szlig;ige Ausr&uuml;stung.
     </p>
     <p>
-      Wer k&auml;mpfend auftritt, kann sein Bild durch Gambeson, Helm, Handschuhe, Hellebarde, Spie&szlig;, Seitenwehr
-      oder andere passende Bewaffnung erg&auml;nzen. Wer nicht k&auml;mpft, findet ebenso Platz als Trossperson,
-      Handwerker, Schreiber, H&auml;ndler, Feldscher, Priester, Gelehrter oder Gesandter.
+      Wer k&auml;mpfend auftritt, kann sein Bild durch Gambeson, Helm, Handschuhe, Hellebarde, Spie&szlig;,
+      Seitenwehr oder andere passende Bewaffnung erg&auml;nzen. Wer nicht k&auml;mpft, findet ebenso Platz als
+      Trossperson, Handwerker, Schreiber, H&auml;ndler, Feldscher, Priester, Gelehrter oder Gesandter.
     </p>
-  </section>
+  </div>
 
-  <section class="surface attire-block">
-    <h2>Farbbild</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:180ms">
+    <h3>Farbbild</h3>
     <p>
-      Unser gemeinsames Farbbild ist Rotwei&szlig;. Diese Reihenfolge ist uns wichtig: Wir sind rotwei&szlig;, nicht
-      wei&szlig;rot. Rot bildet den pr&auml;genden Hauptakzent unserer Darstellung, w&auml;hrend Wei&szlig;
-      beziehungsweise helle Naturt&ouml;ne das Bild erg&auml;nzt. Dadurch entsteht ein wiedererkennbares Gruppenbild,
-      ohne dass alle Gewandungen identisch aussehen m&uuml;ssen.
+      Unser gemeinsames Farbbild ist Rotwei&szlig;. Diese Reihenfolge ist uns wichtig: Wir sind rotwei&szlig;,
+      nicht wei&szlig;rot. Rot bildet den pr&auml;genden Hauptakzent unserer Darstellung, w&auml;hrend Wei&szlig;
+      beziehungsweise helle Naturt&ouml;ne das Bild erg&auml;nzt. Dadurch entsteht ein wiedererkennbares
+      Gruppenbild, ohne dass alle Gewandungen identisch aussehen m&uuml;ssen.
     </p>
     <p>
-      Naturfarben und Braunt&ouml;ne k&ouml;nnen als Grundlage oder Erg&auml;nzung genutzt werden, etwa bei Hemden,
-      einfachen Hosen, Lederzeug, Schuhen, Taschen oder M&auml;nteln. Sie sollen das rotwei&szlig;e Gesamtbild aber
-      nicht ersetzen, sondern unterst&uuml;tzen. Schwarze Gewandung soll m&ouml;glichst vermieden werden, da sie nicht
-      zu unserem gew&uuml;nschten Erscheinungsbild passt.
+      Naturfarben und Braunt&ouml;ne k&ouml;nnen als Grundlage oder Erg&auml;nzung genutzt werden, etwa bei
+      Hemden, einfachen Hosen, Lederzeug, Schuhen, Taschen oder M&auml;nteln. Sie sollen das rotwei&szlig;e
+      Gesamtbild aber nicht ersetzen, sondern unterst&uuml;tzen. Schwarze Gewandung soll m&ouml;glichst vermieden
+      werden, da sie nicht zu unserem gew&uuml;nschten Erscheinungsbild passt.
     </p>
-  </section>
+  </div>
 
-  <section class="surface attire-block">
-    <h2>Landsknechtische Einfl&uuml;sse</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:270ms">
+    <h3>Landsknechtische Einfl&uuml;sse</h3>
     <p>
       Landsknechtische Elemente sind bei uns ausdr&uuml;cklich willkommen: geschlitzte &Auml;rmel, weite Hosen,
       auff&auml;llige Stoffkombinationen, Barettformen, Nestelb&auml;nder, sichtbare Lagen und ein insgesamt
       selbstbewusstes Auftreten passen gut zu unserem Konzept.
     </p>
     <p>
-      Gleichzeitig achten wir darauf, dass die Gewandung nicht beliebig modern oder rein fantastisch wirkt. Aloy soll
-      bodenst&auml;ndig, sp&auml;tmittelalterlich gepr&auml;gt und als freies, wehrhaftes Land erkennbar bleiben.
+      Gleichzeitig achten wir darauf, dass die Gewandung nicht beliebig modern oder rein fantastisch wirkt. Aloy
+      soll bodenst&auml;ndig, sp&auml;tmittelalterlich gepr&auml;gt und als freies, wehrhaftes Land erkennbar
+      bleiben.
     </p>
-  </section>
+  </div>
 
-  <section class="surface attire-block">
-    <h2>Einstieg f&uuml;r neue Mitspielende</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:360ms">
+    <h3>Einstieg f&uuml;r neue Mitspielende</h3>
     <p>
-      F&uuml;r neue Mitspielende ist keine vollst&auml;ndige Gewandung vom ersten Tag an n&ouml;tig. Wichtiger ist,
-      dass das Konzept in die richtige Richtung geht und Schritt f&uuml;r Schritt ausgebaut werden kann. Eine einfache
-      Grundgewandung in passenden Farben ist ein guter Einstieg; auff&auml;lligere landsknechtische Elemente,
-      R&uuml;stungsteile, Waffen, Lagerausstattung und pers&ouml;nliche Details k&ouml;nnen sp&auml;ter erg&auml;nzt
-      werden.
+      Keine vollst&auml;ndige Gewandung vom ersten Tag an n&ouml;tig: Eine einfache Grundgewandung in passenden
+      Farben ist ein guter Einstieg; auff&auml;lligere landsknechtische Elemente, R&uuml;stungsteile, Waffen,
+      Lagerausstattung und pers&ouml;nliche Details k&ouml;nnen sp&auml;ter erg&auml;nzt werden. Wie der Einstieg
+      inhaltlich abl&auml;uft, steht im <a href="/ot/willkommen#hintergrund">Hintergrund-Abschnitt</a>.
     </p>
-  </section>
+  </div>
 
-  <section class="surface attire-block">
-    <h2>Darstellung als Teil der Gruppe</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:450ms">
+    <h3>Darstellung als Teil der Gruppe</h3>
     <p>
-      Neben der Kleidung ist uns auch die Darstellung wichtig. Aloyer Charaktere sollen nicht wie Einzelhelden wirken,
-      sondern wie Teil einer gemeinsamen Gesellschaft: S&ouml;ldner, B&uuml;rger, Handwerker, Gelehrte, Priester,
-      H&auml;ndler oder Trossleute eines freien Landes ohne Adel. Wer Aloy bespielt, tr&auml;gt mit seiner Gewandung,
-      seinem Auftreten und seinem Spiel dazu bei, dass dieses Bild f&uuml;r andere erlebbar wird.
+      Neben der Kleidung ist uns auch die Darstellung wichtig. Aloyer Charaktere sollen nicht wie Einzelhelden
+      wirken, sondern wie Teil einer gemeinsamen Gesellschaft: S&ouml;ldner, B&uuml;rger, Handwerker, Gelehrte,
+      Priester, H&auml;ndler oder Trossleute eines freien Landes ohne Adel. Wer Aloy bespielt, tr&auml;gt mit
+      seiner Gewandung, seinem Auftreten und seinem Spiel dazu bei, dass dieses Bild f&uuml;r andere erlebbar
+      wird.
     </p>
-  </section>
-</BaseLayout>
-
-<style>
-  .attire-intro,
-  .attire-block {
-    text-align: center;
-    max-width: 980px;
-    margin-inline: auto;
-  }
-
-  .attire-intro p,
-  .attire-block p {
-    max-width: 72ch;
-    margin-inline: auto;
-  }
-
-  .attire-intro p + p,
-  .attire-block p + p {
-    margin-top: 1rem;
-  }
-</style>
+  </div>
+</section>

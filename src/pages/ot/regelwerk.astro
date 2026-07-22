@@ -1,151 +1,104 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import {
-  portalNav,
-  portalBrandText,
-  portalBrandAlt,
-  portalFooterTitle,
-  portalFooterDescription,
-} from '../../data/portal';
-
-const pageDescription = 'Regelwerk der Aloyer S\u00f6ldner mit einer Einf\u00fchrung in DKWDDK.';
+// Onepager-Baustein "DKWDDK / Regelwerk". Wird von willkommen.astro als
+// Komponente eingebunden (<Regelwerk />) und rendert dort genau ein
+// <section class="surface onepager-block">.
 ---
 
-<BaseLayout
-  title="Regelwerk"
-  description={pageDescription}
-  nav={portalNav}
-  headerBrandText={portalBrandText}
-  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
-  headerBrandLogoAlt={portalBrandAlt}
-  headerBrandLogoFreestanding={true}
-  footerTitle={portalFooterTitle}
-  footerDescription={portalFooterDescription}
-  bodyClass="portal-welcome"
->
-  <section class="surface rules-intro">
-    <h1>DKWDDK</h1>
+<section id="regelwerk" class="surface onepager-block">
+  <div data-reveal data-reveal-repeat style="--reveal-delay:0ms">
+    <h2>DKWDDK</h2>
     <p>
       F&uuml;r die Aloyer S&ouml;ldner nutzen wir DKWDDK als Grundlage unseres Spiels. Es geht uns dabei um
-      nachvollziehbare Darstellung, glaubhafte Reaktionen und Szenen, die f&uuml;r alle Beteiligten anschlussf&auml;hig
-      bleiben.
+      nachvollziehbare Darstellung, glaubhafte Reaktionen und Szenen, die f&uuml;r alle Beteiligten
+      anschlussf&auml;hig bleiben.
     </p>
     <p>
       DKWDDK steht f&uuml;r <strong>Du kannst, was du darstellen kannst</strong>. Gemeint ist eine punktelose
       Spielphilosophie, bei der nicht Werte, Ansagen oder Tabellen im Vordergrund stehen, sondern glaubhafte
       Darstellung, Reaktion und gemeinsames Spiel.
     </p>
-  </section>
+  </div>
 
-  <section class="surface rules-block">
-    <h2>Was das im Spiel bedeutet</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:80ms">
+    <h3>Was das im Spiel bedeutet</h3>
     <p>
       Eine Aktion gilt nicht deshalb, weil sie auf einem Charakterbogen steht, sondern weil sie f&uuml;r die
       Mitspielenden nachvollziehbar und stimmig dargestellt wird. Wer heilt, zaubert, k&auml;mpft, alchemistisch
-      arbeitet oder eine besondere F&auml;higkeit ausspielt, sollte das so tun, dass andere den Vorgang verstehen und
-      darauf reagieren k&ouml;nnen.
+      arbeitet oder eine besondere F&auml;higkeit ausspielt, sollte das so tun, dass andere den Vorgang verstehen
+      und darauf reagieren k&ouml;nnen.
     </p>
     <p>
-      DKWDDK hei&szlig;t dabei nicht, dass alles beliebig ist. Im Gegenteil: Je gr&ouml;&szlig;er die Freiheit, desto gr&ouml;&szlig;er
-      die Verantwortung, glaubhaft, anschlussf&auml;hig und fair zu spielen.
+      DKWDDK hei&szlig;t dabei nicht, dass alles beliebig ist. Im Gegenteil: Je gr&ouml;&szlig;er die Freiheit,
+      desto gr&ouml;&szlig;er die Verantwortung, glaubhaft, anschlussf&auml;hig und fair zu spielen.
     </p>
-  </section>
+  </div>
 
-  <section class="surface rules-block">
-    <h2>Unterschied zu Punkteregeln</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:160ms">
+    <h3>Unterschied zu Punkteregeln</h3>
     <p>
-      In punktebasierten Systemen entscheidet oft ein festes Regelkorsett dar&uuml;ber, was eine Figur kann und wie eine
-      Wirkung abgehandelt wird. DKWDDK verzichtet auf diese zus&auml;tzliche Absicherung durch Punktewerte. Die
-      Darstellung selbst ist der zentrale Ma&szlig;stab.
+      In punktebasierten Systemen entscheidet oft ein festes Regelkorsett dar&uuml;ber, was eine Figur kann und
+      wie eine Wirkung abgehandelt wird. DKWDDK verzichtet auf diese zus&auml;tzliche Absicherung durch
+      Punktewerte. Die Darstellung selbst ist der zentrale Ma&szlig;stab.
     </p>
     <p>
-      Ein h&auml;ufiges Beispiel ist ein Burgtor: Im Punktespiel z&auml;hlt man Schaden, bis die Spielleitung das Tor
-      &ouml;ffnet. Im DKWDDK wird der Angriff glaubhaft ausgespielt, und das Ergebnis entsteht aus Darstellung,
-      Plausibilit&auml;t und Spielsituation.
+      Ein h&auml;ufiges Beispiel ist ein Burgtor: Im Punktespiel z&auml;hlt man Schaden, bis die Spielleitung das
+      Tor &ouml;ffnet. Im DKWDDK wird der Angriff glaubhaft ausgespielt, und das Ergebnis entsteht aus
+      Darstellung, Plausibilit&auml;t und Spielsituation.
     </p>
-  </section>
+  </div>
 
-  <section class="surface rules-block">
-    <h2>Warum viele Gruppen so spielen</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:240ms">
+    <h3>Warum viele Gruppen so spielen</h3>
     <ul>
       <li>Das Spiel steht vor dem Regelwerk, nicht das Nachhalten von Punkten.</li>
       <li>Charaktere m&uuml;ssen nicht &uuml;ber starre Lernkurven oder Erfahrungspunkte wachsen.</li>
       <li>Treffer, Verletzungen und Magie k&ouml;nnen sch&ouml;ner, fl&uuml;ssiger und immersiver ausgespielt werden.</li>
       <li>Spielende k&ouml;nnen kreativer auf Situationen reagieren, statt nach einer einzigen Regell&ouml;sung zu suchen.</li>
     </ul>
-  </section>
+  </div>
 
-  <section class="surface rules-block">
-    <h2>Worauf es besonders ankommt</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:320ms">
+    <h3>Worauf es besonders ankommt</h3>
     <ul>
       <li>
-        <strong>Glaubw&uuml;rdigkeit:</strong> Eine dargestellte Wirkung sollte zur Szene, zur Rolle und zum eigenen
-        Auftritt passen.
+        <strong>Glaubw&uuml;rdigkeit:</strong> Eine dargestellte Wirkung sollte zur Szene, zur Rolle und zum
+        eigenen Auftritt passen.
       </li>
       <li>
         <strong>Reaktion statt Ignorieren:</strong> Wenn dich jemand anspielt, sollte dein Spiel eine Wirkung
         erkennen lassen, auch wenn sie nicht immer gleich aussehen muss.
       </li>
       <li>
-        <strong>Selbstbeschr&auml;nkung:</strong> Nicht alles, was man theoretisch darstellen k&ouml;nnte, sollte die Figur
-        automatisch auch beherrschen.
+        <strong>Selbstbeschr&auml;nkung:</strong> Nicht alles, was man theoretisch darstellen k&ouml;nnte, sollte
+        die Figur automatisch auch beherrschen.
       </li>
       <li>
-        <strong>Vermeidung von Telling:</strong> Reine OT-Beschreibungen wie &bdquo;Du siehst, wie ...&ldquo; sollten nicht
-        die eigentliche Darstellung ersetzen.
+        <strong>Vermeidung von Telling:</strong> Reine OT-Beschreibungen wie &bdquo;Du siehst, wie ...&ldquo;
+        sollten nicht die eigentliche Darstellung ersetzen.
       </li>
     </ul>
-  </section>
+  </div>
 
-  <section class="surface rules-block">
-    <h2>Grenzen und typische Probleme</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:400ms">
+    <h3>Grenzen und typische Probleme</h3>
     <p>
-      DKWDDK funktioniert nur dann gut, wenn alle Beteiligten verantwortungsvoll spielen. Wer nur minimal symbolisch
-      darstellt, jede Wirkung zu seinen Gunsten auslegt oder gegnerisches Spiel konsequent kleinredet, untergr&auml;bt
-      das System.
+      DKWDDK funktioniert nur dann gut, wenn alle Beteiligten verantwortungsvoll spielen. Wer nur minimal
+      symbolisch darstellt, jede Wirkung zu seinen Gunsten auslegt oder gegnerisches Spiel konsequent kleinredet,
+      untergr&auml;bt das System.
     </p>
     <p>
-      Deshalb gilt: Lieber ein sauber ausgespielter Treffer, eine nachvollziehbare Schw&auml;che oder eine deutlich
-      sichtbare Reaktion als reines Gewinnenwollen. DKWDDK belohnt nicht das h&auml;rteste Durchsetzen, sondern das
-      stimmigste gemeinsame Spiel.
+      Deshalb gilt: Lieber ein sauber ausgespielter Treffer, eine nachvollziehbare Schw&auml;che oder eine
+      deutlich sichtbare Reaktion als reines Gewinnenwollen. DKWDDK belohnt nicht das h&auml;rteste Durchsetzen,
+      sondern das stimmigste gemeinsame Spiel.
     </p>
-  </section>
+  </div>
 
-  <section class="surface rules-block">
-    <h2>Leitgedanke f&uuml;r Aloy</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:480ms">
+    <h3>Leitgedanke f&uuml;r Aloy</h3>
     <p>
-      F&uuml;r die Aloyer S&ouml;ldner hei&szlig;t das: Wir wollen keine Regelakrobatik, sondern saubere Darstellung,
-      nachvollziehbare Konsequenzen und Szenen, an denen andere gerne mitspielen. Wer etwas tut, sollte es so spielen,
-      dass andere es erkennen, annehmen und weitertragen k&ouml;nnen.
+      F&uuml;r die Aloyer S&ouml;ldner hei&szlig;t das: Wir wollen keine Regelakrobatik, sondern saubere
+      Darstellung, nachvollziehbare Konsequenzen und Szenen, an denen andere gerne mitspielen. Wer etwas tut,
+      sollte es so spielen, dass andere es erkennen, annehmen und weitertragen k&ouml;nnen.
     </p>
-  </section>
-</BaseLayout>
-
-<style>
-  .rules-intro,
-  .rules-block {
-    text-align: center;
-    max-width: 980px;
-    margin-inline: auto;
-  }
-
-  .rules-intro p,
-  .rules-block p,
-  .rules-block ul {
-    max-width: 72ch;
-    margin-inline: auto;
-  }
-
-  .rules-intro p + p {
-    margin-top: 1rem;
-  }
-
-  .rules-block ul {
-    text-align: left;
-    padding-left: 1.4rem;
-  }
-
-  .rules-block li + li {
-    margin-top: 0.7rem;
-  }
-</style>
+  </div>
+</section>

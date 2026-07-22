@@ -2,12 +2,27 @@ import type { NavItem } from './site';
 
 export const portalNav: NavItem[] = [
   { label: 'Willkommen', href: '/ot/willkommen' },
-  { label: 'Aktuelles', href: '/ot/aktuelles' },
-  { label: 'Wer wir sind', href: '/ot/wir' },
-  { label: 'Was wir tun', href: '/ot/tun' },
-  { label: 'Hintergrund', href: '/ot/hintergrund' },
-  { label: 'Gewandung', href: '/ot/gewandung' },
-  { label: 'Regelwerk', href: '/ot/regelwerk' },
+  {
+    label: 'Wer wir sind',
+    href: '/ot/willkommen#wer-wir-sind',
+    children: [{ label: 'Was wir tun', href: '/ot/willkommen#was-wir-tun' }],
+  },
+  {
+    label: 'Hintergrund',
+    href: '/ot/willkommen#hintergrund',
+    children: [
+      { label: 'Gewandung', href: '/ot/willkommen#gewandung' },
+      { label: 'Regelwerk', href: '/ot/willkommen#regelwerk' },
+    ],
+  },
+  { label: 'Aktuelles', href: '/ot/willkommen#aktuelles' },
+  { label: 'Packliste', href: '/ot/packliste' },
+  { label: 'Partnergruppen', href: '/ot/willkommen#partner' },
+  {
+    label: 'Kontakt',
+    href: '/ot/willkommen#kontakt',
+    children: [{ label: 'Impressum & Datenschutz', href: '/ot/impressum' }],
+  },
 ];
 
 export const portalBrandText = 'Aloyer S\u00f6ldner';

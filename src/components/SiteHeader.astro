@@ -1,5 +1,6 @@
 ﻿---
 import type { NavItem } from '../data/site';
+import SocialLinks from './SocialLinks.astro';
 
 interface Props {
   nav: NavItem[];
@@ -23,7 +24,7 @@ const isIt = pathname.startsWith('/it');
 
 <header class:list={['site-header', { 'is-dense-nav': isDenseNav, 'mode-it': isIt, 'mode-ot': !isIt }]}>
   <div class:list={['wrap', { 'is-dense-nav': isDenseNav }]}>
-    <a class="brand" href="/portal" aria-label="Zur Startseite">
+    <a class="brand" href="/ot/willkommen" aria-label="Zur Startseite">
       <img
         class:list={['brand-mark', { 'is-freestanding': brandLogoFreestanding }]}
         src={brandLogoSrc}
@@ -140,23 +141,54 @@ const isIt = pathname.startsWith('/it');
         </label>
         <span class="mode-label" data-mode="ot">OT</span>
       </div>
+      {!isIt && <SocialLinks />}
     </div>
   </div>
   <script is:inline>
     (() => {
-      const modeSwitch = document.getElementById('headerModeSwitch');
-      if (!(modeSwitch instanceof HTMLInputElement)) return;
-      modeSwitch.addEventListener('change', () => {
-        window.location.href = modeSwitch.checked ? '/ot/willkommen' : '/it/vorrede';
-      });
+      // initAll() muss bei jedem Seitenwechsel erneut laufen (astro:page-load),
+      // nicht nur beim ersten Laden: SiteHeader wird bei jeder Navigation neu
+      // gerendert, aber wenn der Skriptinhalt textidentisch zur Vorseite ist
+      // (was er hier immer ist), führt Astros ClientRouter ihn beim Soft-Swap
+      // NICHT erneut aus - die frische Checkbox hätte sonst keinen Listener
+      // mehr (genau das Symptom: Regler reagiert nach Seitenwechsel nicht mehr).
+      function initModeSwitch(modeSwitch) {
+        if (modeSwitch.dataset.modeSwitchInitialized === 'true') return;
+        modeSwitch.dataset.modeSwitchInitialized = 'true';
+
+        modeSwitch.addEventListener('change', () => {
+          window.location.href = modeSwitch.checked ? '/ot/willkommen' : '/it/vorrede';
+        });
+      }
+
+      function initAll() {
+        const modeSwitch = document.getElementById('headerModeSwitch');
+        if (modeSwitch instanceof HTMLInputElement) initModeSwitch(modeSwitch);
+      }
+
+      initAll();
+      document.addEventListener('astro:page-load', initAll);
     })();
   </script>
   <script is:inline>
     (() => {
-      const header = document.currentScript?.closest('.site-header');
-      if (!(header instanceof HTMLElement)) return;
+      // Gleiches Muster wie beim Regler-Skript oben: dieses Skript baut das
+      // Burger-Menü (Klick-Listener, Submenü-Toggles, Escape/Outside-Click
+      // zum Schließen usw.) - lief bisher aber nur EINMAL beim allerersten
+      // Laden, weil sein Inhalt bei jedem Seitenwechsel textidentisch ist
+      // und Astros ClientRouter es beim Soft-Swap deshalb nicht erneut
+      // ausführt. Der SiteHeader selbst wird bei der Navigation aber neu
+      // gerendert (neue DOM-Knoten ohne Listener) - Symptom: Burger-Menü
+      // reagiert nach dem ersten Seitenwechsel (z. B. von der Packliste
+      // aus) nicht mehr. Fix: Setup in initAll() kapseln und nach jedem
+      // astro:page-load erneut ausführen, mit Init-Guard falls der Header-
+      // Knoten doch mal wiederverwendet wird (verhindert doppelte
+      // Listener).
+      function initHeaderInteractions(header) {
+        if (header.dataset.headerInteractionsInitialized === 'true') return;
+        header.dataset.headerInteractionsInitialized = 'true';
 
-      const syncHeaderHeight = () => {
+        const syncHeaderHeight = () => {
         const height = Math.ceil(header.getBoundingClientRect().height);
         document.documentElement.style.setProperty('--site-header-height', `${height}px`);
       };
@@ -273,6 +305,15 @@ const isIt = pathname.startsWith('/it');
       } else {
         mobileQuery.onchange = () => closeNavigation();
       }
+      }
+
+      function initAll() {
+        const header = document.querySelector('.site-header');
+        if (header instanceof HTMLElement) initHeaderInteractions(header);
+      }
+
+      initAll();
+      document.addEventListener('astro:page-load', initAll);
     })();
   </script>
 </header>
@@ -338,15 +379,34 @@ const isIt = pathname.startsWith('/it');
     display: none;
   }
 
-  /* Header-Varianten je Modus (nur im Portal-Kontext) */
+  /*
+    Header-Varianten je Modus (nur im Portal-Kontext). --header-ink wird
+    hier mit auf hell umgeschaltet - vorher blieb das nur der Mobile-
+    Media-Query vorbehalten, wodurch Nav-Links und Social-Icons auf
+    Desktop mit dunklem --ink-1-Text auf diesem fast schwarzen
+    Hintergrund kaum lesbar waren.
+  */
   :global(body.portal-welcome) .site-header.mode-it {
+    --header-ink: rgba(244, 233, 215, 0.96);
     background: rgba(66, 49, 33, 0.95);
     border-bottom-color: rgba(212, 183, 145, 0.28);
   }
 
   :global(body.portal-welcome) .site-header.mode-ot {
+    --header-ink: rgba(244, 233, 215, 0.96);
     background: rgba(10, 7, 5, 0.96);
     border-bottom-color: rgba(244, 233, 215, 0.12);
+  }
+
+  /* Modernes Glas-Erscheinungsbild für den OT-Bereich (body.ot-modern):
+     frostiger, transluzenter Header statt Vollfarbe, passend zu den
+     schwebenden Karten im restlichen Layout. */
+  :global(body.ot-modern) .site-header {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 12px 34px -14px rgba(20, 11, 7, 0.24);
   }
 
   /* Rechte Header-Aktionen: Suche + IT/OT-Umschalter */
@@ -495,7 +555,7 @@ const isIt = pathname.startsWith('/it');
     font-family: var(--font-ui);
     padding: 0.42rem 0.66rem;
     border-radius: 999px;
-    color: var(--ink-1);
+    color: var(--header-ink);
     font-size: 0.94rem;
   }
 

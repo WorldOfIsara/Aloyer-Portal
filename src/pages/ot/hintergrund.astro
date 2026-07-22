@@ -1,77 +1,62 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import {
-  portalNav,
-  portalBrandText,
-  portalBrandAlt,
-  portalFooterTitle,
-  portalFooterDescription,
-} from '../../data/portal';
-
-const pageDescription = 'Hintergrund und Spielwelt von Aloy als Herkunftsland der Aloyer Söldner.';
+// Onepager-Baustein "Unser Hintergrund". Wird von willkommen.astro als
+// Komponente eingebunden (<Hintergrund />) und rendert dort genau ein
+// <section class="surface onepager-block">.
 ---
 
-<BaseLayout
-  title="Unser Hintergrund"
-  description={pageDescription}
-  nav={portalNav}
-  headerBrandText={portalBrandText}
-  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
-  headerBrandLogoAlt={portalBrandAlt}
-  headerBrandLogoFreestanding={true}
-  footerTitle={portalFooterTitle}
-  footerDescription={portalFooterDescription}
-  bodyClass="portal-welcome"
->
-  <section class="surface background-intro">
-    <h1>Unser Hintergrund</h1>
+<section id="hintergrund" class="surface onepager-block">
+  <div data-reveal data-reveal-repeat style="--reveal-delay:0ms">
+    <h2>Unser Hintergrund</h2>
     <p>
-      Aloy ist das bespielte Herkunftsland der Aloyer S&ouml;ldner. Der Hintergrund dient uns als gemeinsamer Rahmen
-      f&uuml;r Charaktere, Spielangebote, Diplomatie, R&auml;tespiel und Darstellung. Er ist bewusst so angelegt,
-      dass er auf Cons gut bespielbar bleibt und anderen Gruppen leicht Ankn&uuml;pfungspunkte bietet.
+      Aloy ist das bespielte Herkunftsland der Aloyer S&ouml;ldner. Der Hintergrund dient uns als gemeinsamer
+      Rahmen f&uuml;r Charaktere, Spielangebote, Diplomatie, R&auml;tespiel und Darstellung. Er ist bewusst so
+      angelegt, dass er auf Cons gut bespielbar bleibt und anderen Gruppen leicht Ankn&uuml;pfungspunkte bietet.
     </p>
-  </section>
+  </div>
 
-  <section class="surface background-block">
-    <h2>Land und Orte</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:70ms">
+    <h3>Land und Orte</h3>
     <p>
       Aloy ist ein kleines, abgeschiedenes Land, das von einem sch&uuml;tzenden Hochgebirge umgeben ist und nur
-      &uuml;ber wenige Wege betreten werden kann. Neben einem schmalen Landzugang besitzt Aloy auch einen Zugang zum
-      Meer, weshalb Handel, Reisen und diplomatische Kontakte vor allem &uuml;ber den Seeweg stattfinden.
+      &uuml;ber wenige Wege betreten werden kann. Neben einem schmalen Landzugang besitzt Aloy auch einen Zugang
+      zum Meer, weshalb Handel, Reisen und diplomatische Kontakte vor allem &uuml;ber den Seeweg stattfinden.
     </p>
     <p>
       Die Hauptstadt des Landes ist Grodaus, Sitz des Rates und wichtiger Mittelpunkt von Politik, Bildung und
       Verwaltung. Weitere bedeutende Orte sind unter anderem Tiafunt als Hafenstadt, Ohm als milit&auml;rischer
       Ausbildungsort, Vormberg mit Bergbau und Handwerk sowie kleinere St&auml;dte wie Umseck und Waidfuath.
     </p>
-  </section>
+    <p class="onepager-block__more"><a href="/it/aloy">Mehr zu Land und Orten in der IT-Lore &rarr;</a></p>
+  </div>
 
-  <section class="surface background-block">
-    <h2>Politisches System</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:140ms">
+    <h3>Politisches System</h3>
     <p>
-      Politisch ist Aloy eine R&auml;terepublik. Der Adel wurde vor langer Zeit abgeschafft, weshalb es in Aloy keine
-      K&ouml;nige, Herz&ouml;ge oder Grafen mehr gibt. Stattdessen treffen gew&auml;hlte Vertreter aus St&auml;dten,
-      Z&uuml;nften, Akademie, Glauben, Milit&auml;r und verschiedenen gesellschaftlichen Gruppen die politischen
-      Entscheidungen.
+      Politisch ist Aloy eine R&auml;terepublik. Der Adel wurde vor langer Zeit abgeschafft, weshalb es in Aloy
+      keine K&ouml;nige, Herz&ouml;ge oder Grafen mehr gibt. Stattdessen treffen gew&auml;hlte Vertreter aus
+      St&auml;dten, Z&uuml;nften, Akademie, Glauben, Milit&auml;r und verschiedenen gesellschaftlichen Gruppen die
+      politischen Entscheidungen.
     </p>
     <p>
       Dieses System ist eine wichtige Grundlage f&uuml;r unser Spiel, da es nicht nur Diplomatie nach au&szlig;en
-      erm&ouml;glicht, sondern auch internes R&auml;tespiel, Abstimmungen, Streitfragen und aloyische B&uuml;rokratie.
+      erm&ouml;glicht, sondern auch internes R&auml;tespiel, Abstimmungen, Streitfragen und aloyische
+      B&uuml;rokratie.
     </p>
-  </section>
+    <p class="onepager-block__more"><a href="/it/rat">Mehr zum Rat in der IT-Lore &rarr;</a></p>
+  </div>
 
-  <section class="surface background-block">
-    <h2>Gesellschaft und Figuren</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:210ms">
+    <h3>Gesellschaft und Figuren</h3>
     <p>
       Die Gesellschaft Aloys besteht &uuml;berwiegend aus einfachen Menschen: Bauern, Handwerkern, H&auml;ndlern,
-      Soldaten, Gelehrten, Priestern und B&uuml;rgern. Zwerge und Halblinge existieren im Hintergrund und sind selten
-      anzutreffen, w&auml;hrend Elfen seit langer Zeit kaum noch eine Rolle im &ouml;ffentlichen Leben spielen.
-      Derzeit werden innerhalb unserer Gruppe vor allem menschliche Charaktere bespielt.
+      Soldaten, Gelehrten, Priestern und B&uuml;rgern. Zwerge und Halblinge existieren im Hintergrund und sind
+      selten anzutreffen, w&auml;hrend Elfen seit langer Zeit kaum noch eine Rolle im &ouml;ffentlichen Leben
+      spielen. Derzeit werden innerhalb unserer Gruppe vor allem menschliche Charaktere bespielt.
     </p>
-  </section>
+  </div>
 
-  <section class="surface background-block">
-    <h2>Akademie und Bildung</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:280ms">
+    <h3>Akademie und Bildung</h3>
     <p>
       Ein zentraler Bestandteil Aloys ist die Akademie. Sie verbindet Bildung, Handwerk, Glauben, Wissenschaft und
       milit&auml;rische Ausbildung. In Aloy wird Bildung hochgehalten; grunds&auml;tzlich soll jeder B&uuml;rger die
@@ -82,74 +67,43 @@ const pageDescription = 'Hintergrund und Spielwelt von Aloy als Herkunftsland de
       Priester, Soldaten, Schwertgesellen oder Spezialisten ausgebildet werden. F&uuml;r unser Spiel bietet die
       Akademie viele Rollen jenseits des klassischen S&ouml;ldners.
     </p>
-  </section>
+    <p class="onepager-block__more"><a href="/it/akademie">Mehr zur Akademie in der IT-Lore &rarr;</a></p>
+  </div>
 
-  <section class="surface background-block">
-    <h2>Glaube und Low Fantasy</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:350ms">
+    <h3>Glaube und Low Fantasy</h3>
     <p>
       Religi&ouml;s basiert Aloy auf dem Glauben an die Drei und weitere untergeordnete Gottheiten. Die Priester
-      besitzen keine weltliche Macht und wirken nicht als magische Wundert&auml;ter, sondern als geistige F&uuml;hrer,
-      Ratgeber und Vertreter des Glaubens. Damit bleibt unser Hintergrund bewusst bodenst&auml;ndig und passt zu
-      unserem Low-Fantasy-Ansatz.
+      besitzen keine weltliche Macht und wirken nicht als magische Wundert&auml;ter, sondern als geistige
+      F&uuml;hrer, Ratgeber und Vertreter des Glaubens. Damit bleibt unser Hintergrund bewusst bodenst&auml;ndig
+      und passt zu unserem Low-Fantasy-Ansatz.
     </p>
     <p>
-      Aloy ist ein Low-Fantasy-Land. Magie existiert, ist aber selten, schwer zug&auml;nglich und nicht allt&auml;glich.
-      Sie soll nicht das normale Spiel dominieren, sondern etwas Besonderes bleiben. Auch fantastische Wesen und
-      &uuml;bernat&uuml;rliche Bedrohungen k&ouml;nnen Teil des Hintergrundes sein, stehen aber nicht im Mittelpunkt
-      der gew&ouml;hnlichen aloyischen Gesellschaft.
+      Aloy ist ein Low-Fantasy-Land. Magie existiert, ist aber selten, schwer zug&auml;nglich und nicht
+      allt&auml;glich. Sie soll nicht das normale Spiel dominieren, sondern etwas Besonderes bleiben. Auch
+      fantastische Wesen und &uuml;bernat&uuml;rliche Bedrohungen k&ouml;nnen Teil des Hintergrundes sein, stehen
+      aber nicht im Mittelpunkt der gew&ouml;hnlichen aloyischen Gesellschaft.
     </p>
-  </section>
+    <p class="onepager-block__more"><a href="/it/glaube">Mehr zum Glauben in der IT-Lore &rarr;</a></p>
+  </div>
 
-  <section class="surface background-block">
-    <h2>Warum daraus die Aloyer S&ouml;ldner entstehen</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:420ms">
+    <h3>Warum daraus die Aloyer S&ouml;ldner entstehen</h3>
     <p>
-      Die Aloyer S&ouml;ldner entstehen aus diesem Hintergrund heraus: Soldaten und Abg&auml;nger der Akademie ziehen
-      in die Welt, nehmen Auftr&auml;ge an, kn&uuml;pfen Kontakte, vertreten Aloy und bringen M&uuml;nze, Wissen und
-      Geschichten zur&uuml;ck in die Heimat. Deshalb sind wir nicht nur eine S&ouml;ldnertruppe, sondern ein
-      reisender Ausschnitt aloyischer Kultur.
+      Die Aloyer S&ouml;ldner entstehen aus diesem Hintergrund heraus: Soldaten und Abg&auml;nger der Akademie
+      ziehen in die Welt, nehmen Auftr&auml;ge an, kn&uuml;pfen Kontakte, vertreten Aloy und bringen M&uuml;nze,
+      Wissen und Geschichten zur&uuml;ck in die Heimat. Deshalb sind wir nicht nur eine S&ouml;ldnertruppe, sondern
+      ein reisender Ausschnitt aloyischer Kultur.
     </p>
-  </section>
+  </div>
 
-  <section class="surface background-block">
-    <h2>Aloy in den Splitterlanden</h2>
+  <div data-reveal data-reveal-repeat style="--reveal-delay:490ms">
+    <h3>Einstieg f&uuml;r neue Mitspielende</h3>
     <p>
-      Unser Spiel soll bewusst Anschluss an die Splitterlande finden. Aloy ist darauf ausgelegt, mit anderen
-      L&auml;ndern, Gruppen und Charakteren in Austausch zu treten: durch Diplomatie, Handel, S&ouml;ldnervertr&auml;ge,
-      politische Gespr&auml;che, gemeinsame Unternehmungen und gelegentliche Reibung. Dabei soll Aloy eigenst&auml;ndig
-      bleiben, aber nicht isoliert wirken.
+      F&uuml;r neue Mitspielende bedeutet das: Man muss nicht den gesamten Hintergrund auswendig kennen, um bei
+      uns einzusteigen. Wichtig ist ein grundlegendes Verst&auml;ndnis daf&uuml;r, dass Aloy ein freies,
+      ratregiertes, bodenst&auml;ndiges und wehrhaftes Land ist, dessen B&uuml;rger Wert auf Bildung, Handwerk,
+      Glauben, Gemeinschaft und politische Eigenst&auml;ndigkeit legen.
     </p>
-    <p>
-      Wir m&ouml;chten mit unserem Hintergrund Spielangebote schaffen, die andere Gruppen leicht aufnehmen k&ouml;nnen.
-    </p>
-  </section>
-
-  <section class="surface background-block">
-    <h2>Einstieg f&uuml;r neue Mitspielende</h2>
-    <p>
-      F&uuml;r neue Mitspielende bedeutet das: Man muss nicht den gesamten Hintergrund auswendig kennen, um bei uns
-      einzusteigen. Wichtig ist ein grundlegendes Verst&auml;ndnis daf&uuml;r, dass Aloy ein freies, ratregiertes,
-      bodenst&auml;ndiges und wehrhaftes Land ist, dessen B&uuml;rger Wert auf Bildung, Handwerk, Glauben,
-      Gemeinschaft und politische Eigenst&auml;ndigkeit legen.
-    </p>
-  </section>
-</BaseLayout>
-
-<style>
-  .background-intro,
-  .background-block {
-    text-align: center;
-    max-width: 980px;
-    margin-inline: auto;
-  }
-
-  .background-intro p,
-  .background-block p {
-    max-width: 72ch;
-    margin-inline: auto;
-  }
-
-  .background-intro p + p,
-  .background-block p + p {
-    margin-top: 1rem;
-  }
-</style>
+  </div>
+</section>

@@ -1,0 +1,113 @@
+---
+// Onepager-Baustein "Kontakt". Heißt bewusst nicht kontakt.astro, weil
+// dieser Slug schon von der eigenständigen Seite /ot/kontakt belegt ist
+// (siehe partner-block.astro für dasselbe Muster). Wird von
+// willkommen.astro als Komponente eingebunden (<KontaktBlock />).
+//
+// Struktur und CSS-Werte sind bewusst 1:1 an aktuelles.astro +
+// UpcomingEvents.astro angelehnt, nicht nur "ähnlich":
+// - Parent-Section enthält wie bei aktuelles.astro NUR die Überschrift,
+//   kein Absatz, kein data-reveal-Wrapper.
+// - Die Karten darunter übernehmen exakt die CSS-Werte von .event-card
+//   aus UpcomingEvents.astro (gleiche padding/gap/border/background/
+//   box-shadow/border-radius, gleiche Schriftgrößen für Meta/Titel/Text).
+// - Der Wrapper um Email/Erstkontakt trägt exakt dieselbe .kontakt-card-
+//   Klasse wie seine beiden Kind-Karten (Karte-in-Karte, wie explizit
+//   gewünscht), nur mit einem Zusatz-Modifier für die Zwei-Spalten-
+//   Anordnung innerhalb.
+---
+
+<section id="kontakt" class="surface onepager-block">
+  <h2>Kontakt &amp; Onboarding</h2>
+</section>
+
+<div class="kontakt-cards">
+  <div class="kontakt-card kontakt-card--split">
+    <article class="kontakt-card">
+      <p class="kontakt-card__meta">Email</p>
+      <h3 class="kontakt-card__title">
+        <a href="mailto:orga@reulos-orga.de">orga@reulos-orga.de</a>
+      </h3>
+      <p class="kontakt-card__desc">Antwortziel: innerhalb von 3&ndash;5 Werktagen.</p>
+    </article>
+
+    <article class="kontakt-card">
+      <p class="kontakt-card__meta">Erstkontakt</p>
+      <h3 class="kontakt-card__title">
+        Du m&ouml;chtest neu einsteigen oder brauchst Material f&uuml;r deinen Charakter?
+      </h3>
+      <p class="kontakt-card__desc">
+        Melde dich mit einem kurzen Steckbrief (Rollenidee, Erfahrung, offene Fragen).
+      </p>
+    </article>
+
+    <article class="kontakt-card kontakt-card--full">
+      <p class="kontakt-card__meta">Was wir brauchen</p>
+      <h3 class="kontakt-card__title">Ein kurzer Steckbrief reicht f&uuml;r den Anfang</h3>
+      <p class="kontakt-card__desc">
+        Wer zu uns passt und was einen guten Einstieg ausmacht, steht unter
+        <a href="/ot/willkommen#wer-wir-sind">Wer wir sind</a>.
+      </p>
+    </article>
+  </div>
+</div>
+
+<style>
+  .kontakt-cards {
+    display: grid;
+    gap: 1.75rem;
+    max-width: 980px;
+    margin-inline: auto;
+    container-type: inline-size;
+  }
+
+  .kontakt-card {
+    display: grid;
+    gap: 0.2rem;
+    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(177, 146, 104, 0.55);
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 24px rgba(20, 11, 7, 0.12);
+  }
+
+  .kontakt-card--split {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+
+  .kontakt-card--full {
+    grid-column: 1 / -1;
+  }
+
+  @container (max-width: 640px) {
+    .kontakt-card--split {
+      grid-template-columns: 1fr;
+    }
+
+    .kontakt-card--full {
+      grid-column: 1;
+    }
+  }
+
+  .kontakt-card__meta {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--brand-1);
+  }
+
+  .kontakt-card__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+  }
+
+  .kontakt-card__desc {
+    margin: 0.3rem 0 0;
+    font-size: 0.92rem;
+    color: var(--ink-1);
+  }
+</style>

@@ -1,43 +1,17 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import {
-  portalNav,
-  portalBrandText,
-  portalBrandAlt,
-  portalFooterTitle,
-  portalFooterDescription,
-} from '../../data/portal';
-
-const pageDescription = 'Neuigkeiten und organisatorische Hinweise der Aloyer Söldner.';
+// Onepager-Baustein "Aktuelles". Wird von willkommen.astro als Komponente
+// eingebunden (<Aktuelles />). Anders als die reinen Text-Bausteine
+// (wir.astro, tun.astro, ...) besteht dieser aus zwei Teilen: der
+// Einleitung als <section class="surface onepager-block"> und den
+// Terminen aus UpcomingEvents.astro (liest src/data/events.ts) als
+// eigenem Element - Terminkarten passen nicht in die Fließtext-Optik
+// von .onepager-block, deshalb bleibt UpcomingEvents ein Geschwister-
+// Element statt hineingeschachtelt zu werden.
+import UpcomingEvents from '../../components/UpcomingEvents.astro';
 ---
 
-<BaseLayout
-  title="Aktuelles"
-  description={pageDescription}
-  nav={portalNav}
-  headerBrandText={portalBrandText}
-  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
-  headerBrandLogoAlt={portalBrandAlt}
-  headerBrandLogoFreestanding={true}
-  footerTitle={portalFooterTitle}
-  footerDescription={portalFooterDescription}
-  bodyClass="portal-welcome"
->
-  <section class="surface updates-intro">
-    <h1>Aktuelles</h1>
-    <p>Hier sammeln wir künftige Neuigkeiten, Termine und kurzfristige Hinweise rund um die Aloyer Söldner.</p>
-  </section>
-</BaseLayout>
+<section id="aktuelles" class="surface onepager-block">
+  <h2>Wo die Söldner als nächstes sind</h2>
+</section>
 
-<style>
-  .updates-intro {
-    text-align: center;
-    max-width: 980px;
-    margin-inline: auto;
-  }
-
-  .updates-intro p {
-    max-width: 72ch;
-    margin-inline: auto;
-  }
-</style>
+<UpcomingEvents />

@@ -1,9 +1,13 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import SiteHeader from '../components/SiteHeader.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 import SearchPalette from '../components/SearchPalette.astro';
 import ScrollReveal from '../components/ScrollReveal.astro';
+import PageParallaxBackground from '../components/PageParallaxBackground.astro';
 import { siteConfig } from '../data/site';
 import type { NavItem } from '../data/site';
+import '../styles/fonts.css';
 import '../styles/global.css';
 import '../styles/performance-overrides.css';
 
@@ -35,8 +39,9 @@ const {
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const isItPage = Astro.url.pathname.startsWith('/it');
-const headerBrandHref = isItPage ? `${base}/it/vorrede` : `${base}/portal`;
+const headerBrandHref = isItPage ? `${base}/it/vorrede` : `${base}/ot/willkommen`;
 const headerBrandLabel = isItPage ? 'Zur IT-Vorrede' : 'Zur Startseite';
+const isOtModern = bodyClass?.includes('ot-modern') ?? false;
 ---
 
 <!doctype html>
@@ -53,16 +58,65 @@ const headerBrandLabel = isItPage ? 'Zur IT-Vorrede' : 'Zur Startseite';
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href="/logos/haubentaucher-wappen-transparent.png?v=2" />
     <link rel="canonical" href={canonical.toString()} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;700&family=Cinzel:wght@500;700&family=IM+Fell+English:ital@0;1&family=Source+Sans+3:wght@500;600;700&family=UnifrakturCook:wght@700&display=swap"
-      rel="stylesheet"
-    />
     <title>{title} | {siteConfig.titleSuffix}</title>
+    <ClientRouter />
+    <script is:inline>
+      (() => {
+        // Von /ot/packliste weg soll ein Klick auf einen Anker-Link (z. B.
+        // ein Nav-Punkt zu /ot/willkommen#...) nicht hart zum Abschnitt
+        // springen, sondern sanft dorthin scrollen - Astros ClientRouter
+        // scrollt beim Seitenwechsel selbst instant zum Hash-Ziel, ohne
+        // die CSS scroll-behavior:smooth zu respektieren. Deshalb: Hash
+        // vor der Navigation merken und aus der Ziel-URL entfernen (damit
+        // Astro nicht selbst hart hinspringt), nach dem Seitenwechsel
+        // (astro:page-load) dann selbst weich hinscrollen und den Hash
+        // per replaceState wieder in die Adressleiste schreiben. Nur auf
+        // der Packliste - überall sonst bleibt Anker-Scroll normal.
+        const PENDING_KEY = 'aloy-pending-scroll-anchor';
+
+        document.addEventListener(
+          'click',
+          (event) => {
+            if (window.location.pathname !== '/ot/packliste') return;
+            if (!(event.target instanceof Element)) return;
+
+            const link = event.target.closest('a[href]');
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            const url = new URL(link.href, window.location.href);
+            if (url.hash && url.pathname !== window.location.pathname) {
+              sessionStorage.setItem(PENDING_KEY, `${url.pathname}${url.hash}`);
+              url.hash = '';
+              link.href = url.toString();
+            }
+          },
+          true,
+        );
+
+        function resolvePendingScroll() {
+          const pending = sessionStorage.getItem(PENDING_KEY);
+          if (!pending) return;
+          sessionStorage.removeItem(PENDING_KEY);
+
+          const hashIndex = pending.indexOf('#');
+          if (hashIndex === -1) return;
+          const pathname = pending.slice(0, hashIndex);
+          const hash = pending.slice(hashIndex);
+          if (pathname !== window.location.pathname) return;
+
+          const target = document.getElementById(hash.slice(1));
+          if (!target) return;
+
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(history.state, '', pathname + hash);
+        }
+
+        document.addEventListener('astro:page-load', resolvePendingScroll);
+      })();
+    </script>
   </head>
   <body class={bodyClass}>
-    <ScrollReveal />
+    {isOtModern && <PageParallaxBackground />}
     <SiteHeader
       nav={nav}
       brandText={headerBrandText}
@@ -72,16 +126,36 @@ const headerBrandLabel = isItPage ? 'Zur IT-Vorrede' : 'Zur Startseite';
     />
     <script is:inline define:vars={{ headerBrandHref, headerBrandLabel }}>
       (() => {
-        const brandLink = document.querySelector('.site-header .brand');
-        if (!(brandLink instanceof HTMLAnchorElement)) return;
+        // Muss bei jedem Seitenwechsel erneut laufen, nicht nur beim ersten
+        // Laden - siehe Kommentar zum selben Muster in SiteHeader.astro
+        // (Regler-Skript).
+        function applyBrandLink() {
+          const brandLink = document.querySelector('.site-header .brand');
+          if (!(brandLink instanceof HTMLAnchorElement)) return;
 
-        brandLink.setAttribute('href', headerBrandHref);
-        brandLink.setAttribute('aria-label', headerBrandLabel);
+          brandLink.setAttribute('href', headerBrandHref);
+          brandLink.setAttribute('aria-label', headerBrandLabel);
+        }
+
+        applyBrandLink();
+        document.addEventListener('astro:page-load', applyBrandLink);
       })();
     </script>
     <main>
       <slot />
     </main>
+    <ScrollReveal />
     <SearchPalette />
+    {
+      /*
+        CookieConsent bewusst nicht mehr gerendert: seit die Google Fonts
+        lokal gehostet werden (siehe styles/fonts.css), gibt es keinen
+        einwilligungspflichtigen Drittanbieter-Request mehr, den der
+        Banner gaten müsste. Komponente bleibt im Code erhalten (falls
+        später wieder ein Dienst dazukommt, der Consent braucht), wird
+        aber aktuell nicht mehr eingebunden.
+      */
+    }
+    {false && <CookieConsent />}
   </body>
 </html>

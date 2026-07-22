@@ -1,0 +1,106 @@
+---
+// Cookie-/Consent-Banner. Einziger wirklich einwilligungspflichtiger
+// Punkt auf dieser Seite ist das Nachladen der Google Fonts von
+// fonts.googleapis.com/fonts.gstatic.com (siehe BaseLayout.astro) - bei
+// "Ablehnen" bleibt es bei den lokalen Fallback-Schriften. localStorage
+// für die Packliste und den Scroll-Übergang ist rein funktional und läuft
+// unabhängig von dieser Einwilligung.
+---
+
+<div class="cookie-consent" data-cookie-consent hidden>
+  <div class="cookie-consent__box">
+    <p class="cookie-consent__text">
+      Diese Seite lädt nach Zustimmung Schriftarten von Google Fonts nach (dabei wird deine IP-Adresse an Google
+      übertragen). Ohne Zustimmung nutzen wir lokale Ersatzschriften. Details dazu stehen im
+      <a href="/ot/impressum">Impressum &amp; Datenschutz</a>.
+    </p>
+    <div class="cookie-consent__actions">
+      <button type="button" class="btn-secondary" data-cookie-decline>Nur notwendige</button>
+      <button type="button" class="btn" data-cookie-accept>Akzeptieren</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const CONSENT_KEY = 'aloy-cookie-consent';
+
+    function initCookieConsent(banner) {
+      if (banner.dataset.cookieConsentInitialized === 'true') return;
+      banner.dataset.cookieConsentInitialized = 'true';
+
+      const acceptButton = banner.querySelector('[data-cookie-accept]');
+      const declineButton = banner.querySelector('[data-cookie-decline]');
+
+      function hideBanner() {
+        banner.hidden = true;
+      }
+
+      if (!localStorage.getItem(CONSENT_KEY)) {
+        banner.hidden = false;
+      }
+
+      acceptButton?.addEventListener('click', () => {
+        localStorage.setItem(CONSENT_KEY, 'accepted');
+        hideBanner();
+        window.loadAloyGoogleFonts?.();
+      });
+
+      declineButton?.addEventListener('click', () => {
+        localStorage.setItem(CONSENT_KEY, 'declined');
+        hideBanner();
+      });
+    }
+
+    function initAll() {
+      document.querySelectorAll('[data-cookie-consent]').forEach(initCookieConsent);
+    }
+
+    initAll();
+    document.addEventListener('astro:page-load', initAll);
+  })();
+</script>
+
+<style>
+  .cookie-consent {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    pointer-events: none;
+  }
+
+  .cookie-consent[hidden] {
+    display: none;
+  }
+
+  .cookie-consent__box {
+    pointer-events: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    max-width: 780px;
+    width: 100%;
+    padding: 1.1rem 1.3rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(177, 146, 104, 0.55);
+    background: rgba(253, 247, 236, 0.97);
+    box-shadow: 0 14px 34px rgba(20, 11, 7, 0.28);
+  }
+
+  .cookie-consent__text {
+    flex: 1 1 320px;
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ink-1);
+  }
+
+  .cookie-consent__actions {
+    display: flex;
+    gap: 0.6rem;
+    flex: 0 0 auto;
+  }
+</style>

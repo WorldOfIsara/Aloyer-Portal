@@ -421,7 +421,7 @@ export const contentClusterMap = [
     cluster: 'Einstieg & Mitmachen',
     sourceFocus: 'Gewandung, Mitspielhinweise, Kernregeln',
     status: 'MVP' as LifecycleStatus,
-    singleSource: 'Portalseiten /mitspielen und /kernregeln',
+    singleSource: 'Onepager /ot/willkommen (Wer wir sind / Regelwerk)',
   },
   {
     cluster: 'Welt & Lore',
@@ -454,25 +454,19 @@ export const topLevelPages = [
     slug: 'portal',
     title: 'Start',
     summary: 'Schneller Einstieg in Welt, Mitspielen und Kernregeln.',
-    href: '/portal',
-  },
-  {
-    slug: 'ueber-aloy',
-    title: 'Über Aloy',
-    summary: 'Was Aloy ausmacht und wie sich das im Spiel anfuehlt.',
-    href: '/ueber-aloy',
+    href: '/ot/willkommen',
   },
   {
     slug: 'mitspielen',
     title: 'Mitspielen',
     summary: 'Schritte für den Einstieg und erste Rollenideen.',
-    href: '/mitspielen',
+    href: '/ot/willkommen',
   },
   {
     slug: 'kernregeln',
     title: 'Kernregeln',
     summary: 'Leitlinien für faires und stimmiges Spiel.',
-    href: '/kernregeln',
+    href: '/ot/willkommen#regelwerk',
   },
   {
     slug: 'welt-lore',
@@ -496,7 +490,7 @@ export const topLevelPages = [
     slug: 'kontakt',
     title: 'Kontakt',
     summary: 'Kontakt und Onboarding für neue Interessenten.',
-    href: '/kontakt',
+    href: '/ot/kontakt',
   },
 ];
 

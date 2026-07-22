@@ -42,6 +42,7 @@ body {
 html {
   overflow-x: hidden;
   scroll-padding-top: 5rem;
+  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   /*
     Reserviert den Platz für den vertikalen Scrollbalken immer, auch wenn
@@ -51,6 +52,12 @@ html {
     erzwingt oder ihn wieder verschwinden lässt.
   */
   scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -87,6 +94,16 @@ body.portal-welcome {
     linear-gradient(180deg, rgba(27, 15, 9, 0.42), rgba(27, 15, 9, 0.5)),
     radial-gradient(1200px 600px at 50% 45%, rgba(250, 238, 210, 0.4), transparent 60%),
     url('/pexels-pixabay-326333_1-1-scaled.jpg') center / cover no-repeat fixed;
+}
+
+/*
+  body.ot-modern bekommt seinen Hintergrund über PageParallaxBackground.astro
+  (echte, unterschiedlich schnell scrollende Ebenen statt der einen
+  fixen Textur oben) – das eigene body-background hier deaktivieren,
+  damit sich beides nicht überlagert.
+*/
+body.portal-welcome.ot-modern {
+  background: none;
 }
 
 body.portal-welcome.portal-it {
@@ -250,6 +267,19 @@ main {
   padding: var(--space-5) 0 var(--space-6);
 }
 
+/*
+  Im OT-Bereich soll .surface exakt 70% des Displays einnehmen (siehe
+  body.ot-modern .surface unten) – dafür darf main hier nicht mehr auf
+  1100px begrenzt sein, sonst wären die 70% nur 70% von main statt vom
+  Viewport.
+*/
+body.ot-modern main {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: none;
+}
+
 h1,
 h2,
 h3 {
@@ -295,6 +325,116 @@ section + section {
   border: 1px solid rgba(177, 146, 104, 0.5);
   border-radius: var(--radius-md);
   padding: var(--space-5);
+}
+
+/*
+  OT-Bereich (body.ot-modern, siehe BaseLayout-Aufrufe unter
+  src/pages/ot/*). Bewusst nur hier scoped, damit der IT-Bereich sein
+  eigenes Pergament-Erscheinungsbild behält. Flache Fläche ohne Blur/
+  Schatten/Kante - links und rechts läuft sie per mask-image weich in
+  den Seitenhintergrund aus, statt hart abzuschneiden.
+*/
+body.ot-modern .surface {
+  position: relative;
+  /* !important: einzelne Seiten bringen noch eigene lokale
+     max-width-Regeln (z. B. .updates-intro, .packing-intro) mit, die
+     sonst je nach Ladereihenfolge mit dieser Breite konkurrieren
+     könnten und für "abgeschnittenen"/falsch breiten Content sorgen. */
+  width: 70% !important;
+  max-width: 70% !important;
+  margin-inline: auto;
+
+  
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+
+  /* Feather-Edge: links/rechts blendet die Fläche weich aus, statt mit
+     einer harten Rechteckkante zu enden. mask-image schneidet dabei
+     Hintergrund UND Inhalt aus (nicht nur die Farbe), daher der
+     Sicherheitsabstand von 48px zum Innenpadding. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+}
+
+@media (max-width: 760px) {
+  body.ot-modern .surface {
+    width: 92% !important;
+    max-width: 92% !important;
+  }
+
+  body.ot-modern .surface {
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+  }
+}
+
+/*
+  Garantierter Abstand zwischen ALLEN direkten Kindern von main im
+  OT-Bereich – nicht nur zwischen zwei <section>-Elementen. Component-
+  Wrapper wie UpcomingEvents/PackingChecklist rendern ein <div> als
+  Wurzelelement; "section + section" hat solche Div-zu-Section- bzw.
+  Section-zu-Div-Übergänge nie erfasst, wodurch dort Karten ohne
+  Abstand aufeinandersaßen (wirkte wie eine Überlappung).
+*/
+body.ot-modern main > * + * {
+  margin-top: var(--space-6);
+}
+
+/*
+  Onepager-Bausteine (src/pages/ot/wir.astro, tun.astro, hintergrund.astro,
+  gewandung.astro, regelwerk.astro): jede Datei rendert genau ein
+  <section class="surface onepager-block">, das über diese Regel an die
+  globale Typografie andockt. Sie werden in willkommen.astro als
+  Komponenten importiert. Unterthemen innerhalb eines Bausteins sind reine
+  h3/p/ul - keine eigenen .surface-Wrapper mehr.
+*/
+.onepager-block {
+  text-align: center;
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+.onepager-block p,
+.onepager-block ul,
+.onepager-block ol {
+  max-width: 72ch;
+  margin-inline: auto;
+}
+
+.onepager-block p + p,
+.onepager-block h3 + p {
+  margin-top: 1rem;
+}
+
+.onepager-block h3 {
+  margin-top: var(--space-5);
+}
+
+.onepager-block ul,
+.onepager-block ol {
+  text-align: left;
+  padding-left: 1.4rem;
+}
+
+.onepager-block li + li {
+  margin-top: 0.7rem;
+}
+
+/*
+  "Mehr erfahren"-Links unter OT-Hintergrund-Absätzen, die auf die
+  passende IT-Lore-Seite verweisen (siehe hintergrund.astro). Bewusst
+  kleiner/dezenter als normaler Fließtext, damit klar bleibt: das ist ein
+  Sprungpunkt, kein weiterer Absatz.
+*/
+.onepager-block__more {
+  margin-top: 0.4rem !important;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+}
+
+.onepager-block__more a {
+  color: var(--brand-1);
 }
 
 .grid {
