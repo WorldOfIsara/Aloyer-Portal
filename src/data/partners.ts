@@ -17,10 +17,17 @@ export const partnerGroups: PartnerGroup[] = [
     url: 'https://drachengard.de/',
     logoSrc: '/images/ot/partner/drachengard.png'
   },
+   {
+    slug: 'kronmark',
+    name: 'Fürstentums Kronmark',
+    description: 'Im Jahr 124 hat sich die Kronmark selbst zum Fürstentum Kronmark ausgerufen. Aufgrund der noch etwas unklaren Lage im Land sind bisher wenige Neuigkeiten und Informationen nach außen gedrungen.',
+    url: 'https://koenigreich-komarn-1.jimdosite.com/',
+    logoSrc: '/images/ot/partner/kronmark.png'
+  },
   {
     slug: 'komarn',
     name: 'Königreich Komarn',
-    description: 'Das stolze Volk der Komarner hat dank der Vereinigung sich stark verändert und ist verschmolzen, zu dem was es heute darstellt. ',
+    description: 'Das stolze Volk der Komarner hat dank der Vereinigung sich stark verändert und ist verschmolzen, zu dem was es heute darstellt.',
     url: 'https://koenigreich-komarn-1.jimdosite.com/',
   },
   
