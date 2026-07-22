@@ -1,19 +1,26 @@
 ---
-// Liste der Partnergruppen. Wird sowohl von der eigenständigen Seite
-// /ot/partner als auch vom entsprechenden Onepager-Block
-// (pages/ot/partner-block.astro) verwendet, damit die Reihen nicht doppelt
-// gepflegt werden müssen. Inhalte kommen aus src/data/partners.ts.
+// Liste von Gruppen (Partner- oder Freundesgruppen). Wird sowohl von der
+// eigenständigen Seite /ot/partner als auch vom entsprechenden
+// Onepager-Block (pages/ot/partner-block.astro) verwendet, jeweils einmal
+// pro Kategorie mit der passenden Liste aus src/data/partners.ts als Prop
+// übergeben, damit die Zeilen nicht doppelt gepflegt werden müssen.
 //
 // Layout: eine Zeile pro Gruppe, Bild/Text im 30/70-Verhältnis, abwechselnd
 // Bild-links/Bild-rechts. Bild und Überschrift sind der Link zur Gruppe,
 // die Beschreibung bleibt reiner Text. Jede Zeile blendet wie die h3-Blöcke
 // der Onepager-Themen per Scroll-Reveal ein/aus.
-import { partnerGroups } from '../data/partners';
+import type { PartnerGroup } from '../data/partners';
+
+interface Props {
+  groups: PartnerGroup[];
+}
+
+const { groups } = Astro.props;
 ---
 
 <div class="partner-list">
   {
-    partnerGroups.map((partner, index) => {
+    groups.map((partner, index) => {
       const reversed = index % 2 === 1;
       const initial = partner.name.trim().charAt(0).toUpperCase();
 

@@ -1,18 +1,21 @@
 ---
-// Onepager-Baustein "Partnergruppen". Heißt bewusst nicht partner.astro,
-// weil dieser Slug schon von der eigenständigen Seite /ot/partner belegt
-// ist. Wird von willkommen.astro als Komponente eingebunden
-// (<PartnerBlock />). Gleiche Struktur wie aktuelles.astro: die Einleitung
-// ist eine kleine <section class="surface onepager-block">, die Karten aus
-// PartnerGrid.astro (liest src/data/partners.ts) liegen als eigenes
-// Geschwister-Element daneben, weil Karten nicht in die Fließtext-Optik
-// von .onepager-block passen.
+// Onepager-Baustein "Partnergruppen & Freundesgruppen". Heißt bewusst nicht
+// partner.astro, weil dieser Slug schon von der eigenständigen Seite
+// /ot/partner belegt ist. Wird von willkommen.astro als Komponente
+// eingebunden (<PartnerBlock />). Gleiche Struktur wie aktuelles.astro: die
+// Einleitung ist eine kleine <section class="surface onepager-block">, die
+// Karten aus PartnerGrid.astro liegen als eigene Geschwister-Elemente
+// daneben, weil Karten nicht in die Fließtext-Optik von .onepager-block
+// passen. Zwei Kategorien (Partnergruppen, Freundesgruppen) aus
+// src/data/partners.ts, jeweils eigene Unterüberschrift + eigene
+// PartnerGrid-Instanz.
 import PartnerGrid from '../../components/PartnerGrid.astro';
+import { partnerGroups, friendGroups } from '../../data/partners';
 ---
 
 <section id="partner" class="surface onepager-block">
   <div data-reveal data-reveal-repeat style="--reveal-delay:0ms">
-    <h2>Partnergruppen</h2>
+    <h2>Partner- &amp; Freundesgruppen</h2>
     <p>
       Aloy steht nicht allein in den Splitterlanden. Hier findest du Gruppen, mit denen wir befreundet sind oder
       regelm&auml;&szlig;ig zusammenspielen.
@@ -20,4 +23,51 @@ import PartnerGrid from '../../components/PartnerGrid.astro';
   </div>
 </section>
 
-<PartnerGrid />
+<div class="partner-category">
+  <h3 class="partner-category__title">Partnergruppen</h3>
+  {
+    partnerGroups.length > 0 ? (
+      <PartnerGrid groups={partnerGroups} />
+    ) : (
+      <p class="partner-category__empty">Noch keine Partnergruppen eingetragen.</p>
+    )
+  }
+</div>
+
+<div class="partner-category">
+  <h3 class="partner-category__title">Freundesgruppen</h3>
+  {
+    friendGroups.length > 0 ? (
+      <PartnerGrid groups={friendGroups} />
+    ) : (
+      <p class="partner-category__empty">Noch keine Freundesgruppen eingetragen.</p>
+    )
+  }
+</div>
+
+<style>
+  .partner-category {
+    max-width: 980px;
+    margin: 2rem auto 0;
+  }
+
+  .partner-category__title {
+    margin: 0 0 1rem;
+    text-align: center;
+    font-family: var(--font-heading);
+    /*
+      .partner-category liegt anders als .surface-Panels direkt auf dem
+      dunklen Seiten-/Parallax-Hintergrund, nicht auf einer hellen Karte.
+      var(--ink-1) (dunkelbraun) war dafür gedacht, auf hellem Grund zu
+      stehen - hier auf dunkel praktisch unlesbar. Helle Farbe wie beim
+      übrigen Text auf dunklem Grund (z. B. Hero-Text).
+    */
+    color: rgba(248, 236, 210, 0.96);
+  }
+
+  .partner-category__empty {
+    text-align: center;
+    color: rgba(248, 236, 210, 0.7);
+    font-style: italic;
+  }
+</style>
