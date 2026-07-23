@@ -1,33 +1,141 @@
 ---
+// Eigenständige Seite statt Onepager-Abschnitt (vorher kontakt-block.astro,
+// als <KontaktBlock /> in willkommen.astro eingebunden - jetzt entfernt).
+// Struktur/Styling bewusst wie packliste.astro: BaseLayout mit
+// bodyClass="portal-welcome ot-modern", eine zentrierte Intro-Section im
+// "surface"-Look, keine Breadcrumbs. Der Seitenwechsel von/zur Hauptseite
+// bekommt in BaseLayout.astro + global.css den gleichen Swipe-Effekt wie
+// die Packliste, nur seitenverkehrt (Hauptseite schiebt nach rechts weg,
+// Kontakt kommt von links - siehe SWIPE_ROUTES in BaseLayout.astro).
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import {
+  portalNav,
+  portalBrandText,
+  portalBrandAlt,
+  portalFooterTitle,
+  portalFooterDescription,
+} from '../../data/portal';
 ---
 
-<BaseLayout title="Kontakt" description="Kontakt zur Reulos-Orga für Einstieg, Rollenabstimmung und Dokumente.">
-  <Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Kontakt', href: '/ot/kontakt' }]} />
-
-  <section class="surface">
-    <p class="kicker">Kontakt</p>
-    <h1>Kontakt & Onboarding</h1>
+<BaseLayout
+  title="Kontakt"
+  description="Kontakt zur Reulos-Orga für Einstieg, Rollenabstimmung und Dokumente."
+  nav={portalNav}
+  headerBrandText={portalBrandText}
+  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
+  headerBrandLogoAlt={portalBrandAlt}
+  headerBrandLogoFreestanding={true}
+  footerTitle={portalFooterTitle}
+  footerDescription={portalFooterDescription}
+  bodyClass="portal-welcome ot-modern"
+>
+  <section class="surface kontakt-intro">
+    <h1>Kontakt &amp; Onboarding</h1>
     <p>
-      Du möchtest neu einsteigen oder brauchst Material für deinen Charakter? Melde dich mit einem kurzen Steckbrief (Rollenidee, Erfahrung, offene Fragen).
+      Du m&ouml;chtest neu einsteigen oder brauchst Material f&uuml;r deinen Charakter? Melde dich mit einem
+      kurzen Steckbrief (Rollenidee, Erfahrung, offene Fragen).
     </p>
   </section>
 
-  <section class="grid">
-    <article class="surface">
-      <h2>Erstkontakt</h2>
-      <p class="muted">Mail</p>
-      <p><a href="mailto:orga@reulos-orga.de">orga@reulos-orga.de</a></p>
-      <p class="muted">Antwortziel: innerhalb von 3-5 Werktagen.</p>
-    </article>
+  <div class="kontakt-cards">
+    <div class="kontakt-card kontakt-card--split">
+      <article class="kontakt-card">
+        <p class="kontakt-card__meta">Email</p>
+        <h3 class="kontakt-card__title">
+          <a href="mailto:orga@reulos-orga.de">orga@reulos-orga.de</a>
+        </h3>
+        <p class="kontakt-card__desc">Antwortziel: innerhalb von 3&ndash;5 Werktagen.</p>
+      </article>
 
-    <article class="surface">
-      <h2>Was wir brauchen</h2>
-      <p>
-        Ein kurzer Steckbrief reicht für den Anfang. Wer zu uns passt und was einen guten Einstieg ausmacht,
-        steht unter <a href="/ot/willkommen#wer-wir-sind">Wer wir sind</a>.
-      </p>
-    </article>
-  </section>
+      <article class="kontakt-card">
+        <p class="kontakt-card__meta">Erstkontakt</p>
+        <h3 class="kontakt-card__title">
+          Du m&ouml;chtest neu einsteigen oder brauchst Material f&uuml;r deinen Charakter?
+        </h3>
+        <p class="kontakt-card__desc">
+          Melde dich mit einem kurzen Steckbrief (Rollenidee, Erfahrung, offene Fragen).
+        </p>
+      </article>
+
+      <article class="kontakt-card kontakt-card--full">
+        <p class="kontakt-card__meta">Was wir brauchen</p>
+        <h3 class="kontakt-card__title">Ein kurzer Steckbrief reicht f&uuml;r den Anfang</h3>
+        <p class="kontakt-card__desc">
+          Wer zu uns passt und was einen guten Einstieg ausmacht, steht unter
+          <a href="/ot/willkommen#wer-wir-sind">Wer wir sind</a>.
+        </p>
+      </article>
+    </div>
+  </div>
 </BaseLayout>
+
+<style>
+  .kontakt-intro {
+    text-align: center;
+    max-width: 980px;
+    margin-inline: auto;
+  }
+
+  .kontakt-intro p {
+    max-width: 72ch;
+    margin-inline: auto;
+  }
+
+  .kontakt-cards {
+    display: grid;
+    gap: 1.75rem;
+    max-width: 980px;
+    margin: 2rem auto 0;
+    container-type: inline-size;
+  }
+
+  .kontakt-card {
+    display: grid;
+    gap: 0.2rem;
+    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(177, 146, 104, 0.55);
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 24px rgba(20, 11, 7, 0.12);
+  }
+
+  .kontakt-card--split {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+
+  .kontakt-card--full {
+    grid-column: 1 / -1;
+  }
+
+  @container (max-width: 640px) {
+    .kontakt-card--split {
+      grid-template-columns: 1fr;
+    }
+
+    .kontakt-card--full {
+      grid-column: 1;
+    }
+  }
+
+  .kontakt-card__meta {
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--brand-1);
+  }
+
+  .kontakt-card__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+  }
+
+  .kontakt-card__desc {
+    margin: 0.3rem 0 0;
+    font-size: 0.92rem;
+    color: var(--ink-1);
+  }
+</style>

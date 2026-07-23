@@ -80,4 +80,14 @@
     opacity: 1;
     transform: none;
   }
+
+  /*
+    Die Onepager-Panels selbst (.surface.onepager-block, seit kurzem auch
+    data-reveal statt nur ihrer inneren Textblöcke) wirkten mit den
+    Standard-620ms zu abrupt/heftig - für die großen Panels langsamer und
+    sanfter, unabhängig von der Geschwindigkeit der inneren Textblöcke.
+  */
+  html.reveal-active .surface.onepager-block[data-reveal] {
+    transition-duration: 1100ms;
+  }
 </style>

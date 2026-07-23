@@ -45,6 +45,14 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   /*
+    Ohne eigenes background bleibt die Browser-Canvas weiß. body hat zwar
+    einen dunklen Hintergrund, aber während der Swipe-Transition (siehe
+    weiter unten) können kurz Lücken zwischen altem/neuem Snapshot
+    entstehen - dort sonst sichtbar als heller Rand. Dunkle Grundfarbe
+    hier schließt das ab.
+  */
+  background-color: #0a0705;
+  /*
     Reserviert den Platz für den vertikalen Scrollbalken immer, auch wenn
     er (noch) nicht gebraucht wird. Ohne das springt die ganze Seite um
     die Scrollbar-Breite horizontal, sobald ein wachsender Inhalt (z. B.
@@ -57,6 +65,108 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+}
+
+/*
+  Test-Effekt: Packliste <-> Onepager und Kontakt <-> Onepager bekommen
+  einen Swipe statt des normalen Crossfades - Kontakt seitenverkehrt zu
+  Packliste (Hauptseite schiebt nach rechts statt links weg). Das
+  data-page-transition-Attribut wird kurz vor der Navigation per Script
+  gesetzt (siehe BaseLayout.astro, astro:before-preparation, SWIPE_ROUTES)
+  und scoped hier die ::view-transition-old/new-Pseudoelemente der ganzen
+  Seite (Gruppe "root", da nirgends ein eigenes transition:name vergeben
+  ist) - dadurch bleiben alle anderen Seitenwechsel beim normalen
+  Standard-Crossfade.
+*/
+@keyframes aloy-swipe-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes aloy-swipe-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes aloy-swipe-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes aloy-swipe-in-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+/*
+  mix-blend-mode: normal ist hier Pflicht, nicht optional: der Browser
+  blendet ::view-transition-old/new(root) standardmäßig mit
+  "plus-lighter" übereinander (gedacht für sauberes Über-Kreuz-Blenden bei
+  einem Crossfade). Bei einer Slide-Animation überlappen sich alte und
+  neue Seite aber während der Bewegung sichtbar, und plus-lighter addiert
+  dort die Farbwerte - sichtbar als heller/weißer Rand genau an der Naht
+  zwischen beiden Seiten. Ohne diesen Reset bleibt der Rand auch bei
+  perfekt sitzenden Keyframes bestehen.
+*/
+:root[data-page-transition='to-packliste']::view-transition-old(root),
+:root[data-page-transition='to-packliste']::view-transition-new(root),
+:root[data-page-transition='from-packliste']::view-transition-old(root),
+:root[data-page-transition='from-packliste']::view-transition-new(root),
+:root[data-page-transition='to-kontakt']::view-transition-old(root),
+:root[data-page-transition='to-kontakt']::view-transition-new(root),
+:root[data-page-transition='from-kontakt']::view-transition-old(root),
+:root[data-page-transition='from-kontakt']::view-transition-new(root) {
+  mix-blend-mode: normal;
+}
+
+:root[data-page-transition='to-packliste']::view-transition-old(root) {
+  animation: 420ms cubic-bezier(0.65, 0, 0.35, 1) both aloy-swipe-out-left;
+}
+
+:root[data-page-transition='to-packliste']::view-transition-new(root) {
+  animation: 420ms cubic-bezier(0.65, 0, 0.35, 1) both aloy-swipe-in-from-right;
+}
+
+:root[data-page-transition='from-packliste']::view-transition-old(root) {
+  animation: 420ms cubic-bezier(0.65, 0, 0.35, 1) both aloy-swipe-out-right;
+}
+
+:root[data-page-transition='from-packliste']::view-transition-new(root) {
+  animation: 420ms cubic-bezier(0.65, 0, 0.35, 1) both aloy-swipe-in-from-left;
+}
+
+/* Kontakt: exakt seitenverkehrt zu Packliste. */
+:root[data-page-transition='to-kontakt']::view-transition-old(root) {
+  animation: 420ms cubic-bezier(0.65, 0, 0.35, 1) both aloy-swipe-out-right;
+}
+
+:root[data-page-transition='to-kontakt']::view-transition-new(root) {
+  animation: 420ms cubic-bezier(0.65, 0, 0.35, 1) both aloy-swipe-in-from-left;
+}
+
+:root[data-page-transition='from-kontakt']::view-transition-old(root) {
+  animation: 420ms cubic-bezier(0.65, 0, 0.35, 1) both aloy-swipe-out-left;
+}
+
+:root[data-page-transition='from-kontakt']::view-transition-new(root) {
+  animation: 420ms cubic-bezier(0.65, 0, 0.35, 1) both aloy-swipe-in-from-right;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-page-transition='to-packliste']::view-transition-old(root),
+  :root[data-page-transition='to-packliste']::view-transition-new(root),
+  :root[data-page-transition='from-packliste']::view-transition-old(root),
+  :root[data-page-transition='from-packliste']::view-transition-new(root),
+  :root[data-page-transition='to-kontakt']::view-transition-old(root),
+  :root[data-page-transition='to-kontakt']::view-transition-new(root),
+  :root[data-page-transition='from-kontakt']::view-transition-old(root),
+  :root[data-page-transition='from-kontakt']::view-transition-new(root) {
+    animation: none;
   }
 }
 
@@ -320,7 +430,7 @@ section + section {
 }
 
 .surface {
-  background: rgba(253, 247, 236, 0.82);
+  background: rgba(253, 247, 236, 0.68);
   backdrop-filter: blur(2px);
   border: 1px solid rgba(177, 146, 104, 0.5);
   border-radius: var(--radius-md);
@@ -344,28 +454,59 @@ body.ot-modern .surface {
   max-width: 70% !important;
   margin-inline: auto;
 
-  
+  /* Feather-Edge braucht auf allen vier Seiten 48px Sicherheitsabstand
+     zum Inhalt (siehe mask-image unten) - die Basis-.surface-Regel gibt
+     nur 2rem (32px) Padding, das reicht oben/unten nicht mehr, seit auch
+     dort ausgeblendet wird. Text direkt an Überschrift/letztem Absatz
+     würde sonst in der Ausblend-Zone verwaschen wirken (gleiches Problem
+     wie vorher bei impressum.astro, siehe dortiger Kommentar). */
+  padding-block: 3rem;
+
   border: 0;
-  border-radius: 0;
+  /*
+    Abgerundete Kanten statt hartem Rechteck: die mask-image-Ausblendung
+    unten läuft an den ECKEN sonst als scharfes Kreuz zweier gerader
+    Verläufe zusammen (Schnittpunkt von horizontalem und vertikalem
+    Gradient) und wirkt dort kaum weich. Mit border-radius wird der
+    Panel-Inhalt (inkl. backdrop-filter: blur) selbst an runden Ecken
+    geclippt, wodurch der Blur-Übergang auch dort sichtbar weich bleibt.
+  */
+  border-radius: var(--radius-lg);
   box-shadow: none;
 
-  /* Feather-Edge: links/rechts blendet die Fläche weich aus, statt mit
-     einer harten Rechteckkante zu enden. mask-image schneidet dabei
-     Hintergrund UND Inhalt aus (nicht nur die Farbe), daher der
-     Sicherheitsabstand von 48px zum Innenpadding. */
-  -webkit-mask-image: linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+  /* Feather-Edge: läuft an allen vier Seiten weich in den Seiten-
+     hintergrund aus, statt mit einer harten Kante zu enden. Zwei
+     Gradienten (horizontal + vertikal) als separate mask-Layer,
+     mask-composite: intersect multipliziert ihre Alpha-Werte, dadurch
+     blendet die Fläche in JEDE Richtung aus - nicht nur an den Seiten.
+     mask-image schneidet dabei Hintergrund UND Inhalt aus (nicht nur die
+     Farbe), daher der Sicherheitsabstand von 48px zum Innenpadding. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%),
+    linear-gradient(to bottom, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%),
+    linear-gradient(to bottom, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+  mask-composite: intersect;
 }
 
 @media (max-width: 760px) {
   body.ot-modern .surface {
     width: 92% !important;
     max-width: 92% !important;
+    padding-block: 2rem;
   }
 
   body.ot-modern .surface {
-    -webkit-mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%),
+      linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0, black 24px, black calc(100% - 24px), transparent 100%),
+      linear-gradient(to bottom, transparent 0, black 24px, black calc(100% - 24px), transparent 100%);
+    mask-composite: intersect;
   }
 }
 

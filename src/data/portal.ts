@@ -16,11 +16,11 @@ export const portalNav: NavItem[] = [
     ],
   },
   { label: 'Aktuelles', href: '/ot/willkommen#aktuelles' },
-  { label: 'Packliste', href: '/ot/packliste' },
   { label: 'Freundesgruppen', href: '/ot/willkommen#partner' },
+  { label: 'Packliste', href: '/ot/packliste' },
   {
     label: 'Kontakt',
-    href: '/ot/willkommen#kontakt',
+    href: '/ot/kontakt',
     children: [{ label: 'Impressum & Datenschutz', href: '/ot/impressum' }],
   },
 ];

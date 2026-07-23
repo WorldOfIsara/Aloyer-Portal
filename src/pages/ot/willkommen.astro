@@ -8,7 +8,6 @@ import Gewandung from './gewandung.astro';
 import Regelwerk from './regelwerk.astro';
 import Aktuelles from './aktuelles.astro';
 import PartnerBlock from './partner-block.astro';
-import KontaktBlock from './kontakt-block.astro';
 import { getFotostreckeFiles } from '../../lib/fotostrecke';
 import {
   portalNav,
@@ -204,7 +203,6 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
   <Regelwerk />
   <Aktuelles />
   <PartnerBlock />
-  <KontaktBlock />
 
   <BackToTop />
 </BaseLayout>

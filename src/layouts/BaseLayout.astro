@@ -62,56 +62,73 @@ const isOtModern = bodyClass?.includes('ot-modern') ?? false;
     <ClientRouter />
     <script is:inline>
       (() => {
-        // Von /ot/packliste weg soll ein Klick auf einen Anker-Link (z. B.
-        // ein Nav-Punkt zu /ot/willkommen#...) nicht hart zum Abschnitt
-        // springen, sondern sanft dorthin scrollen - Astros ClientRouter
-        // scrollt beim Seitenwechsel selbst instant zum Hash-Ziel, ohne
-        // die CSS scroll-behavior:smooth zu respektieren. Deshalb: Hash
-        // vor der Navigation merken und aus der Ziel-URL entfernen (damit
-        // Astro nicht selbst hart hinspringt), nach dem Seitenwechsel
-        // (astro:page-load) dann selbst weich hinscrollen und den Hash
-        // per replaceState wieder in die Adressleiste schreiben. Nur auf
-        // der Packliste - überall sonst bleibt Anker-Scroll normal.
-        const PENDING_KEY = 'aloy-pending-scroll-anchor';
+        // Swipe-Übergang testweise für zwei eigenständige Seiten ohne
+        // Onepager-Struktur: /ot/packliste (schiebt Hauptseite nach links
+        // weg, kommt von rechts) und /ot/kontakt (exakt andersherum -
+        // schiebt Hauptseite nach rechts weg, kommt von links). Markiert
+        // wird das per data-Attribut auf <html>, bevor der ClientRouter
+        // die Transition startet - die eigentliche Animation steckt in
+        // global.css (::view-transition-old/new(root), gescoped auf genau
+        // diese Attributwerte, damit alle anderen Seitenwechsel unangetastet
+        // bleiben).
+        //
+        // Vorher gab es hier einen Mechanismus, der beim Verlassen der
+        // Packliste sanft zum Zielanker scrollte (weil Astro sonst hart
+        // hinspringt). Der ist jetzt bewusst raus: der Swipe-Effekt zeigt
+        // die Zielstelle direkt an der richtigen Position, ein zusätzliches
+        // Scrollen würde sich mit der Schiebe-Animation beißen. Gilt für
+        // beide Routen gleichermaßen.
+        const SWIPE_ROUTES = {
+          '/ot/packliste': { to: 'to-packliste', from: 'from-packliste' },
+          '/ot/kontakt': { to: 'to-kontakt', from: 'from-kontakt' },
+        };
 
-        document.addEventListener(
-          'click',
-          (event) => {
-            if (window.location.pathname !== '/ot/packliste') return;
-            if (!(event.target instanceof Element)) return;
+        document.addEventListener('astro:before-preparation', (event) => {
+          const fromPath = event.from?.pathname ?? window.location.pathname;
+          const toPath = event.to?.pathname ?? '';
+          const toRoute = SWIPE_ROUTES[toPath];
+          const fromRoute = SWIPE_ROUTES[fromPath];
 
-            const link = event.target.closest('a[href]');
-            if (!(link instanceof HTMLAnchorElement)) return;
+          if (toRoute && !fromRoute) {
+            document.documentElement.dataset.pageTransition = toRoute.to;
+          } else if (fromRoute && !toRoute) {
+            document.documentElement.dataset.pageTransition = fromRoute.from;
+          } else {
+            delete document.documentElement.dataset.pageTransition;
+          }
+        });
 
-            const url = new URL(link.href, window.location.href);
-            if (url.hash && url.pathname !== window.location.pathname) {
-              sessionStorage.setItem(PENDING_KEY, `${url.pathname}${url.hash}`);
-              url.hash = '';
-              link.href = url.toString();
-            }
-          },
-          true,
-        );
+        // Astros swapRootAttributes() übernimmt beim eigentlichen DOM-Swap
+        // die <html>-Attribute des NEUEN Dokuments (so behält z. B. lang=""
+        // seinen Wert) - unser oben gesetztes data-page-transition würde
+        // dabei verloren gehen, weil das frisch geladene Dokument es noch
+        // nicht kennt. Deshalb hier vor dem Swap auf das neue Dokument
+        // spiegeln, damit es den Swap übersteht und für die
+        // ::view-transition-new(root)-Regel in global.css verfügbar bleibt.
+        document.addEventListener('astro:before-swap', (event) => {
+          const value = document.documentElement.dataset.pageTransition;
+          if (value && event.newDocument) {
+            event.newDocument.documentElement.dataset.pageTransition = value;
+          }
 
-        function resolvePendingScroll() {
-          const pending = sessionStorage.getItem(PENDING_KEY);
-          if (!pending) return;
-          sessionStorage.removeItem(PENDING_KEY);
+          // Zurück zum Onepager-Anker (von Packliste ODER Kontakt): Astro
+          // springt beim Swap selbst zum Hash-Ziel, respektiert dabei aber
+          // die globale CSS-Regel "scroll-behavior: smooth" (html in
+          // global.css) - dadurch war trotz entferntem Extra-Skript
+          // weiterhin ein sichtbares Hochscrollen zu sehen, das sich mit
+          // dem Swipe überschneidet. Für dieses eine Dokument kurzzeitig
+          // auf "auto" (instant) umschalten, direkt auf dem NEUEN Dokument
+          // gesetzt, weil der Hash-Sprung während/kurz nach dem Swap
+          // passiert - danach in astro:page-load wieder zurücksetzen,
+          // damit normale Anker-Klicks anderswo weiter sanft scrollen.
+          if ((value === 'from-packliste' || value === 'from-kontakt') && event.newDocument) {
+            event.newDocument.documentElement.style.scrollBehavior = 'auto';
+          }
+        });
 
-          const hashIndex = pending.indexOf('#');
-          if (hashIndex === -1) return;
-          const pathname = pending.slice(0, hashIndex);
-          const hash = pending.slice(hashIndex);
-          if (pathname !== window.location.pathname) return;
-
-          const target = document.getElementById(hash.slice(1));
-          if (!target) return;
-
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          history.replaceState(history.state, '', pathname + hash);
-        }
-
-        document.addEventListener('astro:page-load', resolvePendingScroll);
+        document.addEventListener('astro:page-load', () => {
+          document.documentElement.style.scrollBehavior = '';
+        });
       })();
     </script>
   </head>
