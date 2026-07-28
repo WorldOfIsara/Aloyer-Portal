@@ -27,17 +27,17 @@ export const partnerGroups: PartnerGroup[] = [
   },
   {
     slug: 'kronmark',
-    name: 'Fürstentums Kronmark',
+    name: 'Fürstentum Kronmark',
     description:
       'Im Jahr 124 hat sich die Kronmark selbst zum Fürstentum Kronmark ausgerufen. Aufgrund der noch etwas unklaren Lage im Land sind bisher wenige Neuigkeiten und Informationen nach außen gedrungen.',
-    url: 'https://koenigreich-komarn-1.jimdosite.com/',
+    url: 'https://www.kronmark.de',
     logoSrc: '/images/ot/partner/kronmark.png',
   },
   {
     slug: 'boffeld',
-    name: 'Fürstentums Boffeld',
+    name: 'Fürstentum Boffeld',
     description:
-      'Fürstentum Boffeld, ehemals Neu-Boffeld. ',
+      'Neu-Boffeld ist die Kolonie des Königreich Boffelds. Eine Insel in den Splitterlanden von ungefähr 100 Boffelder Morgen Land. Auf selbiger befindet sich eine Festungsstadt Neu-Boffeld - Stadt samt der Trutzburg „Karlsburg“ und mehrere Fischer- und Bauerndörfer. Der Summglaube ist Staatsreligion, keine andere Religion wird parallel geduldet.',
     url: 'https://www.facebook.com/Neuboffeld/?locale=de_DE',
     logoSrc: '/images/ot/partner/boffeld.png',
   },
@@ -53,12 +53,13 @@ export const friendGroups: PartnerGroup[] = [
     description:
       'Das stolze Volk der Komarner hat dank der Vereinigung sich stark verändert und ist verschmolzen, zu dem was es heute darstellt.',
     url: 'https://koenigreich-komarn-1.jimdosite.com/',
+    logoSrc: '/images/ot/partner/komarn.png',
   },
   {
     slug: 'arcogne',
     name: 'Die Arcogne',
     description:
-      'Die Arcogne',
+      'Willkommen in der Inselgruppe Arcogne, einem Hort von Schönheit, Mut und Innovation. Seit mehreren Jahrhunderten existieren hier drei Länder in Frieden und Zwist.',
     url: 'https://www.facebook.com/people/Die-Arcogne/100064555397896/',
     logoSrc: '/images/ot/partner/argogne.png',
   },

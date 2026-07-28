@@ -2,6 +2,7 @@ import type { NavItem } from './site';
 
 export const portalNav: NavItem[] = [
   { label: 'Willkommen', href: '/ot/willkommen' },
+  { label: 'Aktuelles', href: '/ot/willkommen#aktuelles' },
   {
     label: 'Wer wir sind',
     href: '/ot/willkommen#wer-wir-sind',
@@ -15,7 +16,6 @@ export const portalNav: NavItem[] = [
       { label: 'Regelwerk', href: '/ot/willkommen#regelwerk' },
     ],
   },
-  { label: 'Aktuelles', href: '/ot/willkommen#aktuelles' },
   { label: 'Freundesgruppen', href: '/ot/willkommen#partner' },
   { label: 'Packliste', href: '/ot/packliste' },
   {

@@ -29,7 +29,7 @@ const formatRange = (event: AloyEvent) =>
     : formatDate(event.dateStart);
 ---
 
-<div class="upcoming-events">
+<div class="upcoming-events surface">
   {
     nextEvent && (
       <section class="event-highlight" aria-label="Nächste Veranstaltung">
@@ -315,6 +315,46 @@ const formatRange = (event: AloyEvent) =>
     font-family: var(--font-ui);
     font-weight: 700;
     color: var(--ink-2);
+  }
+
+  body.portal-welcome .upcoming-events {
+    color: rgba(244, 233, 215, 0.94);
+  }
+
+  body.portal-welcome .event-highlight {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+  }
+
+  body.portal-welcome .event-highlight__meta,
+  body.portal-welcome .event-highlight__desc,
+  body.portal-welcome .event-card__location,
+  body.portal-welcome .event-card__desc,
+  body.portal-welcome .event-empty,
+  body.portal-welcome .event-past summary {
+    color: inherit;
+  }
+
+  body.portal-welcome .event-list h3 {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+  }
+
+  body.portal-welcome .event-card {
+    border-color: rgba(244, 233, 215, 0.16);
+    background: rgba(12, 8, 6, 0.32);
+    box-shadow: none;
+    color: inherit;
+  }
+
+  body.portal-welcome .event-empty {
+    border-color: rgba(244, 233, 215, 0.24);
   }
 
   @media (max-width: 480px) {

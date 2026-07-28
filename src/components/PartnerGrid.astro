@@ -158,6 +158,21 @@ const { groups } = Astro.props;
     color: var(--ink-1);
   }
 
+  body.portal-welcome .partner-row {
+    border-color: rgba(244, 233, 215, 0.16);
+    background: rgba(12, 8, 6, 0.32);
+    box-shadow: none;
+    color: rgba(244, 233, 215, 0.94);
+  }
+
+  body.portal-welcome .partner-row__name a {
+    color: rgba(230, 155, 107, 0.96);
+  }
+
+  body.portal-welcome .partner-row__desc {
+    color: inherit;
+  }
+
   @container (max-width: 640px) {
     .partner-row,
     .partner-row--reverse {
