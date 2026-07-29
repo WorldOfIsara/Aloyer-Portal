@@ -134,9 +134,6 @@ const useAutomaticDropCap =
     if (page.dataset.dropCapInitialized === 'true') return;
     page.dataset.dropCapInitialized = 'true';
 
-    // Zitat- und Urkundenblöcke verwalten ihre Schmuckinitiale selbst.
-    if (page.querySelector('.it-verse--dropcap')) return;
-
     const paragraph = Array.from(page.querySelectorAll<HTMLParagraphElement>('p')).find((candidate) => {
       if (
         candidate.closest('nav, aside, figure, header, footer') ||
