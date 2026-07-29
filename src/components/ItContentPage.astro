@@ -130,7 +130,7 @@ const useAutomaticDropCap =
 <script>
   const MINIMUM_DROP_CAP_WORDS = 18;
 
-  document.querySelectorAll<HTMLElement>('[data-it-auto-drop-cap="true"]').forEach((page) => {
+  function initializeDropCap(page: HTMLElement) {
     if (page.dataset.dropCapInitialized === 'true') return;
     page.dataset.dropCapInitialized = 'true';
 
@@ -149,7 +149,16 @@ const useAutomaticDropCap =
     });
 
     paragraph?.classList.add('it-auto-drop-cap');
-  });
+  }
+
+  function initializeAllDropCaps() {
+    document
+      .querySelectorAll<HTMLElement>('[data-it-auto-drop-cap="true"]')
+      .forEach(initializeDropCap);
+  }
+
+  initializeAllDropCaps();
+  document.addEventListener('astro:page-load', initializeAllDropCaps);
 </script>
 
 <style>
