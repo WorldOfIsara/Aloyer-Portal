@@ -63,7 +63,7 @@ Diese Liste dokumentiert die derzeit eingebundenen Bilder. Noch offene Angaben s
 
 | Website-Seite | Originaldatei | Website-Datei | Originaltitel | Urheber | Jahr | Institution | Original-URL | Lizenz | Download |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `/it/glaube/limba-weisse` | `Limbar.png` | `limbar-der-weisse.webp` | offen | offen | offen | offen | offen | offen | offen |
+| `/it/glaube/limbar-weisse` | `Limbar.png` | `limbar-der-weisse.webp` | offen | offen | offen | offen | offen | offen | offen |
 | `/it/glaube/miram-graue` | `Miram.png` | `miram-die-graue.webp` | offen | offen | offen | offen | offen | offen | offen |
 | `/it/glaube/hortum-schwarze` | `Hortum.png` | `hortum-der-schwarze.webp` | offen | offen | offen | offen | offen | offen | offen |
 

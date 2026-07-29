@@ -178,7 +178,7 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
-.god-segment[data-god='limba'] {
+.god-segment[data-god='limbar'] {
   --segment: polygon(50% 50%, 6.7% 25%, 25% 6.7%, 50% 0%, 75% 6.7%, 93.3% 25%);
   --hover-left: 50%;
   --hover-top: 27%;
@@ -294,7 +294,7 @@
   transform: scale(1) rotate(0deg);
 }
 
-.drey-center-seal[data-active-god='limba'] {
+.drey-center-seal[data-active-god='limbar'] {
   box-shadow:
     0 0 0 3px rgba(255, 252, 238, 0.98),
     0 0 0 6px rgba(225, 218, 198, 0.95),

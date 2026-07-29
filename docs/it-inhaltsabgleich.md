@@ -31,7 +31,7 @@ Stand: 15. Juli 2026
 
 ## Bewusst erhaltene Varianten
 
-- Limbar / Limba
+- Limbar
 - Ernst zu Haft / Ernst von Haft
 - Waidfuath
 

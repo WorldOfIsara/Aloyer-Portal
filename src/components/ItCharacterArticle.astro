@@ -16,6 +16,8 @@ interface Props {
 
   imageSrc?: string;
   imageAlt?: string;
+  imagePosition?: string;
+  imageOffsetY?: string;
 
   rank?: string;
   deploymentArea?: string;
@@ -48,6 +50,8 @@ const {
   name,
   imageSrc,
   imageAlt,
+  imagePosition = 'left top',
+  imageOffsetY = '0px',
 
   rank,
   deploymentArea,
@@ -103,7 +107,10 @@ const dossierFacts: CharacterFact[] = [
 
 <article class="character-sheet">
   <section class="character-sheet__top" aria-label={`Charakterbogen zu ${name}`}>
-    <figure class="character-sheet__image">
+    <figure
+      class="character-sheet__image"
+      style={`--character-image-position: ${imagePosition}; --character-image-offset-y: ${imageOffsetY};`}
+    >
       {
         imageSrc ? (
           <img
@@ -273,7 +280,8 @@ const dossierFacts: CharacterFact[] = [
      nach oben und rechts über das Info-Div hinaus). */
   margin: -3% 0 0 0.4rem;
   object-fit: contain;
-  object-position: left top;
+  object-position: var(--character-image-position, left top);
+  transform: translateY(var(--character-image-offset-y, 0px));
   border-radius: 0;
   border: 0;
   box-shadow: none;

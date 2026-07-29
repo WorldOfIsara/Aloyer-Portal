@@ -75,7 +75,7 @@ export const loreRecords: LoreRecord[] = [
   {
     slug: 'umseck',
     title: 'Umseck - Ordnung und Ausbildung',
-    summary: 'Knotenpunkt für Ausbildung von Waechtern und Ordenskriegern.',
+    summary: 'Knotenpunkt für Ausbildung von Wächtern und Ordenskriegern.',
     contentType: 'City',
     updatedAt: '2026-04-23',
     tags: ['Stadt', 'Militaer', 'Ausbildung'],
@@ -140,7 +140,7 @@ export const loreRecords: LoreRecord[] = [
   },
   {
     slug: 'gwalt',
-    title: 'GWALT - Waechter Aloys',
+    title: 'GWALT - Wächter Aloys',
     summary: 'Gilde für Land- und Truppenschutz mit hohem Spielwert.',
     contentType: 'Faction',
     updatedAt: '2026-04-23',
@@ -173,7 +173,7 @@ export const loreRecords: LoreRecord[] = [
   },
   {
     slug: 'goetterwelt',
-    title: 'Aloyer Goetterwelt',
+    title: 'Aloyer Götterwelt',
     summary: 'Kompakter Einstieg in zentrale Gottheiten und ihre Spielwirkung.',
     contentType: 'LoreArticle',
     updatedAt: '2026-04-23',
@@ -228,7 +228,7 @@ export const loreRecords: LoreRecord[] = [
   {
     slug: 'hortum',
     title: 'Hortum - Der Schwarze',
-    summary: 'Herr der Unterwelt und Waechter der letzten Ordnung.',
+    summary: 'Herr der Unterwelt und Wächter der letzten Ordnung.',
     contentType: 'Deity',
     updatedAt: '2026-04-23',
     tags: ['Gottheit', 'Unterwelt', 'Tod'],
@@ -248,7 +248,7 @@ export const loreRecords: LoreRecord[] = [
   },
   {
     slug: 'favilla',
-    title: 'Favilla - Die Totengraeberin',
+    title: 'Favilla - Die Totengräberin',
     summary: 'Rituelle Begleiterin für Abschied und Würde der Gefallenen.',
     contentType: 'Deity',
     updatedAt: '2026-04-23',
@@ -296,7 +296,7 @@ export const chronikRecords: EventRecord[] = [
   {
     slug: 'chronik-akademiebericht-2023-08',
     title: 'Akademiebericht und Lehrlage (August 2023)',
-    summary: 'Lehrkoerper, Schuelerstand und Prioritaeten der Ausbildung.',
+    summary: 'Lehrkörper, Schülerstand und Prioritäten der Ausbildung.',
     contentType: 'EventLog',
     date: '2023-08-12',
     location: 'Grodaus / Akademie',
@@ -319,7 +319,7 @@ export const chronikRecords: EventRecord[] = [
   {
     slug: 'chronik-erntekonvoi-2024-09',
     title: 'Erntekonvoi und Nachtwache (September 2024)',
-    summary: 'Konvoiabsicherung, Zwischenfaelle und lokale Reaktion.',
+    summary: 'Konvoiabsicherung, Zwischenfälle und lokale Reaktion.',
     contentType: 'EventLog',
     date: '2024-09-17',
     location: 'Vorland zwischen Doerfern',
@@ -393,7 +393,7 @@ export const downloadRecords: DownloadRecord[] = [
   {
     slug: 'nsc-gsc-leitfaden',
     title: 'NSC/GSC Leitfaden',
-    summary: 'Leitfaden für Nebenrollen, Spielauftraege und Plausibilitaet.',
+    summary: 'Leitfaden für Nebenrollen, Spielaufträge und Plausibilität.',
     contentType: 'DownloadAsset',
     fileType: 'PDF',
     fileSize: '1.8 MB',
@@ -471,7 +471,7 @@ export const topLevelPages = [
   {
     slug: 'welt-lore',
     title: 'Welt & Lore',
-    summary: 'Staedte, Fraktionen und Glauben kompakt erklaert.',
+    summary: 'Städte, Fraktionen und Glauben kompakt erklärt.',
     href: '/welt-lore',
   },
   {

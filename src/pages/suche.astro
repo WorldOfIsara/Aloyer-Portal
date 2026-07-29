@@ -1,12 +1,12 @@
 ﻿---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
-import { searchIndex } from '../data/content';
+import { officialSearchIndex } from '../data/search';
 
-const serialized = JSON.stringify(searchIndex);
+const serialized = JSON.stringify(officialSearchIndex);
 ---
 
-<BaseLayout title="Suche" description="Suche über Portal, Lore, Chronik und Downloads.">
+<BaseLayout title="Suche" description="Suche im Aloyer IT- und OT-Bereich.">
   <Breadcrumbs items={[{ label: 'Start', href: '/' }, { label: 'Suche', href: '/suche' }]} />
 
   <section class="surface">
@@ -24,15 +24,24 @@ const serialized = JSON.stringify(searchIndex);
   const resultList = document.getElementById('resultList');
   const resultCount = document.getElementById('resultCount');
 
+  const normalize = (value) =>
+    value
+      .toLocaleLowerCase('de')
+      .replace(/ä/g, 'ae')
+      .replace(/ö/g, 'oe')
+      .replace(/ü/g, 'ue')
+      .replace(/ß/g, 'ss')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
   const render = (query) => {
-    const normalized = query.trim().toLowerCase();
+    const normalized = normalize(query.trim());
     const matches = !normalized
       ? items
       : items.filter((entry) => {
           return (
-            entry.title.toLowerCase().includes(normalized) ||
-            entry.summary.toLowerCase().includes(normalized) ||
-            entry.group.toLowerCase().includes(normalized)
+            normalize(entry.title).includes(normalized) ||
+            normalize(entry.keywords.join(' ')).includes(normalized)
           );
         });
 
@@ -41,7 +50,7 @@ const serialized = JSON.stringify(searchIndex);
       const li = document.createElement('li');
       const link = document.createElement('a');
       link.href = entry.href;
-      link.textContent = `${entry.title} (${entry.group})`;
+      link.textContent = entry.title;
       li.appendChild(link);
       const p = document.createElement('p');
       p.textContent = entry.summary;

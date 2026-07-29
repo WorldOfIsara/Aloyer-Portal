@@ -7,16 +7,32 @@ Gruppendokumenten, Discord-Inhalten und Bildsammlungen aufgebaut.
 
 ## Aktueller Stand
 
-- Astro-Website mit rund 120 statisch erzeugten Seiten
+- Astro-Website mit 128 statisch erzeugten Seiten
 - separate Navigation und Gestaltung für IT und OT
 - responsive Header, ausklappbare IT-Untermenüs und fixierter Footer
 - Landingpage mit Einstieg in das Portal
 - OT-Fotostrecke mit automatischem und manuellem Bildwechsel
 - umfangreicher IT-Bereich mit Chroniken zu Land, Rat, Söldnern, Akademie,
   Glauben, Volk, Recht und Umland
+- Akademie-Glossar mit mehr als 80 Begriffen und Verknüpfung zur Portalsuche
+- Suche über offizielle Seiten, Seitentitel und Glossarbegriffe
 - historische Illustrationen mit Bildunterschriften und Bildnachweisen
 - Sitemap, Canonical URLs, Metadaten und Weiterleitungen für alte Pfade
 - vorbereitetes Directus-Modell für eine spätere CMS-Anbindung
+
+## Letzte Änderungen
+
+Stand: 29. Juli 2026
+
+- Portalsuche nach Seitenwechseln stabilisiert und auf offizielle Seiten sowie
+  Glossarbegriffe begrenzt
+- neues, filterbares Glossar der Aloyer Akademie ergänzt und inworld formuliert
+- Gottesname projektweit von `Limba` auf `Limbar` vereinheitlicht
+- „Gebet an die Drei“ zentriert und handschriftlich gestaltet
+- doppelte Umland-Seite „Berichte von Heerlagern“ zugunsten von `/it/berichte`
+  entfernt
+- Tobalts Charakterbild am unteren Kartenrand ausgerichtet und den Ortsnamen
+  Waidfuath berichtigt
 
 ## Bereiche
 

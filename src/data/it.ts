@@ -82,6 +82,7 @@ export const itNav: NavItem[] = [
       { label: 'Die rote Akademie zu Ohm', href: '/it/akademie/rote-akademie-ohm' },
       { label: 'Ausbildung der Soldaten', href: '/it/akademie/ausbildung-soldaten' },
       { label: 'Gelehrte, Schreiber und Meister', href: '/it/akademie/gelehrte-schreiber-meister' },
+      { label: 'Glossar der Akademie', href: '/it/akademie/glossar' },
     ],
   },
   {
@@ -134,7 +135,6 @@ export const itNav: NavItem[] = [
       { label: 'Bekannte Nachbarn', href: '/it/umland/nachbarn' },
       { label: 'Diplomatische Kontakte', href: '/it/umland/diplomatische-kontakte' },
       { label: 'Handel und Söldnerverträge', href: '/it/umland/handel-soeldnervertraege' },
-      { label: 'Berichte von Heerlagern', href: '/it/umland/berichte-heerlager' },
       {
         label: 'Freunde, Verbündete und schwierige Leute',
         href: '/it/umland/freunde-verbuendete-schwierige-leute',

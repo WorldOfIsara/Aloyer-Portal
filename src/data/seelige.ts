@@ -15,7 +15,7 @@ import type { SeeligeBeadItem } from '@components/SeeligeBeadSlider.astro';
   - epithet: kurzer Beiname/Titel, erscheint kursiv direkt unter dem Namen
              (optional).
   - sphere:  welchem der drei Hauptgötter (Drey) der/die Seelige
-             zugeordnet ist: 'Limba' | 'Miram' | 'Hortum'. Wird als Text
+             zugeordnet ist: 'Limbar' | 'Miram' | 'Hortum'. Wird als Text
              angezeigt UND sorgt automatisch dafür, dass im Inhaltsbereich
              (nicht auf der Perle) das Siegel des jeweiligen Hauptgottes
              mit eingeblendet wird (Zuordnung passiert in
@@ -30,7 +30,7 @@ import type { SeeligeBeadItem } from '@components/SeeligeBeadSlider.astro';
 */
 /*
   Reihenfolge der Einträge (= Reihenfolge der Perlen in der Kette):
-  zuerst alle Kinder Limbas, dann alle Kinder Mirams, dann alle Kinder
+  zuerst alle Kinder Limbars, dann alle Kinder Mirams, dann alle Kinder
   Hortums; Seelige mit zwei Elternteilen stehen am Ende der Liste.
 */
 export const seelige: SeeligeBeadItem[] = [
@@ -38,7 +38,7 @@ export const seelige: SeeligeBeadItem[] = [
     id: 'rogon',
     name: 'Rogon',
     epithet: 'der Handwerker und Bauer',
-    sphere: 'Limba',
+    sphere: 'Limbar',
     text: 'Rogon, ein Kind Limbars, ist der Heilige des Handwerks, der Kunst und des praktischen Fortschritts. Er lehrte die Menschen, aus einfachen Elementen neue Dinge zu schaffen, Felder zu bestellen und Häuser zu bauen, und steht in enger Verbindung zum Zunftwesen. Seine sterblichen Kinder sollen den Menschen einzelne Fähigkeiten gelehrt haben; ihre Seelen kehren nach dem Tod in neue Körper zurück, wodurch über Generationen hinweg herausragende Handwerker entstehen. Diese Vorstellung erklärt religiös Meisterschaft im Handwerk, Berufstraditionen, Zunftheilige und den hohen Stellenwert praktischer Bildung in Aloy. Rogon ist besonders wichtig für Bauern, Handwerker, Zünfte, Baumeister, Künstler sowie Lehrlinge, Gesellen und Meister.',
   },
 
@@ -46,7 +46,7 @@ export const seelige: SeeligeBeadItem[] = [
     id: 'pelaga',
     name: 'Pelaga',
     epithet: 'die Stürmische',
-    sphere: 'Limba',
+    sphere: 'Limbar',
     text: 'Pelaga, eine Tochter Limbars, bestimmt den Lauf des Wetters, besänftigt Meere und Gezeiten und sichert durch den Wasserkreislauf das Überleben von Pflanzen, Tieren und Menschen. Sie ist launenhaft wie das Wasser: friedlich wie ein Bach, aufbrausend wie Stromschnellen, gefährlich wie die tobende See. Fischer, Seefahrer, die Bewohner von Hafenstädten wie Tiafunt sowie Bauern, die auf Regen und fruchtbare Böden angewiesen sind, rufen sie ebenso an wie Reisende über Wasser. Ihr Zorn äußert sich in Regen, Dürre, Gewittern, Wolkenmassen, Blitz und Donner.',
   },
 
@@ -54,7 +54,7 @@ export const seelige: SeeligeBeadItem[] = [
     id: 'oblectatia',
     name: 'Oblectatia',
     epithet: 'die Sinnliche',
-    sphere: 'Limba',
+    sphere: 'Limbar',
     text: 'Oblectatia ist die Heilige der Liebe, Lust, Fruchtbarkeit und Ekstase – Tochter Limbars und einer Sterblichen, also ein Kind göttlicher Schöpferkraft und sterblicher Schönheit. Sie wird bei Festen, Feiern und Kinderwunsch angerufen, und manche Alchemisten arbeiten in ihrem Dienst oder berufen sich auf sie, insbesondere bei Mitteln, deren Wirkung auf Liebe, Fruchtbarkeit oder Sinnlichkeit abzielt. Sie ist bedeutsam für Fruchtbarkeit, Liebesbeziehungen, Hochzeiten und Feste, körperliche Freude und die ausgelassene aloyer Feierkultur.',
   },
 
@@ -62,7 +62,7 @@ export const seelige: SeeligeBeadItem[] = [
     id: 'barsinger',
     name: 'Barsinger',
     epithet: 'der Spielmann',
-    sphere: 'Limba',
+    sphere: 'Limbar',
     text: 'Barsinger, ein Sohn Limbars, ist ein geselliger Heiliger, der die Welt mit Musik, Spielen und Trinkgenüssen beschenkt. Musiker, Spielmänner, Gaukler, Abenteurer und das fahrende Volk legen ihr Glück in seine Hände; man erkennt ihn an seinem heiteren Gemüt und einer Flöte, mit der er Herzen zum Singen bringt. Er ist wichtig für Tavernen, Gelage, Musik, Würfelspiel, Schausteller, Abenteurer und Söldner auf Wanderschaft und prägt stark die aloyer Fest- und Tavernenkultur – der Ausruf „Barsinger!“ gilt als allgemeiner aloyer Trinkspruch. Der Legende nach hat Barsinger selbst die aloyer Freiheitserklärung unterschrieben, weshalb es als gute Sitte gilt, in Wirtshäusern auf sie zu trinken.',
   },
 

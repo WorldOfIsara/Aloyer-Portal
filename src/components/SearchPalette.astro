@@ -1,45 +1,10 @@
 ---
-import { searchIndex } from '../data/content';
-import { itNav } from '../data/it';
-import { portalNav } from '../data/portal';
-import type { NavItem } from '../data/site';
+import { officialSearchIndex } from '../data/search';
 
-interface SearchEntry {
-  href: string;
-  title: string;
-  summary: string;
-  group: string;
-}
-
-const flattenNav = (items: NavItem[], group: string): SearchEntry[] => {
-  const out: SearchEntry[] = [];
-  for (const item of items) {
-    out.push({ href: item.href, title: item.label, summary: '', group });
-    for (const child of item.children ?? []) {
-      out.push({ href: child.href, title: child.label, summary: item.label, group });
-    }
-  }
-  return out;
-};
-
-// Kombinierter Index: bestehende Portal/Lore/Chronik/Downloads + IT-Wiki + OT-Bereich
-const combined: SearchEntry[] = [
-  ...(searchIndex as SearchEntry[]),
-  ...flattenNav(itNav, 'IT-Wiki'),
-  ...flattenNav(portalNav, 'OT-Bereich'),
-];
-
-// Dubletten nach href entfernen (erster Treffer gewinnt)
-const seen = new Set<string>();
-const entries = combined.filter((entry) => {
-  const key = entry.href.replace(/\/$/, '');
-  if (seen.has(key)) return false;
-  seen.add(key);
-  return true;
-});
-
-const serialized = JSON.stringify(entries);
+const serialized = JSON.stringify(officialSearchIndex);
 ---
+
+<script type="application/json" data-search-index set:html={serialized}></script>
 
 <div class="search-overlay" data-search-overlay hidden>
   <div class="search-backdrop" data-search-close></div>
@@ -64,52 +29,62 @@ const serialized = JSON.stringify(entries);
   </div>
 </div>
 
-<script is:inline define:vars={{ serialized }}>
-  (() => {
-    const entries = JSON.parse(serialized);
-    const overlay = document.querySelector('[data-search-overlay]');
-    const input = document.querySelector('[data-search-input]');
-    const results = document.querySelector('[data-search-results]');
-    const empty = document.querySelector('[data-search-empty]');
-    if (!overlay || !input || !results || !empty) return;
+<script>
+  interface SearchEntry {
+    href: string;
+    title: string;
+    summary: string;
+    group: string;
+    keywords: string[];
+  }
 
+  function initializeSearchPalette() {
+    const index = document.querySelector<HTMLScriptElement>('[data-search-index]');
+    const overlay = document.querySelector<HTMLElement>('[data-search-overlay]');
+    const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+    const results = document.querySelector<HTMLElement>('[data-search-results]');
+    const empty = document.querySelector<HTMLElement>('[data-search-empty]');
+    if (!index || !overlay || !input || !results || !empty) return;
+    if (overlay.dataset.searchPaletteInitialized === 'true') return;
+    overlay.dataset.searchPaletteInitialized = 'true';
+
+    const entries = JSON.parse(index.textContent ?? '[]') as SearchEntry[];
+    const controller = new AbortController();
+    const listenerOptions = { signal: controller.signal };
     let activeIndex = -1;
-    let current = [];
-    let lastFocus = null;
+    let current: SearchEntry[] = [];
+    let lastFocus: HTMLElement | null = null;
 
-    const normalize = (value) =>
+    const normalize = (value: string) =>
       value
-        .toLowerCase()
-        .replace(/ä/g, 'a')
-        .replace(/ö/g, 'o')
-        .replace(/ü/g, 'u')
+        .toLocaleLowerCase('de')
+        .replace(/ä/g, 'ae')
+        .replace(/ö/g, 'oe')
+        .replace(/ü/g, 'ue')
         .replace(/ß/g, 'ss')
-        .replace(/[áàâ]/g, 'a')
-        .replace(/[éèê]/g, 'e')
-        .replace(/[íìî]/g, 'i')
-        .replace(/[óòô]/g, 'o')
-        .replace(/[úùû]/g, 'u');
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
 
-    const render = (query) => {
+    const render = (query: string) => {
       const q = normalize(query.trim());
       current = !q
         ? entries.slice(0, 40)
         : entries
-            .filter((e) => {
-              const hay = normalize(`${e.title} ${e.summary} ${e.group}`);
-              return hay.includes(q);
+            .filter((entry) => {
+              const haystack = normalize(`${entry.title} ${entry.keywords.join(' ')}`);
+              return haystack.includes(q);
             })
             .slice(0, 40);
 
       results.innerHTML = '';
       activeIndex = current.length ? 0 : -1;
 
-      current.forEach((entry, index) => {
-        const li = document.createElement('li');
-        li.className = 'search-result';
-        li.setAttribute('role', 'option');
-        li.dataset.index = String(index);
-        li.setAttribute('aria-selected', index === activeIndex ? 'true' : 'false');
+      current.forEach((entry, entryIndex) => {
+        const item = document.createElement('li');
+        item.className = 'search-result';
+        item.setAttribute('role', 'option');
+        item.dataset.index = String(entryIndex);
+        item.setAttribute('aria-selected', entryIndex === activeIndex ? 'true' : 'false');
 
         const link = document.createElement('a');
         link.href = entry.href;
@@ -119,63 +94,58 @@ const serialized = JSON.stringify(entries);
         title.className = 'search-result__title';
         title.textContent = entry.title;
 
-        const group = document.createElement('span');
-        group.className = 'search-result__group';
-        group.textContent = entry.group;
-
         link.appendChild(title);
-        link.appendChild(group);
-        li.appendChild(link);
-        li.addEventListener('mousemove', () => setActive(index));
-        results.appendChild(li);
+        item.appendChild(link);
+        item.addEventListener('mousemove', () => setActive(entryIndex), listenerOptions);
+        results.appendChild(item);
       });
 
       empty.hidden = current.length > 0;
     };
 
-    const setActive = (index) => {
+    const setActive = (index: number) => {
       activeIndex = index;
       const nodes = results.querySelectorAll('.search-result');
-      nodes.forEach((node, i) => {
-        node.setAttribute('aria-selected', i === index ? 'true' : 'false');
-        if (i === index) node.scrollIntoView({ block: 'nearest' });
+      nodes.forEach((node, nodeIndex) => {
+        node.setAttribute('aria-selected', nodeIndex === index ? 'true' : 'false');
+        if (nodeIndex === index) node.scrollIntoView({ block: 'nearest' });
       });
     };
 
-    const go = (index) => {
+    const go = (index: number) => {
       const entry = current[index];
       if (entry) window.location.href = entry.href;
     };
 
     const open = () => {
       if (!overlay.hidden) return;
-      lastFocus = document.activeElement;
+      lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       overlay.hidden = false;
       document.body.classList.add('search-open');
       input.value = '';
       render('');
-      requestAnimationFrame(() => input.focus());
+      window.requestAnimationFrame(() => input.focus());
     };
 
     const close = () => {
       if (overlay.hidden) return;
       overlay.hidden = true;
       document.body.classList.remove('search-open');
-      if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+      lastFocus?.focus();
     };
 
     document.querySelectorAll('[data-search-trigger]').forEach((trigger) => {
       trigger.addEventListener('click', (event) => {
         event.preventDefault();
         open();
-      });
+      }, listenerOptions);
     });
 
-    document.querySelectorAll('[data-search-close]').forEach((el) => {
-      el.addEventListener('click', close);
+    document.querySelectorAll('[data-search-close]').forEach((element) => {
+      element.addEventListener('click', close, listenerOptions);
     });
 
-    input.addEventListener('input', (event) => render(event.target.value));
+    input.addEventListener('input', () => render(input.value), listenerOptions);
 
     input.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowDown') {
@@ -188,7 +158,7 @@ const serialized = JSON.stringify(entries);
         event.preventDefault();
         if (activeIndex >= 0) go(activeIndex);
       }
-    });
+    }, listenerOptions);
 
     document.addEventListener('keydown', (event) => {
       const key = event.key.toLowerCase();
@@ -198,12 +168,24 @@ const serialized = JSON.stringify(entries);
       } else if (event.key === 'Escape' && !overlay.hidden) {
         event.preventDefault();
         close();
-      } else if (key === '/' && overlay.hidden && !/^(input|textarea|select)$/i.test(document.activeElement?.tagName ?? '')) {
+      } else if (
+        key === '/' &&
+        overlay.hidden &&
+        !/^(input|textarea|select)$/i.test(document.activeElement?.tagName ?? '')
+      ) {
         event.preventDefault();
         open();
       }
+    }, listenerOptions);
+
+    document.addEventListener('astro:before-swap', () => controller.abort(), {
+      once: true,
+      signal: controller.signal,
     });
-  })();
+  }
+
+  initializeSearchPalette();
+  document.addEventListener('astro:page-load', initializeSearchPalette);
 </script>
 
 <style>
@@ -298,18 +280,6 @@ const serialized = JSON.stringify(entries);
     font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
     font-weight: 600;
     line-height: 1.3;
-  }
-
-  .search-result__group {
-    flex: 0 0 auto;
-    font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: rgba(230, 155, 107, 0.9);
-    background: rgba(159, 72, 39, 0.16);
-    border-radius: 999px;
-    padding: 0.12rem 0.55rem;
   }
 
   .search-result[aria-selected='true'] .search-result__link {

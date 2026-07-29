@@ -1,0 +1,303 @@
+---
+import ItContentPage from '../../../components/ItContentPage.astro';
+import { sortedGlossaryEntries } from '../../../data/glossary';
+
+const initialLetter = (term: string) => {
+  const first = term.charAt(0).toLocaleUpperCase('de');
+  return /[A-ZÄÖÜ]/.test(first) ? first : '#';
+};
+
+const letters = [...new Set(sortedGlossaryEntries.map((entry) => initialLetter(entry.term)))];
+---
+
+<ItContentPage
+  title="Glossar der Akademie"
+  description="Von der Aloyer Akademie geordnetes Verzeichnis zentraler Begriffe."
+  wide={true}
+  dropCap={false}
+>
+  <p class="glossary-intro">
+    Dieses Verzeichnis erklärt zentrale Begriffe aus Land, Republik, Akademie, Glaube,
+    Söldnerwesen und Recht. Neben Fachbegriffen werden auch wichtige Namen, Ämter,
+    Einrichtungen und Bezeichnungen aus den Registern und Chroniken erläutert.
+  </p>
+
+  <div class="glossary-tools" data-glossary-tools>
+    <label for="glossary-filter">Begriff im Register suchen</label>
+    <div class="glossary-search">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"></circle>
+        <path d="m20 20-3.2-3.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+      </svg>
+      <input
+        id="glossary-filter"
+        type="search"
+        placeholder="Zum Beispiel: Räterepublik, Miram oder Büttel"
+        autocomplete="off"
+        spellcheck="false"
+        data-glossary-filter
+      />
+    </div>
+    <p class="glossary-status" aria-live="polite" data-glossary-status>
+      {sortedGlossaryEntries.length} Begriffe verzeichnet
+    </p>
+  </div>
+
+  <nav class="glossary-alphabet" aria-label="Glossar nach Anfangsbuchstaben">
+    {
+      letters.map((letter) => (
+        <a href={`#buchstabe-${letter === '#' ? 'zeichen' : letter.toLocaleLowerCase('de')}`}>
+          {letter}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class="glossary-register" data-glossary-register>
+    {
+      letters.map((letter) => {
+        const entries = sortedGlossaryEntries.filter((entry) => initialLetter(entry.term) === letter);
+        const letterId = letter === '#' ? 'zeichen' : letter.toLocaleLowerCase('de');
+
+        return (
+          <section class="glossary-letter" id={`buchstabe-${letterId}`} data-glossary-letter>
+            <h2>{letter}</h2>
+            <div class="glossary-grid">
+              {entries.map((entry) => (
+                <article
+                  class="glossary-entry"
+                  id={entry.slug}
+                  data-glossary-entry
+                  data-glossary-terms={[entry.term, ...(entry.aliases ?? [])].join('|')}
+                >
+                  <h3>{entry.term}</h3>
+                  {
+                    entry.aliases && entry.aliases.length > 0 && (
+                      <p class="glossary-aliases">
+                        Auch verzeichnet als: {entry.aliases.join(', ')}
+                      </p>
+                    )
+                  }
+                  <p>{entry.definition}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      })
+    }
+  </div>
+
+  <p class="glossary-empty" data-glossary-empty hidden>
+    Dieser Begriff ist im Glossar noch nicht verzeichnet.
+  </p>
+</ItContentPage>
+
+<script>
+  function initializeGlossary() {
+    const tools = document.querySelector<HTMLElement>('[data-glossary-tools]');
+    const input = document.querySelector<HTMLInputElement>('[data-glossary-filter]');
+    const status = document.querySelector<HTMLElement>('[data-glossary-status]');
+    const empty = document.querySelector<HTMLElement>('[data-glossary-empty]');
+    const entries = Array.from(document.querySelectorAll<HTMLElement>('[data-glossary-entry]'));
+    const letterSections = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-glossary-letter]'),
+    );
+
+    if (!tools || !input || !status || !empty || entries.length === 0) return;
+    if (tools.dataset.glossaryInitialized === 'true') return;
+    tools.dataset.glossaryInitialized = 'true';
+
+    const controller = new AbortController();
+
+    const normalize = (value: string) =>
+      value
+        .toLocaleLowerCase('de')
+        .replace(/ä/g, 'ae')
+        .replace(/ö/g, 'oe')
+        .replace(/ü/g, 'ue')
+        .replace(/ß/g, 'ss')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+    const filterEntries = () => {
+      const query = normalize(input.value.trim());
+      let visibleCount = 0;
+
+      for (const entry of entries) {
+        const terms = normalize(entry.dataset.glossaryTerms ?? '');
+        const visible = !query || terms.includes(query);
+        entry.hidden = !visible;
+        if (visible) visibleCount += 1;
+      }
+
+      for (const section of letterSections) {
+        section.hidden = !section.querySelector('[data-glossary-entry]:not([hidden])');
+      }
+
+      status.textContent = `${visibleCount} ${visibleCount === 1 ? 'Begriff' : 'Begriffe'} verzeichnet`;
+      empty.hidden = visibleCount > 0;
+    };
+
+    input.addEventListener('input', filterEntries, { signal: controller.signal });
+    document.addEventListener('astro:before-swap', () => controller.abort(), {
+      once: true,
+      signal: controller.signal,
+    });
+  }
+
+  initializeGlossary();
+  document.addEventListener('astro:page-load', initializeGlossary);
+</script>
+
+<style>
+  .glossary-intro {
+    max-width: 850px !important;
+    margin: 0 auto 1.5rem !important;
+    text-align: center;
+  }
+
+  .glossary-tools {
+    max-width: 760px;
+    margin: 0 auto 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(92, 55, 31, 0.32);
+    background: rgba(255, 248, 229, 0.28);
+    box-shadow: 0 8px 24px rgba(66, 39, 21, 0.08);
+  }
+
+  .glossary-tools label {
+    display: block;
+    margin-bottom: 0.45rem;
+    text-align: center;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .glossary-search {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid rgba(92, 55, 31, 0.42);
+    background: rgba(255, 252, 240, 0.72);
+  }
+
+  .glossary-search svg {
+    flex: 0 0 auto;
+    color: rgba(92, 55, 31, 0.78);
+  }
+
+  .glossary-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #16100b;
+    font: 700 1rem/1.4 var(--font-body);
+  }
+
+  .glossary-search input::placeholder {
+    color: rgba(55, 39, 27, 0.58);
+  }
+
+  .glossary-status {
+    margin: 0.55rem 0 0 !important;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(55, 39, 27, 0.75);
+  }
+
+  .glossary-alphabet {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+    margin: 1.2rem auto 2rem;
+  }
+
+  .glossary-alphabet a {
+    display: grid;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    place-items: center;
+    border: 1px solid rgba(92, 55, 31, 0.32);
+    background: rgba(255, 248, 229, 0.32);
+    color: #3f2618;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 140ms ease, transform 140ms ease;
+  }
+
+  .glossary-alphabet a:hover,
+  .glossary-alphabet a:focus-visible {
+    background: rgba(139, 42, 28, 0.14);
+    transform: translateY(-1px);
+  }
+
+  .glossary-letter {
+    scroll-margin-top: 5.5rem;
+  }
+
+  .glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+    gap: 1rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .glossary-entry {
+    scroll-margin-top: 5.5rem;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid rgba(92, 55, 31, 0.3);
+    background:
+      linear-gradient(135deg, rgba(255, 252, 239, 0.55), rgba(230, 209, 177, 0.2));
+    box-shadow: 0 8px 22px rgba(56, 31, 17, 0.08);
+  }
+
+  .glossary-entry[hidden],
+  .glossary-letter[hidden] {
+    display: none;
+  }
+
+  .glossary-entry h3 {
+    margin: 0 0 0.55rem;
+    padding: 0;
+    text-align: left !important;
+    font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  }
+
+  .glossary-entry h3::after {
+    display: none !important;
+  }
+
+  .glossary-entry p {
+    margin: 0 !important;
+  }
+
+  .glossary-entry .glossary-aliases {
+    margin-bottom: 0.65rem !important;
+    color: rgba(80, 50, 31, 0.72);
+    font-size: 0.9rem;
+    font-style: italic;
+  }
+
+  .glossary-empty {
+    padding: 2rem;
+    text-align: center;
+    border: 1px dashed rgba(92, 55, 31, 0.36);
+  }
+
+  @media (max-width: 600px) {
+    .glossary-tools {
+      padding: 0.8rem;
+    }
+
+    .glossary-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

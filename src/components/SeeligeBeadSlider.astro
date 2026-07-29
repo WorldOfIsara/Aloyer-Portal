@@ -13,17 +13,17 @@ import { limbarSymbol, miramSymbol, hortumSymbol } from '../data/dreySymbols';
 // von item.sphere zu – zur Anzeige im Inhaltsbereich (nicht auf der
 // Perle selbst, die zeigt weiterhin die Initiale des Namens).
 const deitySymbols: Record<string, string> = {
-  Limba: limbarSymbol,
+  Limbar: limbarSymbol,
   Miram: miramSymbol,
   Hortum: hortumSymbol,
 };
 
 // Farbe des Schlagschattens hinter der Perle im Inhaltsbereich, passend
-// zum jeweiligen Hauptgott: weiß bei Limba, grau bei Miram, schwarz bei
+// zum jeweiligen Hauptgott: weiß bei Limbar, grau bei Miram, schwarz bei
 // Hortum. Bei gemischter Abstammung (z. B. "Miram & Hortum") wird die
 // erste passende Sphäre im Text genutzt.
 const badgeGlowBySphere: Record<string, string> = {
-  Limba: 'rgba(255, 255, 255, 0.92)',
+  Limbar: 'rgba(255, 255, 255, 0.92)',
   Miram: 'rgba(120, 120, 120, 0.88)',
   Hortum: 'rgba(0, 0, 0, 0.9)',
 };
@@ -40,7 +40,7 @@ export interface SeeligeBeadItem {
   id: string;
   name: string;
   epithet?: string;
-  // Name des zugehörigen Hauptgottes (Drey): 'Limba' | 'Miram' | 'Hortum'.
+  // Name des zugehörigen Hauptgottes (Drey): 'Limbar' | 'Miram' | 'Hortum'.
   // Steuert sowohl den angezeigten Text als auch automatisch, welches
   // Hauptgott-Siegel im Inhaltsbereich mitangezeigt wird.
   sphere?: string;

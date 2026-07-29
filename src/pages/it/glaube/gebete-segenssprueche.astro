@@ -5,15 +5,17 @@ import ItContentPage from '../../../components/ItContentPage.astro';
 <ItContentPage title="Gebete und Segenssprüche">
   <p>Aloyer Gebete werden im Alltag, vor dem Schlaf, auf Reisen, im Feld, bei Krankheit und am Sterbebett gesprochen. Die längeren Formen folgen dem Gebetsbuch; kurze Segenssprüche werden oft frei an Anlass und angerufene Gottheit angepasst.</p>
 
-  <h2>Gebet an die Drei</h2>
-  <p><em>Limbar, der uns formt,<br />
-  Miram, die uns lenkt,<br />
-  Hortum, der uns richtet - hört mein Wort.<br />
-  Was ich war, soll gewogen werden,<br />
-  was ich bin, soll Bestand haben,<br />
-  was ich werde, liegt in eurer Hand.<br />
-  Führt meine Seele durch Licht und Schatten,<br />
-  auf dass sie würdig wiederkehre.</em></p>
+  <section class="prayer" aria-labelledby="gebet-an-die-drei">
+    <h2 id="gebet-an-die-drei">Gebet an die Drei</h2>
+    <p>Limbar, der uns formt,<br />
+    Miram, die uns lenkt,<br />
+    Hortum, der uns richtet - hört mein Wort.<br />
+    Was ich war, soll gewogen werden,<br />
+    was ich bin, soll Bestand haben,<br />
+    was ich werde, liegt in eurer Hand.<br />
+    Führt meine Seele durch Licht und Schatten,<br />
+    auf dass sie würdig wiederkehre.</p>
+  </section>
 
   <h2>Für Schlaf und letzte Wege</h2>
   <p>Vor dem Schlaf bittet man Miram um eine ruhige Waage, Limbar um einen neuen Funken für den kommenden Tag und Hortum, seine Hand fernzuhalten, da die eigene Zeit noch nicht gekommen sei. Ein Sterbender ruft Favilla als sanfte Führerin an und bittet Hortum um ein gerechtes, weder milderes noch härteres Urteil.</p>
@@ -25,3 +27,30 @@ import ItContentPage from '../../../components/ItContentPage.astro';
 
   <p>Der kurze Alltagssegen lautet: <em>Die Drei sehen dich - handle weise.</em> In Schänken genügt zuweilen ein einziges Wort: <em>Barsinger!</em></p>
 </ItContentPage>
+
+<style>
+  .prayer {
+    margin-block: clamp(2.4rem, 6vw, 4.5rem);
+    text-align: center;
+  }
+
+  .prayer h2,
+  .prayer p {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .prayer h2 {
+    margin-bottom: 1.25rem;
+  }
+
+  .prayer p {
+    max-width: 40rem;
+    margin-inline: auto;
+    font-size: clamp(1.15rem, 1.4vw, 1.35rem);
+    font-weight: 400;
+    line-height: 1.75;
+    letter-spacing: 0.015em;
+  }
+</style>
