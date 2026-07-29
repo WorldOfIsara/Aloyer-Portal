@@ -16,12 +16,14 @@ interface Props {
   title: string;
   description?: string;
   wide?: boolean;
+  dropCap?: boolean;
 }
 
 const {
   title,
   description = `${title} im IT-Bereich von Aloy.`,
   wide = false,
+  dropCap = true,
 } = Astro.props;
 
 // Abschnitts-Root erkennen: passt die aktuelle URL auf einen IT-Navigationspunkt
@@ -66,6 +68,22 @@ function findNavItemByPath(items: NavNode[], path: string): NavNode | undefined 
 const pathname = normalizePath(Astro.url.pathname);
 const section = findNavItemByPath(itNav, pathname);
 const sectionChildren = section?.children?.filter((child) => Boolean(child.href)) ?? [];
+const dropCapExcludedPaths = new Set([
+  '/it/berichte',
+  '/it/vorrede',
+  '/it/akademie/vier-zweige',
+  '/it/akademie/wissenschaft-magie',
+  '/it/glaube/weitere-gottheiten',
+  '/it/glaube/gebete-segenssprueche',
+  '/it/recht',
+]);
+const isHaubentaucherPage =
+  pathname === '/it/soeldner/haubentaucher' ||
+  pathname.startsWith('/it/soeldner/haubentaucher/');
+const useAutomaticDropCap =
+  dropCap &&
+  !dropCapExcludedPaths.has(pathname) &&
+  !isHaubentaucherPage;
 ---
 
 <BaseLayout
@@ -82,7 +100,10 @@ const sectionChildren = section?.children?.filter((child) => Boolean(child.href)
 >
   <ReadingAids />
 
-  <section class:list={['surface', 'it-page', { 'it-page--wide': wide }]}>
+  <section
+    class:list={['surface', 'it-page', { 'it-page--wide': wide }]}
+    data-it-auto-drop-cap={useAutomaticDropCap ? 'true' : undefined}
+  >
     <h1>{title}</h1>
     <slot />
   </section>
@@ -105,6 +126,34 @@ const sectionChildren = section?.children?.filter((child) => Boolean(child.href)
     )
   }
 </BaseLayout>
+
+<script>
+  const MINIMUM_DROP_CAP_WORDS = 18;
+
+  document.querySelectorAll<HTMLElement>('[data-it-auto-drop-cap="true"]').forEach((page) => {
+    if (page.dataset.dropCapInitialized === 'true') return;
+    page.dataset.dropCapInitialized = 'true';
+
+    // Zitat- und Urkundenblöcke verwalten ihre Schmuckinitiale selbst.
+    if (page.querySelector('.it-verse--dropcap')) return;
+
+    const paragraph = Array.from(page.querySelectorAll<HTMLParagraphElement>('p')).find((candidate) => {
+      if (
+        candidate.closest('nav, aside, figure, header, footer') ||
+        candidate.matches(
+          '[class*="kicker"], [class*="meta"], [class*="caption"], [class*="label"], [class*="status"]',
+        )
+      ) {
+        return false;
+      }
+
+      const words = candidate.textContent?.trim().split(/\s+/).filter(Boolean) ?? [];
+      return words.length >= MINIMUM_DROP_CAP_WORDS;
+    });
+
+    paragraph?.classList.add('it-auto-drop-cap');
+  });
+</script>
 
 <style>
   .it-page {
@@ -255,6 +304,19 @@ const sectionChildren = section?.children?.filter((child) => Boolean(child.href)
     margin-top: 1rem;
   }
 
+  .it-page :global(p.it-auto-drop-cap)::first-letter {
+    float: left;
+    margin: 0.02em 0.1em 0 0;
+    font-family: var(--font-heading);
+    font-size: 4.15em;
+    line-height: 0.78;
+    font-weight: 700;
+    color: rgba(139, 42, 28, 0.96);
+    text-shadow:
+      1px 1px 0 rgba(255, 245, 220, 0.7),
+      2px 2px 0 rgba(45, 30, 18, 0.18);
+  }
+
   @media (max-width: 700px) {
     .it-page h1 {
       margin-bottom: 1rem;
@@ -274,6 +336,10 @@ const sectionChildren = section?.children?.filter((child) => Boolean(child.href)
     .it-page :global(ul),
     .it-page :global(ol) {
       padding-left: 1.35rem;
+    }
+
+    .it-page :global(p.it-auto-drop-cap)::first-letter {
+      font-size: 3.3em;
     }
   }
 </style>
