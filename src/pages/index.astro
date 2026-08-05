@@ -23,17 +23,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   </head>
 
   <body>
-    <div
-      class="scene"
-      aria-hidden="true"
-      style={`--scene-bg: url("${base}/pexels-pixabay-326333_1-1-scaled.jpg")`}
-    ></div>
+    <div class="hero-fog" aria-hidden="true">
+      <span class="fog-blob fog-blob-1"></span>
+      <span class="fog-blob fog-blob-2"></span>
+      <span class="fog-blob fog-blob-3"></span>
+    </div>
 
     <div class="vignette" aria-hidden="true"></div>
 
+    <div class="hero-embers" data-embers aria-hidden="true"></div>
+
     <main class="splash">
       <a
-        class="logo-link reveal reveal-1"
+        class="logo-link logo-stamp"
         href={`${base}/ot/willkommen`}
         aria-label="Zum Portal"
       >
@@ -74,6 +76,34 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         </a>
       </div>
     </main>
+
+    <script>
+      (() => {
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Funken: ein paar kleine Punkte, die von unten nach oben durchs
+        // Bild treiben, jeweils mit eigener Größe/Dauer/Startverzögerung.
+        // Läuft immer, außer bei reduzierter Bewegung.
+        if (!reduceMotion) {
+          const emberLayer = document.querySelector('[data-embers]');
+          if (emberLayer instanceof HTMLElement) {
+            const emberCount = 34;
+            for (let i = 0; i < emberCount; i += 1) {
+              const ember = document.createElement('span');
+              ember.className = 'ember';
+              const size = 3 + Math.random() * 5;
+              ember.style.left = `${5 + Math.random() * 90}%`;
+              ember.style.width = `${size}px`;
+              ember.style.height = `${size}px`;
+              ember.style.setProperty('--ember-drift', `${Math.random() * 60 - 30}px`);
+              ember.style.animationDuration = `${5 + Math.random() * 5}s`;
+              ember.style.animationDelay = `${Math.random() * 8}s`;
+              emberLayer.appendChild(ember);
+            }
+          }
+        }
+      })();
+    </script>
   </body>
 </html>
 
@@ -96,33 +126,70 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     overflow: hidden;
   }
 
-  /* Langsamer Ken-Burns-Zoom auf dem Hintergrund */
-  .scene {
+  /* Screen-Shake im Moment des Einschlags: startet, wenn das fallende
+     Wappen auf seiner Endposition in der Bildmitte aufschlägt (siehe
+     .logo-stamp/@keyframes stamp - Einschlag bei 75% von 1300ms +
+     100ms Delay = 1075ms), noch bevor es nachfedert. Läuft auf body,
+     damit Hintergrund/Nebel/Funken/Text wirklich ALLES gemeinsam
+     wackelt statt nur das Wappen. */
+  body {
+    animation: hero-shake 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97) 1075ms both;
+  }
+
+  /*
+    Hero-Ebenen von hinten nach vorn: .hero-fog (treibender Nebel) >
+    .vignette (Abdunklung an den Rändern) > .hero-embers (aufsteigende
+    Funken). Der Hintergrund selbst ist die einfarbige body-Fläche
+    (kein Foto mehr).
+  */
+
+  /* Treibender Nebel: zwei-drei weiche, unscharfe Streifen, die langsam
+     von links nach rechts durchs Bild ziehen. */
+  .hero-fog {
     position: fixed;
-    inset: -6%;
-    z-index: -2;
+    inset: 0;
+    z-index: -3;
+    overflow: hidden;
+    pointer-events: none;
+  }
 
-    background:
-      linear-gradient(
-        180deg,
-        rgba(27, 15, 9, 0.42),
-        rgba(27, 15, 9, 0.5)
-      ),
-      radial-gradient(
-        1200px 600px at 50% 45%,
-        rgba(250, 238, 210, 0.4),
-        transparent 60%
-      ),
-      var(--scene-bg) center / cover no-repeat;
+  /* Größer, flacher in der Deckkraft und viel stärker verwaschen als
+     vorher - sonst liest sich ein schmaler, scharf begrenzter Blob als
+     Lichtschliere statt als Nebel/Dunst. */
+  .fog-blob {
+    position: absolute;
+    left: -45%;
+    width: 90%;
+    height: 260px;
+    background: rgba(230, 210, 180, 0.045);
+    filter: blur(50px);
+    border-radius: 50%;
+  }
 
-    transform: scale(1.06);
-    animation: kenburns 34s ease-in-out infinite alternate;
+  .fog-blob-1 {
+    top: 20%;
+    animation: fogDrift 30s linear infinite;
+  }
+
+  .fog-blob-2 {
+    top: 50%;
+    height: 220px;
+    background: rgba(230, 210, 180, 0.035);
+    animation: fogDrift 38s linear infinite;
+    animation-delay: -14s;
+  }
+
+  .fog-blob-3 {
+    top: 78%;
+    height: 200px;
+    background: rgba(230, 210, 180, 0.03);
+    animation: fogDrift 34s linear infinite reverse;
   }
 
   .vignette {
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: -2;
     pointer-events: none;
 
     background:
@@ -131,6 +198,29 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         transparent 52%,
         rgba(12, 8, 6, 0.55) 100%
       );
+  }
+
+  /* Aufsteigende Funken - Punkte werden per Script befüllt (siehe unten),
+     jeder mit eigener Animationsdauer/-verzögerung. */
+  .hero-embers {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .hero-embers :global(.ember) {
+    position: absolute;
+    bottom: -2%;
+    border-radius: 50%;
+    background: rgba(255, 190, 120, 0.98);
+    box-shadow:
+      0 0 8px rgba(255, 170, 90, 0.9),
+      0 0 18px rgba(255, 140, 60, 0.55);
+    animation-name: emberRise;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
   }
 
   .splash {
@@ -155,6 +245,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .logo-link:hover,
   .logo-link:focus-visible {
     transform: scale(1.03);
+  }
+
+  /* Wappen fällt von oben ins Bild und schlägt auf seiner Endposition
+     (Bildmitte) auf, statt einzufaden. Timing/Beschleunigung steckt in
+     den Keyframe-Abständen selbst (siehe @keyframes stamp), deshalb hier
+     nur noch "ease" statt einer speziellen Bezier-Kurve. opacity bleibt
+     bewusst konstant bei 1 (nur transform animiert) - falls die
+     Animation aus irgendeinem Grund nicht greift, bleibt das Wappen
+     trotzdem sichtbar statt zu verschwinden. */
+  .logo-stamp {
+    opacity: 1;
+    animation: stamp 1300ms ease 100ms forwards;
   }
 
   .logo {
@@ -259,16 +361,6 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     animation-delay: 780ms;
   }
 
-  @keyframes kenburns {
-    from {
-      transform: scale(1.04) translate3d(0, 0, 0);
-    }
-
-    to {
-      transform: scale(1.13) translate3d(0, -1.5%, 0);
-    }
-  }
-
   @keyframes rise {
     to {
       opacity: 1;
@@ -276,16 +368,127 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .scene {
-      animation: none;
-      transform: scale(1.04);
+  @keyframes fogDrift {
+    from {
+      transform: translateX(0);
     }
 
+    to {
+      transform: translateX(220%);
+    }
+  }
+
+  @keyframes emberRise {
+    0% {
+      transform: translateY(0) translateX(0);
+      opacity: 0;
+    }
+
+    12% {
+      opacity: 0.9;
+    }
+
+    100% {
+      transform: translateY(-100vh) translateX(var(--ember-drift, 12px));
+      opacity: 0;
+    }
+  }
+
+  /* Fall von oben: EIN durchgehender Zug von 0% auf 75% ohne
+     Zwischen-Haltepunkte. Jede Etappe bekommt ihre eigene, zur
+     Bewegungsrichtung passende Timing-Funktion direkt im Keyframe
+     (animation-timing-function gilt jeweils für die Strecke BIS zum
+     nächsten Keyframe) - dadurch wirkt es als eine durchgehende
+     Bewegung statt Bremsen + erneutem Beschleunigen:
+     0%->75%  beschleunigender Fall (ease-in-artige Kurve)
+     75%->87% abbremsendes Nachfedern nach oben (ease-out)
+     87%->100% wieder beschleunigend zurück auf die Ruheposition (ease-in)
+     Bei 75% erreicht das Wappen seine Endposition in der Bildmitte -
+     hier setzt exakt der Screen-Shake ein (siehe body-Regel oben). */
+  @keyframes stamp {
+    0% {
+      transform: translateY(-70vh);
+      animation-timing-function: cubic-bezier(0.55, 0.06, 0.68, 0.19);
+    }
+
+    75% {
+      transform: translateY(0);
+      animation-timing-function: ease-out;
+    }
+
+    87% {
+      transform: translateY(-18px);
+      animation-timing-function: ease-in;
+    }
+
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes hero-shake {
+    0%,
+    100% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+
+    12% {
+      transform: translate(-12px, 7px) rotate(-1.1deg);
+    }
+
+    26% {
+      transform: translate(10px, -8px) rotate(1deg);
+    }
+
+    40% {
+      transform: translate(-9px, 6px) rotate(-0.8deg);
+    }
+
+    54% {
+      transform: translate(7px, -5px) rotate(0.6deg);
+    }
+
+    68% {
+      transform: translate(-5px, 4px) rotate(-0.4deg);
+    }
+
+    82% {
+      transform: translate(3px, -2px) rotate(0.2deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
     .reveal {
       opacity: 1;
       transform: none;
       animation: none;
+    }
+
+    .logo-stamp {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    body {
+      animation: none;
+    }
+
+    .fog-blob {
+      animation: none;
+      display: none;
+    }
+
+    .hero-embers {
+      display: none;
+    }
+  }
+
+  /* Nebel kostet auf schmalen Screens unnötig Leistung und wirkt dort
+     kaum - Funken/Glut bleiben bewusst überall an. */
+  @media (max-width: 640px) {
+    .hero-fog {
+      display: none;
     }
   }
 </style>

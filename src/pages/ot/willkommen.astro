@@ -54,21 +54,40 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
 
     {
       heroSlides.length > 1 && (
-        <div class="hero-slideshow-dots" data-hero-dots role="tablist" aria-label="Bild ausw&auml;hlen">
-          <div class="hero-slideshow-dots__track" data-hero-dots-track>
-            {heroSlides.map((_, index) => (
-              <button
-                type="button"
-                class:list={['hero-slideshow-dot', { 'is-active': index === 0 }]}
-                data-hero-dot
-                data-index={index}
-                role="tab"
-                aria-label={`Bild ${index + 1} von ${heroSlides.length}`}
-                aria-selected={index === 0 ? 'true' : 'false'}
-              />
-            ))}
+        <>
+          <button
+            type="button"
+            class="hero-slideshow-nav hero-slideshow-nav--prev"
+            data-hero-prev
+            aria-label="Voriges Bild"
+          >
+            <span aria-hidden="true">&lsaquo;</span>
+          </button>
+          <button
+            type="button"
+            class="hero-slideshow-nav hero-slideshow-nav--next"
+            data-hero-next
+            aria-label="N&auml;chstes Bild"
+          >
+            <span aria-hidden="true">&rsaquo;</span>
+          </button>
+
+          <div class="hero-slideshow-dots" data-hero-dots role="tablist" aria-label="Bild ausw&auml;hlen">
+            <div class="hero-slideshow-dots__track" data-hero-dots-track>
+              {heroSlides.map((_, index) => (
+                <button
+                  type="button"
+                  class:list={['hero-slideshow-dot', { 'is-active': index === 0 }]}
+                  data-hero-dot
+                  data-index={index}
+                  role="tab"
+                  aria-label={`Bild ${index + 1} von ${heroSlides.length}`}
+                  aria-selected={index === 0 ? 'true' : 'false'}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       )
     }
 
@@ -86,6 +105,17 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
         f&uuml;r langfristiges Charakterspiel.
       </p>
     </div>
+
+    <button
+      type="button"
+      class="hero-overlay-toggle"
+      data-hero-overlay-toggle
+      aria-pressed="false"
+      aria-label="Text und Wappen ausblenden"
+      title="Text und Wappen ausblenden"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
   </section>
 
   <script>
@@ -153,8 +183,37 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
           });
         });
 
+        const prevButton = hero.querySelector<HTMLButtonElement>('[data-hero-prev]');
+        const nextButton = hero.querySelector<HTMLButtonElement>('[data-hero-next]');
+
+        prevButton?.addEventListener('click', () => {
+          showSlide(activeIndex - 1);
+          restartAutoplay();
+        });
+
+        nextButton?.addEventListener('click', () => {
+          showSlide(activeIndex + 1);
+          restartAutoplay();
+        });
+
         updateDots();
         restartAutoplay();
+      }
+
+      // X-Button: blendet Text + Wappen manuell aus, damit man die
+      // Slideshow ungestört sehen kann. Muss VOR dem reduceMotion-
+      // Early-Return verdrahtet werden (siehe unten), sonst würde der
+      // Button bei aktivierter "Bewegung reduzieren"-Einstellung nie
+      // funktionieren.
+      const overlayToggle = hero.querySelector<HTMLButtonElement>('[data-hero-overlay-toggle]');
+      if (overlayToggle) {
+        overlayToggle.addEventListener('click', () => {
+          const hidden = hero.classList.toggle('is-overlay-hidden');
+          overlayToggle.setAttribute('aria-pressed', String(hidden));
+          const label = hidden ? 'Text und Wappen einblenden' : 'Text und Wappen ausblenden';
+          overlayToggle.setAttribute('aria-label', label);
+          overlayToggle.setAttribute('title', label);
+        });
       }
 
       // Scroll-Fortschritt (0 = oben, 1 = Hero komplett durchgescrollt):
@@ -242,6 +301,48 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
     position: absolute;
     inset: 0;
     background: linear-gradient(200deg, rgba(18, 11, 8, 0.32) 0%, rgba(18, 11, 8, 0.68) 65%, rgba(18, 11, 8, 0.82) 100%);
+    transition: opacity 200ms ease;
+  }
+
+  /* Pfeil-Buttons links/rechts für manuelles Vor-/Zurückblättern -
+     gleicher runder Button-Look wie .hero-overlay-toggle. */
+  .hero-slideshow-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgba(248, 236, 210, 0.35);
+    border-radius: 999px;
+    background: rgba(12, 8, 6, 0.4);
+    color: #f8ecd2;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: background-color 160ms ease;
+  }
+
+  .hero-slideshow-nav:hover,
+  .hero-slideshow-nav:focus-visible {
+    background: rgba(12, 8, 6, 0.65);
+  }
+
+  .hero-slideshow-nav--prev {
+    left: 1rem;
+  }
+
+  .hero-slideshow-nav--next {
+    right: 1rem;
+  }
+
+  .hero-slideshow-nav span {
+    display: block;
+    transform: translateY(-2px);
   }
 
   /*
@@ -299,19 +400,23 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
   }
 
   /*
-    Wappen: startet dezent rechts im Bild und fliegt beim Scrollen nach
-    rechts oben aus dem sichtbaren Bereich, statt einfach dazustehen.
+    Wappen: bleibt einfach an seinem Platz stehen (kein Wegfliegen mehr).
+    Blendet beim Laden einmalig sanft ein (@keyframes heroFadeIn, siehe
+    unten) und blendet beim Scrollen gemeinsam mit dem Text per Opacity
+    wieder aus - keine Bewegung/Skalierung mehr, nur Sichtbarkeit.
+    "backwards" statt "forwards" als Fill-Mode ist hier bewusst gewählt:
+    nach Animationsende übernimmt wieder die normale opacity-Regel
+    darunter (die scroll-Fortschritt-Formel), statt dass die Animation
+    die Opacity dauerhaft auf 1 einfriert.
   */
   .hero-wappen {
     position: absolute;
     top: 50%;
-    right: 4%;
+    left: 66%;
     width: min(30vw, 320px);
-    opacity: calc(0.5 - var(--hero-progress) * 0.5);
-    transform: translateY(-50%) translate(calc(var(--hero-progress) * 55vw), calc(var(--hero-progress) * -45vh))
-      rotate(calc(var(--hero-progress) * 35deg));
-    transition: opacity 80ms linear;
-    will-change: transform, opacity;
+    transform: translate(-50%, -50%);
+    opacity: calc((1 - var(--hero-progress) * 3) * 0.4);
+    animation: heroFadeInWappen 900ms ease 150ms backwards;
   }
 
   .hero-wappen img {
@@ -319,24 +424,51 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
     width: 100%;
     height: auto;
     filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.4));
+    /* Weiche, ausgefranste Kante statt hartem Rand - blendet ins Bild
+       über statt sich als scharf ausgeschnittene Grafik abzuheben. */
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
   }
 
   /*
-    Text: startet zentriert in der Mitte des Hero, wandert beim
-    Scrollen ins linke obere Eck und wird dabei etwas kleiner/kompakter.
+    Text: bleibt zentriert stehen, blendet genauso wie das Wappen beim
+    Laden sanft ein und beim Scrollen per Opacity wieder aus.
   */
   .hero-text {
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 33%;
     max-width: min(60ch, 80vw);
     padding: 1.5rem;
     text-align: center;
     color: #f8ecd2;
-    transform: translate(-50%, -50%) translate(calc(var(--hero-progress) * -32vw), calc(var(--hero-progress) * -30vh))
-      scale(calc(1 - var(--hero-progress) * 0.28));
-    transform-origin: center;
-    will-change: transform;
+    transform: translate(-50%, -50%);
+    opacity: calc(1 - var(--hero-progress) * 3);
+    animation: heroFadeIn 900ms ease 350ms backwards;
+  }
+
+  @keyframes heroFadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Eigene Einblend-Keyframes fürs Wappen, die bei 0.9 statt bei 1
+     enden - sonst würde die Animation kurz auf volle Deckkraft
+     hochblenden und beim Übergang zur opacity-Formel darunter (die bei
+     0.9 gedeckelt ist) sichtbar auf 90% zurückspringen. */
+  @keyframes heroFadeInWappen {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 0.4;
+    }
   }
 
   .hero-kicker {
@@ -359,13 +491,69 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
     color: rgba(248, 236, 210, 0.92);
   }
 
+  /* X-Button zum manuellen Ausblenden von Text + Wappen, damit die
+     Slideshow ungestört betrachtet werden kann. Bleibt selbst immer
+     sichtbar (auch im ausgeblendeten Zustand), damit man wieder
+     einblenden kann. */
+  .hero-overlay-toggle {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid rgba(248, 236, 210, 0.35);
+    border-radius: 999px;
+    background: rgba(12, 8, 6, 0.4);
+    color: #f8ecd2;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 160ms ease, transform 160ms ease;
+  }
+
+  .hero-overlay-toggle:hover,
+  .hero-overlay-toggle:focus-visible {
+    background: rgba(12, 8, 6, 0.65);
+  }
+
+  .hero-overlay-toggle span {
+    display: block;
+    transition: transform 200ms ease;
+  }
+
+  /* Aus dem "×" wird ein "+", sobald ausgeblendet ist - reine
+     Drehung desselben Zeichens statt Text/Icon auszutauschen. */
+  .hero-overlay-toggle[aria-pressed='true'] span {
+    transform: rotate(45deg);
+  }
+
+  .parallax-hero.is-overlay-hidden .hero-text,
+  .parallax-hero.is-overlay-hidden .hero-wappen {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  /* Beim Ausblenden von Text/Wappen auch die Abdunklung über den
+     Bildern weg - dann sind die Fotos wirklich ohne jeden Effekt zu
+     sehen. Kommt beim erneuten Einblenden automatisch zurück. */
+  .parallax-hero.is-overlay-hidden .hero-slideshow__wash {
+    opacity: 0;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .hero-wappen {
-      transform: translateY(-50%) !important;
+      animation: none;
+      opacity: 0.4;
     }
 
     .hero-text {
-      transform: translate(-50%, -50%) !important;
+      animation: none;
+      opacity: 1;
     }
 
     .hero-slideshow__img {
@@ -384,7 +572,8 @@ const heroSlides = getFotostreckeFiles().map((file, index) => `/fotostrecke/${in
       Hintergrund, konsistent mit dem restlichen Mobile-Look.
     */
     .hero-slideshow__img,
-    .hero-slideshow-dots {
+    .hero-slideshow-dots,
+    .hero-slideshow-nav {
       display: none;
     }
 
