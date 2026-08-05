@@ -20,7 +20,32 @@ const typeKey = (type: string) => {
   return 'kurzmeldung';
 };
 
-const yearNumber = (year: string) => year.split(' ')[0];
+// "Original" ist in diesem Kontext redundant (jeder Eintrag ist ein
+// Originaltext) und wird für die Anzeige entfernt.
+const displayType = (type: string) => {
+  const stripped = type.replace(/^Original/, '');
+  return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+};
+
+// Symbole je Quellenart statt farbiger Punkte: Schriftstück (Bericht),
+// Umschlag (Meldung), Fähnchen/Ausruf (Ausschreibung), Häkchen-Siegel
+// (bestätigte Kurzmeldung).
+const typeIcons: Record<string, string> = {
+  bericht:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M15 3v4h4"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="15.5" x2="16" y2="15.5"/><line x1="8" y1="19" x2="13" y2="19"/></svg>',
+  meldung:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  ausschreibung:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v18"/><path d="M5 4h11l-2.5 3.5L16 11H5"/></svg>',
+  kurzmeldung:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>',
+};
+
+// Leichter Wellenversatz je Eintrag, damit der Zeitstrahl-Pfad (siehe <script>
+// unten) nicht schnurgerade, sondern wie ein gewundener Pfad wirkt. Der Punkt
+// wird per CSS-Transform verschoben, das Skript zeichnet die Linie danach
+// exakt durch die tatsächlichen Punktpositionen.
+const waveOffset = (index: number) => Math.round(Math.sin(index * 1.15) * 24);
 ---
 
 <ItContentPage
@@ -29,144 +54,128 @@ const yearNumber = (year: string) => year.split(' ')[0];
   wide
 >
   <div class="chronicle-intro">
-    <p>Die Register der Akademie bewahren Feldberichte, öffentliche Botenmeldungen, Ausschreibungen und bestätigte Ereignisse. Wählet ein Jahr und folgt den Verbindungen durch die Chronik. Persönliche Berichte zeigen die Sicht ihrer Verfasser und gelten nicht als allwissende Staatschronik.</p>
+    <p>Die Register der Akademie bewahren Feldberichte, öffentliche Botenmeldungen, Ausschreibungen und bestätigte Ereignisse. Wählet ein Jahr und eine Quellenart, um die Chronik einzugrenzen. Persönliche Berichte zeigen die Sicht ihrer Verfasser und gelten nicht als allwissende Staatschronik.</p>
     <p class="transmission-note">Originaltexte bleiben in ihrer überlieferten Schreibweise erhalten. Ältere Zeitkürzel, Ortsnamen und sprachliche Eigenheiten wurden nicht nachträglich geglättet.</p>
   </div>
 
-  <section class="chronicle" data-chronicle data-initial-year={latestYear}>
-    <header class="chronicle-controls">
-      <div>
-        <p class="control-kicker">Das Band der Jahre</p>
-        <h2 class="control-title">Wählet ein Registerjahr</h2>
-      </div>
-      <button class="show-all" type="button" data-year-filter="all" aria-pressed="false">
-        Ganze Chronik
-        <span>{itReportEntries.length} Einträge</span>
+  <section class="chronicle" data-chronicle data-initial-year={latestYear} data-initial-entry={initialEntry?.id}>
+    <div class="filter-row" aria-label="Registerjahre">
+      <span class="filter-label">Jahr</span>
+      <button class="filter-chip" type="button" data-year-filter="all" aria-pressed="false">
+        Alle
       </button>
-    </header>
+      {reportYears.map((year) => (
+        <button
+          class:list={['filter-chip', { 'is-active': year === latestYear }]}
+          type="button"
+          data-year-filter={year}
+          aria-pressed={year === latestYear ? 'true' : 'false'}
+        >
+          {year}
+        </button>
+      ))}
+    </div>
 
-    <nav class="year-track" aria-label="Berichtsjahre">
-      <div class="year-line" aria-hidden="true"></div>
-      {reportYears.map((year) => {
-        const count = itReportEntries.filter((entry) => entry.year === year).length;
-        const isCurrent = year === latestYear;
-
-        return (
-          <button
-            class:list={['year-node', { 'is-active': isCurrent }]}
-            type="button"
-            data-year-filter={year}
-            aria-pressed={isCurrent ? 'true' : 'false'}
-          >
-            <span class="year-seal">{yearNumber(year)}</span>
-            <span class="year-era">n.B.A.</span>
-            <span class="year-count">{count} {count === 1 ? 'Eintrag' : 'Einträge'}</span>
-          </button>
-        );
-      })}
-    </nav>
-
-    <div class="type-controls" aria-label="Quellenarten">
-      <span>Siegel und Quellenart</span>
-      <button class="type-filter is-active" type="button" data-type-filter="all" aria-pressed="true">
+    <div class="filter-row" aria-label="Quellenarten">
+      <span class="filter-label">Art</span>
+      <button class="filter-chip is-active" type="button" data-type-filter="all" aria-pressed="true">
         Alle
       </button>
       {typeLabels.map((type) => (
         <button
-          class={`type-filter type-${typeKey(type)}`}
+          class:list={['filter-chip', `type-${typeKey(type)}`]}
           type="button"
           data-type-filter={type}
           aria-pressed="false"
         >
-          <i aria-hidden="true"></i>
-          {type}
+          <i aria-hidden="true" set:html={typeIcons[typeKey(type)]} />
+          {displayType(type)}
         </button>
       ))}
     </div>
 
     <p class="result-status" data-result-status aria-live="polite"></p>
 
-    <div class="chronicle-workspace">
-      <section class="chronicle-map" aria-label="Ereignispfad">
-        <div class="path-spine" aria-hidden="true"></div>
-        <div class="event-nodes">
-          {itReportEntries.map((entry, index) => {
-            const isInitial = entry.id === initialEntry?.id;
-            const entryType = typeKey(entry.type);
+    <div class="timeline" data-timeline>
+      <svg class="timeline-svg" data-timeline-svg aria-hidden="true" preserveAspectRatio="none">
+        <path class="timeline-path-bg" data-timeline-path-bg />
+        <path class="timeline-path-progress" data-timeline-path-progress />
+      </svg>
 
-            return (
-              <button
-                class:list={[
-                  'event-node',
-                  `type-${entryType}`,
-                  { 'is-selected': isInitial },
-                ]}
-                type="button"
-                data-entry-node={entry.id}
-                data-entry-year={entry.year}
-                data-entry-type={entry.type}
-                data-lane={index % 2 === 0 ? 'left' : 'right'}
-                aria-controls={`bericht-${entry.id}`}
-                aria-pressed={isInitial ? 'true' : 'false'}
-                hidden={entry.year !== latestYear}
-              >
-                <span class="event-connector" aria-hidden="true"></span>
-                <span class="event-pin" aria-hidden="true"></span>
-                <span class="event-index">{String(index + 1).padStart(2, '0')}</span>
-                <span class="event-year">{entry.year}</span>
-                <strong>{entry.title}</strong>
-                <span class="event-type">{entry.type}</span>
-                <span class="open-hint">Akte öffnen</span>
-              </button>
-            );
-          })}
-        </div>
-        <p class="no-results" data-no-results hidden>Für diese Auswahl ist noch keine Akte im Register verzeichnet.</p>
-      </section>
-
-      <aside class="reading-desk" aria-label="Geöffnete Berichtsakte">
-        <div class="desk-top">
-          <span class="desk-label">Geöffnete Akte</span>
-          <span class="desk-flourish" aria-hidden="true">◆</span>
-        </div>
-
-        {itReportEntries.map((entry) => {
-          const isInitial = entry.id === initialEntry?.id;
+      <div class="timeline-track" data-entry-list>
+        {itReportEntries.map((entry, index) => {
+          const entryType = typeKey(entry.type);
           const originalParagraphs = entry.original?.trim().split(/\n\s*\n/) ?? [];
 
           return (
             <article
-              class={`report-panel type-${typeKey(entry.type)}`}
-              id={`bericht-${entry.id}`}
-              data-report-panel={entry.id}
-              hidden={!isInitial}
-              tabindex="-1"
+              class:list={['timeline-item', `type-${entryType}`, index % 2 === 0 ? 'side-left' : 'side-right']}
+              data-entry
+              data-entry-id={entry.id}
+              data-entry-year={entry.year}
+              data-entry-type={entry.type}
+              hidden={entry.year !== latestYear}
             >
-              <p class="panel-meta">
-                <span>{entry.year}</span>
-                <span>{entry.type}</span>
-              </p>
-              <h2 class="panel-title">{entry.title}</h2>
+              <button
+                type="button"
+                class="timeline-dot"
+                data-timeline-dot
+                data-timeline-jump
+                style={`--wave: ${waveOffset(index)}px`}
+                aria-label={`Zu „${entry.title}“ springen`}
+                set:html={typeIcons[entryType]}
+              ></button>
 
-              {entry.facts && (
-                <ul class="confirmed-facts">
-                  {entry.facts.map((fact) => <li>{fact}</li>)}
-                </ul>
-              )}
+              <div class="timeline-card">
+                <button
+                  class="entry-header"
+                  type="button"
+                  data-entry-toggle
+                  aria-expanded="false"
+                  aria-controls={`bericht-body-${entry.id}`}
+                  id={`bericht-${entry.id}`}
+                >
+                  <span class="entry-heading">
+                    <span class="entry-meta">
+                      <span class="entry-year">{entry.year}</span>
+                      <span class="entry-type">{displayType(entry.type)}</span>
+                    </span>
+                    <span class="entry-title">{entry.title}</span>
+                  </span>
+                  <span class="entry-caret" aria-hidden="true"></span>
+                </button>
 
-              {entry.original && (
-                <details class="original-report">
-                  <summary>{entry.originalLabel ?? 'Originaltext lesen'}</summary>
-                  <div class="original-copy">
-                    {originalParagraphs.map((paragraph) => <p>{paragraph}</p>)}
-                  </div>
-                </details>
-              )}
+                <div
+                  class="entry-body"
+                  id={`bericht-body-${entry.id}`}
+                  data-entry-body
+                  hidden
+                >
+                  {entry.facts && (
+                    <ul class="confirmed-facts">
+                      {entry.facts.map((fact) => <li>{fact}</li>)}
+                    </ul>
+                  )}
+
+                  {entry.original && (
+                    <div class="original-report">
+                      <p class="original-label">
+                        {(entry.originalLabel ?? 'Originaltext').replace(/\s*lesen\s*$/i, '')}
+                      </p>
+                      <div class="original-copy">
+                        {originalParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </article>
           );
         })}
-      </aside>
+      </div>
     </div>
+
+    <p class="no-results" data-no-results hidden>Für diese Auswahl ist noch keine Akte im Register verzeichnet.</p>
   </section>
 
   <p class="reports-closing">Weitere bestätigte Rats-, Fest- und Lagerberichte werden aufgenommen, sobald ein belastbarer Eintrag oder ein veröffentlichungsfähiger Originaltext vorliegt. Planungen, unbestätigte Gerüchte und bloße Absichtserklärungen gelten nicht als geschehen.</p>
@@ -178,55 +187,250 @@ const yearNumber = (year: string) => year.split(' ')[0];
   if (chronicle) {
     const yearButtons = [...chronicle.querySelectorAll<HTMLButtonElement>('[data-year-filter]')];
     const typeButtons = [...chronicle.querySelectorAll<HTMLButtonElement>('[data-type-filter]')];
-    const eventNodes = [...chronicle.querySelectorAll<HTMLButtonElement>('[data-entry-node]')];
-    const reportPanels = [...chronicle.querySelectorAll<HTMLElement>('[data-report-panel]')];
+    const entries = [...chronicle.querySelectorAll<HTMLElement>('[data-entry]')];
     const resultStatus = chronicle.querySelector<HTMLElement>('[data-result-status]');
     const noResults = chronicle.querySelector<HTMLElement>('[data-no-results]');
+    const timeline = chronicle.querySelector<HTMLElement>('[data-timeline]');
+    const svg = chronicle.querySelector<SVGSVGElement>('[data-timeline-svg]');
+    const pathBg = chronicle.querySelector<SVGPathElement>('[data-timeline-path-bg]');
+    const pathProgress = chronicle.querySelector<SVGPathElement>('[data-timeline-path-progress]');
 
     let selectedYear = chronicle.dataset.initialYear ?? 'all';
     let selectedType = 'all';
-    let selectedEntry = eventNodes.find((node) => node.classList.contains('is-selected'))?.dataset.entryNode ?? '';
+    let pathLength = 0;
 
-    const showPanel = (entryId: string, moveFocus = false) => {
-      selectedEntry = entryId;
+    // Für jeden sichtbaren Eintrag die Pfadlänge bis zu seinem Punkt (siehe
+    // recomputePath). So kann updateProgress erkennen, ob die wachsende Linie
+    // eine Kugel schon "erreicht" hat.
+    const entryPathLength = new Map<HTMLElement, number>();
+    const scratchPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-      eventNodes.forEach((node) => {
-        const selected = node.dataset.entryNode === entryId;
-        node.classList.toggle('is-selected', selected);
-        node.setAttribute('aria-pressed', String(selected));
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const setExpanded = (entry: HTMLElement, expanded: boolean, moveFocus = false) => {
+      const toggle = entry.querySelector<HTMLButtonElement>('[data-entry-toggle]');
+      const body = entry.querySelector<HTMLElement>('[data-entry-body]');
+      toggle?.setAttribute('aria-expanded', String(expanded));
+      if (body) body.hidden = !expanded;
+      if (expanded && moveFocus) {
+        entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    // Baut aus einer Liste von Punkten einen sanft geschwungenen Pfad
+    // (quadratische Kurven durch die Punktmitten) statt einer geraden Linie.
+    const buildWindingPath = (points: { x: number; y: number }[]) => {
+      if (points.length === 0) return '';
+      if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+
+      let d = `M ${points[0].x} ${points[0].y}`;
+
+      for (let i = 1; i < points.length - 1; i += 1) {
+        const current = points[i];
+        const next = points[i + 1];
+        const midX = (current.x + next.x) / 2;
+        const midY = (current.y + next.y) / 2;
+        d += ` Q ${current.x} ${current.y} ${midX} ${midY}`;
+      }
+
+      const last = points[points.length - 1];
+      d += ` L ${last.x} ${last.y}`;
+      return d;
+    };
+
+    // Die Füllung des Pfads wächst passend zum Lesefortschritt: sobald die
+    // Bildschirmmitte einen Punkt erreicht, ist der Pfad bis dorthin "bereist".
+    const updateProgress = () => {
+      if (!timeline || !pathProgress || pathLength === 0) return;
+
+      const trackRect = timeline.getBoundingClientRect();
+      const trackHeight = trackRect.height || 1;
+      const viewportHalf = window.innerHeight * 0.5;
+
+      // Absolute Dokumentposition von Anfang/Ende der Linie sowie die
+      // Bildschirmmitte, an der die Linie "vorbeizieht".
+      const trackTopAbs = trackRect.top + window.scrollY;
+      const trackBottomAbs = trackTopAbs + trackHeight;
+
+      // Rechnerisches Ende (Bildschirmmitte erreicht das Linienende) kann
+      // weiter unten liegen, als sich die Seite tatsächlich scrollen lässt
+      // (z. B. wenn nach dem Zeitstrahl nur noch ein kurzer Schlusstext und
+      // der Footer folgen). Deshalb wird der Endpunkt auf das tatsächlich
+      // erreichbare Scroll-Maximum begrenzt - so füllt sich die Linie stetig
+      // und ist am Seitenende immer exakt bei 100%, ohne Sprung.
+      const maxScrollY = Math.max(
+        0,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+
+      const start = trackTopAbs - viewportHalf;
+      const naturalEnd = trackBottomAbs - viewportHalf;
+      const end = Math.min(naturalEnd, maxScrollY);
+
+      const span = Math.max(end - start, 1);
+      let raw = (window.scrollY - start) / span;
+      raw = Math.max(0, Math.min(1, raw));
+
+      pathProgress.style.strokeDashoffset = String(pathLength * (1 - raw));
+
+      // Aktiv ist immer genau die zuletzt erreichte Kugel (die mit der
+      // größten Pfadlänge <= aktuellem Füllstand) - nicht ein schmales
+      // Abstandsfenster. Ein Fenster kann bei größeren Scroll-Sprüngen
+      // (schnelles Mausrad-Scrollen) übersprungen werden, ein "zuletzt
+      // erreicht"-Vergleich dagegen nie, egal wie groß der Sprung ist. Ist
+      // die zugehörige Karte aufgeklappt, bleibt die Kugel unabhängig davon
+      // aktiviert - der Text gehört ja weiterhin zu dieser Kugel.
+      const filledLength = pathLength * raw;
+      let currentEntry: HTMLElement | null = null;
+      let currentLength = -Infinity;
+      entryPathLength.forEach((lengthAtEntry, entry) => {
+        if (lengthAtEntry <= filledLength && lengthAtEntry > currentLength) {
+          currentLength = lengthAtEntry;
+          currentEntry = entry;
+        }
       });
 
-      reportPanels.forEach((panel) => {
-        const selected = panel.dataset.reportPanel === entryId;
-        panel.hidden = !selected;
-        if (selected && moveFocus && window.matchMedia('(max-width: 820px)').matches) {
-          panel.focus({ preventScroll: true });
-          panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+      entryPathLength.forEach((_lengthAtEntry, entry) => {
+        const toggle = entry.querySelector<HTMLButtonElement>('[data-entry-toggle]');
+        const isExpanded = toggle?.getAttribute('aria-expanded') === 'true';
+        entry.classList.toggle('is-near', isExpanded || entry === currentEntry);
       });
     };
 
+    // Liest die tatsächlichen (bereits durch CSS-Wellenversatz verschobenen)
+    // Punktpositionen aus und zeichnet den Pfad neu. Wird bei Filteränderung,
+    // Auf-/Zuklappen und Größenänderung erneut aufgerufen.
+    const recomputePath = () => {
+      if (!timeline || !svg || !pathBg || !pathProgress) return;
+
+      const trackRect = timeline.getBoundingClientRect();
+      const width = trackRect.width;
+      const height = trackRect.height;
+      if (width <= 0 || height <= 0) return;
+
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('width', String(width));
+      svg.setAttribute('height', String(height));
+
+      const visibleWithPoints = entries
+        .filter((entry) => !entry.hidden)
+        .map((entry) => {
+          const dot = entry.querySelector<HTMLElement>('[data-timeline-dot]');
+          if (!dot) return null;
+          const dotRect = dot.getBoundingClientRect();
+          return {
+            entry,
+            point: {
+              x: dotRect.left - trackRect.left + dotRect.width / 2,
+              y: dotRect.top - trackRect.top + dotRect.height / 2,
+            },
+          };
+        })
+        .filter((item): item is { entry: HTMLElement; point: { x: number; y: number } } => item !== null);
+
+      const points = visibleWithPoints.map((item) => item.point);
+
+      const d = buildWindingPath(points);
+      pathBg.setAttribute('d', d);
+      pathProgress.setAttribute('d', d);
+
+      pathLength = pathProgress.getTotalLength();
+      pathProgress.style.strokeDasharray = String(pathLength);
+      pathProgress.style.strokeDashoffset = String(pathLength);
+
+      // Pfadlänge bis zu jedem einzelnen Punkt ermitteln (für den
+      // "Kugel-erreicht"-Effekt in updateProgress), indem der Pfad schrittweise
+      // um je einen weiteren Punkt verlängert und neu vermessen wird.
+      entryPathLength.clear();
+      entries.forEach((entry) => entry.classList.remove('is-near'));
+      for (let i = 0; i < visibleWithPoints.length; i += 1) {
+        scratchPath.setAttribute('d', buildWindingPath(points.slice(0, i + 1)));
+        entryPathLength.set(visibleWithPoints[i].entry, scratchPath.getTotalLength());
+      }
+
+      updateProgress();
+    };
+
+    let ticking = false;
+    const scheduleUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateProgress();
+        ticking = false;
+      });
+    };
+
+    let recomputeTicking = false;
+    const scheduleRecompute = () => {
+      if (recomputeTicking) return;
+      recomputeTicking = true;
+      requestAnimationFrame(() => {
+        recomputePath();
+        recomputeTicking = false;
+      });
+    };
+
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleRecompute);
+    document.fonts?.ready?.then(scheduleRecompute).catch(() => {});
+
+    if ('ResizeObserver' in window && timeline) {
+      const resizeObserver = new ResizeObserver(scheduleRecompute);
+      resizeObserver.observe(timeline);
+    }
+
+    // Punkte und Karten blenden beim Erscheinen sanft ein. Das "erreicht"-
+    // Leuchten der Kugeln wird nicht hierüber, sondern direkt vom
+    // Linienfortschritt in updateProgress gesteuert (siehe entryPathLength).
+    let revealObserver: IntersectionObserver | undefined;
+
+    if ('IntersectionObserver' in window) {
+      revealObserver = new IntersectionObserver(
+        (records) => {
+          records.forEach((record) => {
+            if (record.isIntersecting) {
+              record.target.classList.add('is-revealed');
+              revealObserver?.unobserve(record.target);
+            }
+          });
+        },
+        { threshold: 0.2, rootMargin: '0px 0px -8% 0px' },
+      );
+    }
+
+    const observeEntry = (entry: HTMLElement) => {
+      if (prefersReducedMotion) {
+        entry.classList.add('is-revealed');
+      } else {
+        revealObserver?.observe(entry);
+      }
+    };
+
+    entries.forEach(observeEntry);
+
     const applyFilters = () => {
-      const visibleNodes = eventNodes.filter((node) => {
-        const matchesYear = selectedYear === 'all' || node.dataset.entryYear === selectedYear;
-        const matchesType = selectedType === 'all' || node.dataset.entryType === selectedType;
-        const visible = matchesYear && matchesType;
-        node.hidden = !visible;
-        return visible;
+      const visible = entries.filter((entry) => {
+        const matchesYear = selectedYear === 'all' || entry.dataset.entryYear === selectedYear;
+        const matchesType = selectedType === 'all' || entry.dataset.entryType === selectedType;
+        const isVisible = matchesYear && matchesType;
+        entry.hidden = !isVisible;
+        return isVisible;
       });
 
-      noResults?.toggleAttribute('hidden', visibleNodes.length > 0);
+      noResults?.toggleAttribute('hidden', visible.length > 0);
 
       if (resultStatus) {
         const yearText = selectedYear === 'all' ? 'der ganzen Chronik' : selectedYear;
-        const typeText = selectedType === 'all' ? '' : ` · ${selectedType}`;
-        resultStatus.textContent = `${visibleNodes.length} ${visibleNodes.length === 1 ? 'Akte' : 'Akten'} aus ${yearText}${typeText}`;
+        const typeText = (() => {
+          if (selectedType === 'all') return '';
+          const stripped = selectedType.replace(/^Original/, '');
+          return ` · ${stripped.charAt(0).toUpperCase()}${stripped.slice(1)}`;
+        })();
+        resultStatus.textContent = `${visible.length} ${visible.length === 1 ? 'Akte' : 'Akten'} aus ${yearText}${typeText}`;
       }
 
-      const selectedStillVisible = visibleNodes.some((node) => node.dataset.entryNode === selectedEntry);
-      if (!selectedStillVisible && visibleNodes[0]?.dataset.entryNode) {
-        showPanel(visibleNodes[0].dataset.entryNode);
-      }
+      scheduleRecompute();
     };
 
     yearButtons.forEach((button) => {
@@ -253,32 +457,46 @@ const yearNumber = (year: string) => year.split(' ')[0];
       });
     });
 
-    eventNodes.forEach((node) => {
-      node.addEventListener('click', () => {
-        const entryId = node.dataset.entryNode;
-        if (entryId) showPanel(entryId, true);
+    entries.forEach((entry) => {
+      const toggle = entry.querySelector<HTMLButtonElement>('[data-entry-toggle]');
+      toggle?.addEventListener('click', () => {
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+        setExpanded(entry, !isExpanded);
+        scheduleRecompute();
+      });
+
+      // Klick auf die Kugel springt direkt zur zugehörigen Karte und klappt
+      // sie auf, statt nur dekorativ auf der Linie zu sitzen.
+      const jumpDot = entry.querySelector<HTMLButtonElement>('[data-timeline-jump]');
+      jumpDot?.addEventListener('click', () => {
+        setExpanded(entry, true, true);
+        scheduleRecompute();
       });
     });
 
-    const hashEntry = window.location.hash.replace('#bericht-', '');
-    if (hashEntry && eventNodes.some((node) => node.dataset.entryNode === hashEntry)) {
+    const hashId = window.location.hash.replace('#bericht-', '');
+    const hashEntry = hashId ? entries.find((entry) => entry.dataset.entryId === hashId) : undefined;
+
+    if (hashEntry) {
       selectedYear = 'all';
       const allYearsButton = yearButtons.find((button) => button.dataset.yearFilter === 'all');
       allYearsButton?.click();
-      showPanel(hashEntry);
+      entries.forEach((entry) => setExpanded(entry, entry === hashEntry));
+      setExpanded(hashEntry, true, true);
     } else {
       applyFilters();
     }
+
+    scheduleRecompute();
   }
 </script>
 
 <style>
   .chronicle-intro {
     display: grid;
-    grid-template-columns: 1.4fr 0.8fr;
-    gap: 2rem;
-    align-items: start;
-    margin-bottom: 2rem;
+    gap: 0.75rem;
+    max-width: 760px;
+    margin-bottom: var(--space-5);
   }
 
   .chronicle-intro p {
@@ -286,213 +504,81 @@ const yearNumber = (year: string) => year.split(' ')[0];
   }
 
   .transmission-note {
-    padding: 0.85rem 1rem;
-    border-left: 3px double rgba(79, 47, 26, 0.72);
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid rgba(159, 72, 39, 0.45);
+    color: var(--ink-2);
     font-size: 0.92rem;
     font-style: italic;
   }
 
   .chronicle {
-    --ink: #21150d;
-    --muted-ink: #6b4932;
-    --line: rgba(76, 45, 25, 0.46);
-    --paper: rgba(241, 220, 181, 0.72);
-    --paper-strong: rgba(248, 231, 199, 0.94);
-    --seal: #8f1f18;
-    margin-top: 1.5rem;
-    padding: 1.35rem;
-    border: 1px solid rgba(83, 50, 29, 0.5);
-    background:
-      linear-gradient(90deg, transparent 49.8%, rgba(93, 58, 34, 0.035) 50%, transparent 50.2%),
-      radial-gradient(circle at 20% 10%, rgba(255, 246, 221, 0.5), transparent 24%),
-      rgba(225, 201, 161, 0.22);
-    box-shadow:
-      inset 0 0 0 4px rgba(238, 219, 183, 0.2),
-      0 14px 34px rgba(49, 29, 17, 0.12);
+    margin-top: var(--space-4);
   }
 
-  .chronicle-controls {
+  .filter-row {
     display: flex;
-    align-items: end;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.25rem 0.25rem 1rem;
-  }
-
-  .control-kicker,
-  .control-title {
-    margin: 0;
-  }
-
-  .control-kicker {
-    color: var(--muted-ink);
-    font-family: var(--font-ui);
-    font-size: 0.78rem;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
-  }
-
-  .control-title {
-    padding: 0 !important;
-    font-size: clamp(1.55rem, 3vw, 2.25rem);
-    text-align: left !important;
-  }
-
-  .control-title::after,
-  .panel-title::after {
-    display: none !important;
-  }
-
-  .show-all {
-    display: grid;
-    gap: 0.1rem;
-    min-width: 148px;
-    padding: 0.6rem 0.8rem;
-    border: 1px solid rgba(78, 46, 26, 0.65);
-    color: var(--ink);
-    background: rgba(245, 227, 194, 0.55);
-    font: 700 1rem var(--font-ui);
-    cursor: pointer;
-  }
-
-  .show-all span {
-    color: var(--muted-ink);
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-
-  .show-all:hover,
-  .show-all:focus-visible,
-  .show-all.is-active {
-    background: rgba(255, 241, 210, 0.9);
-    outline: 2px solid rgba(91, 49, 24, 0.22);
-    outline-offset: 2px;
-  }
-
-  .year-track {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(6, minmax(100px, 1fr));
-    gap: 0.6rem;
-    padding: 1rem 0 1.4rem;
-    overflow-x: auto;
-    scrollbar-color: rgba(82, 49, 28, 0.55) transparent;
-  }
-
-  .year-line {
-    position: absolute;
-    top: 3.35rem;
-    left: 7%;
-    right: 7%;
-    height: 3px;
-    background:
-      repeating-linear-gradient(90deg, rgba(83, 49, 27, 0.62) 0 8px, transparent 8px 13px);
-  }
-
-  .year-node {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    justify-items: center;
-    min-width: 100px;
-    border: 0;
-    color: var(--ink);
-    background: transparent;
-    font-family: var(--font-ui);
-    cursor: pointer;
-  }
-
-  .year-seal {
-    display: grid;
-    place-items: center;
-    width: 56px;
-    aspect-ratio: 1;
-    border: 3px double rgba(74, 42, 23, 0.78);
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 34% 28%, rgba(255, 238, 199, 0.9), transparent 26%),
-      #c9a879;
-    box-shadow: 0 3px 0 rgba(71, 42, 24, 0.26);
-    font: 700 1.18rem var(--font-heading);
-    transition:
-      transform 180ms ease,
-      color 180ms ease,
-      background-color 180ms ease;
-  }
-
-  .year-era {
-    margin-top: 0.3rem;
-    font-weight: 700;
-  }
-
-  .year-count {
-    color: var(--muted-ink);
-    font-size: 0.72rem;
-  }
-
-  .year-node:hover .year-seal,
-  .year-node:focus-visible .year-seal {
-    transform: translateY(-3px) rotate(-3deg);
-  }
-
-  .year-node.is-active .year-seal {
-    border-color: #54120f;
-    color: #fff1d7;
-    background:
-      radial-gradient(circle at 34% 28%, rgba(255, 205, 166, 0.35), transparent 24%),
-      var(--seal);
-    box-shadow:
-      0 0 0 4px rgba(143, 31, 24, 0.13),
-      0 4px 0 rgba(71, 42, 24, 0.3);
-    transform: translateY(-4px);
-  }
-
-  .type-controls {
-    display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: 0.45rem;
-    padding: 0.75rem 0;
-    border-block: 1px solid rgba(79, 47, 27, 0.34);
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.5rem;
   }
 
-  .type-controls > span {
-    margin-right: 0.35rem;
-    color: var(--muted-ink);
-    font: 700 0.78rem var(--font-ui);
-    letter-spacing: 0.06em;
+  .filter-row + .filter-row {
+    border-top: 1px solid rgba(177, 146, 104, 0.35);
+  }
+
+  .filter-label {
+    margin-right: 0.25rem;
+    color: var(--ink-2);
+    font-family: var(--font-ui);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .type-filter {
+  .filter-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.35rem 0.58rem;
-    border: 1px solid transparent;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid rgba(159, 72, 39, 0.35);
     border-radius: 999px;
-    color: var(--ink);
-    background: transparent;
-    font: 700 0.78rem var(--font-ui);
+    color: var(--ink-1);
+    background: rgba(253, 247, 236, 0.5);
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
   }
 
-  .type-filter i {
-    display: block;
-    width: 0.65rem;
+  .filter-chip i {
+    display: flex;
+    width: 0.95rem;
     aspect-ratio: 1;
-    border: 1px solid currentColor;
-    border-radius: 50%;
-    background: currentColor;
-    box-shadow: inset 0 0 0 2px rgba(245, 226, 191, 0.8);
+    color: var(--type-color, var(--brand-1));
   }
 
-  .type-filter:hover,
-  .type-filter:focus-visible,
-  .type-filter.is-active {
-    border-color: rgba(74, 43, 24, 0.45);
-    background: rgba(249, 231, 198, 0.75);
+  .filter-chip i :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .filter-chip:hover,
+  .filter-chip:focus-visible {
+    border-color: rgba(159, 72, 39, 0.6);
+    background: rgba(253, 247, 236, 0.85);
+  }
+
+  .filter-chip.is-active {
+    border-color: var(--brand-1);
+    color: #fff6ea;
+    background: var(--brand-1);
+  }
+
+  .filter-chip.is-active i {
+    color: #fff6ea;
   }
 
   .type-bericht {
@@ -511,336 +597,256 @@ const yearNumber = (year: string) => year.split(' ')[0];
     --type-color: #5c4b6b;
   }
 
-  .type-filter i,
-  .event-node .event-pin {
-    color: var(--type-color);
-  }
-
   .result-status {
-    margin: 0.65rem 0 0 !important;
-    color: var(--muted-ink) !important;
+    margin: 0.75rem 0 0 !important;
+    color: var(--ink-2) !important;
     font-family: var(--font-ui);
     font-size: 0.82rem;
-    text-align: right;
   }
 
-  .chronicle-workspace {
-    display: grid;
-    grid-template-columns: minmax(460px, 1.16fr) minmax(340px, 0.84fr);
-    gap: 1.5rem;
-    align-items: start;
-    margin-top: 0.6rem;
-  }
+  /* ---------- Zeitstrahl ---------- */
 
-  .chronicle-map {
+  .timeline {
     position: relative;
-    min-height: 520px;
-    padding: 1.5rem 0.8rem 2rem;
-    border-right: 1px solid rgba(78, 46, 26, 0.26);
+    margin-top: 1.5rem;
   }
 
-  .path-spine {
+  .timeline-svg {
     position: absolute;
-    top: 1.8rem;
-    bottom: 2rem;
-    left: 50%;
-    width: 3px;
-    translate: -50% 0;
-    background:
-      repeating-linear-gradient(180deg, rgba(79, 47, 27, 0.58) 0 9px, transparent 9px 15px);
+    inset: 0;
+    z-index: 0;
+    overflow: visible;
+    pointer-events: none;
   }
 
-  .path-spine::before,
-  .path-spine::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    width: 12px;
-    aspect-ratio: 1;
-    border: 2px solid rgba(75, 43, 24, 0.65);
-    border-radius: 50%;
-    background: #d7bc8e;
-    translate: -50% 0;
+  .timeline-path-bg {
+    fill: none;
+    stroke: rgba(159, 72, 39, 0.2);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
-  .path-spine::before {
-    top: -4px;
+  .timeline-path-progress {
+    fill: none;
+    stroke: var(--brand-1);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 5px rgba(159, 72, 39, 0.5));
+    transition: stroke-dashoffset 120ms linear;
   }
 
-  .path-spine::after {
-    bottom: -4px;
-  }
-
-  .event-nodes {
+  .timeline-track {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .event-node {
-    position: relative;
-    display: grid;
-    gap: 0.18rem;
-    width: calc(50% - 1.65rem);
-    min-height: 118px;
-    padding: 0.78rem 0.9rem 0.72rem;
-    border: 1px solid rgba(70, 40, 22, 0.55);
-    border-radius: 2px 12px 3px 9px;
-    color: var(--ink);
-    background:
-      linear-gradient(135deg, rgba(255, 247, 224, 0.62), transparent 35%),
-      var(--paper);
-    box-shadow:
-      3px 5px 0 rgba(79, 45, 24, 0.1),
-      inset 0 0 18px rgba(109, 69, 38, 0.08);
-    font-family: var(--font-body);
-    text-align: left;
-    cursor: pointer;
-    transition:
-      transform 180ms ease,
-      box-shadow 180ms ease,
-      background-color 180ms ease;
-  }
-
-  .event-node[data-lane='left'] {
-    align-self: flex-start;
-    rotate: -0.35deg;
-  }
-
-  .event-node[data-lane='right'] {
-    align-self: flex-end;
-    rotate: 0.35deg;
-  }
-
-  .event-node:hover,
-  .event-node:focus-visible {
-    z-index: 2;
-    transform: translateY(-3px);
-    outline: 2px solid rgba(83, 46, 24, 0.24);
-    outline-offset: 3px;
-    box-shadow:
-      5px 8px 0 rgba(79, 45, 24, 0.13),
-      inset 0 0 18px rgba(109, 69, 38, 0.08);
-  }
-
-  .event-node.is-selected {
-    border-color: var(--type-color);
-    background:
-      linear-gradient(135deg, rgba(255, 250, 232, 0.84), transparent 35%),
-      var(--paper-strong);
-    box-shadow:
-      0 0 0 3px color-mix(in srgb, var(--type-color) 18%, transparent),
-      5px 7px 0 rgba(79, 45, 24, 0.12);
-  }
-
-  .event-connector {
-    position: absolute;
-    top: 50%;
-    width: 1.75rem;
-    height: 1px;
-    border-top: 1px dashed rgba(73, 42, 24, 0.7);
-  }
-
-  [data-lane='left'] .event-connector {
-    left: 100%;
-  }
-
-  [data-lane='right'] .event-connector {
-    right: 100%;
-  }
-
-  .event-pin {
-    position: absolute;
-    top: 50%;
     z-index: 1;
-    width: 12px;
-    aspect-ratio: 1;
-    border: 2px solid #ead3a8;
-    border-radius: 50%;
-    background: var(--type-color);
-    box-shadow: 0 0 0 1px var(--type-color);
-    translate: 0 -50%;
+    display: grid;
+    gap: 1.9rem;
   }
 
-  [data-lane='left'] .event-pin {
-    left: calc(100% + 1.75rem - 6px);
-  }
-
-  [data-lane='right'] .event-pin {
-    right: calc(100% + 1.75rem - 6px);
-  }
-
-  .event-index {
-    position: absolute;
-    top: 0.45rem;
-    right: 0.55rem;
-    color: rgba(83, 49, 28, 0.34);
-    font: 700 0.72rem var(--font-ui);
-  }
-
-  .event-year {
-    color: var(--type-color);
-    font: 700 0.74rem var(--font-ui);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .event-node strong {
-    padding-right: 1rem;
-    font-size: 1.02rem;
-    line-height: 1.18;
-  }
-
-  .event-type {
-    color: var(--muted-ink);
-    font: 600 0.72rem var(--font-ui);
-  }
-
-  .open-hint {
-    margin-top: 0.3rem;
-    color: var(--type-color);
-    font: 700 0.72rem var(--font-ui);
-    text-align: right;
-  }
-
-  .no-results {
+  .timeline-item {
     position: relative;
-    margin: 3rem 1rem !important;
-    padding: 1rem;
-    border: 1px dashed var(--line);
-    background: rgba(245, 226, 191, 0.55);
-    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr 2.75rem 1fr;
+    align-items: start;
+    opacity: 0;
+    translate: 0 16px;
+    perspective: 600px;
+    transition: opacity 480ms ease, translate 480ms ease;
   }
 
-  .reading-desk {
-    position: sticky;
-    top: 5.7rem;
-    min-height: 480px;
-    padding: 1rem 1.2rem 1.25rem;
-    border: 1px solid rgba(70, 40, 22, 0.58);
-    background:
-      linear-gradient(90deg, transparent 0 94%, rgba(78, 43, 23, 0.06) 94% 95%, transparent 95%),
-      radial-gradient(circle at 18% 12%, rgba(255, 248, 225, 0.72), transparent 28%),
-      rgba(242, 221, 184, 0.9);
-    box-shadow:
-      8px 10px 0 rgba(69, 39, 22, 0.12),
-      inset 0 0 30px rgba(103, 63, 34, 0.12);
+  .timeline-item.is-revealed {
+    opacity: 1;
+    translate: 0 0;
   }
 
-  .reading-desk::before,
-  .reading-desk::after {
-    content: '';
-    position: absolute;
-    left: 10px;
-    right: 10px;
-    height: 1px;
-    background: rgba(78, 45, 24, 0.32);
-  }
-
-  .reading-desk::before {
-    top: 7px;
-  }
-
-  .reading-desk::after {
-    bottom: 7px;
-  }
-
-  .desk-top {
+  .timeline-dot {
+    grid-column: 2;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding-bottom: 0.55rem;
-    border-bottom: 3px double rgba(79, 47, 26, 0.5);
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    justify-self: center;
+    margin-top: 0.1rem;
+    width: 1.85rem;
+    aspect-ratio: 1;
+    appearance: none;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 50%;
+    color: rgba(253, 247, 236, 0.96);
+    background: var(--type-color, var(--brand-1));
+    box-shadow: 0 0 0 4px rgba(253, 247, 236, 0.9), 0 0 0 5px rgba(159, 72, 39, 0.25);
+    transform: translateX(var(--wave, 0px));
+    transition: transform 220ms ease, box-shadow 220ms ease, color 220ms ease;
   }
 
-  .desk-label {
-    color: var(--muted-ink);
-    font: 700 0.76rem var(--font-ui);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+  .timeline-dot :global(svg) {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
   }
 
-  .desk-flourish {
-    color: var(--seal);
-    font-size: 0.72rem;
+  .timeline-dot:hover,
+  .timeline-dot:focus-visible {
+    transform: translateX(var(--wave, 0px)) scale(1.12);
+    box-shadow: 0 0 0 4px rgba(253, 247, 236, 0.9), 0 0 0 5px var(--type-color, var(--brand-1));
   }
 
-  .report-panel {
-    scroll-margin-top: 6rem;
-    outline: none;
+  .timeline-dot:focus-visible {
+    outline: 2px solid var(--brand-1);
+    outline-offset: 3px;
   }
 
-  .panel-meta {
+  .timeline-item.is-near .timeline-dot {
+    animation: coin-flip 700ms ease-out;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes coin-flip {
+    0% {
+      transform: translateX(var(--wave, 0px)) scale(1) rotateY(0deg);
+      color: rgba(253, 247, 236, 0.96);
+      box-shadow: 0 0 0 4px rgba(253, 247, 236, 0.9), 0 0 0 5px rgba(159, 72, 39, 0.25);
+    }
+    50% {
+      transform: translateX(var(--wave, 0px)) scale(1.32) rotateY(90deg);
+      color: #fff3d0;
+      box-shadow: 0 0 0 5px rgba(253, 247, 236, 0.95), 0 0 0 6px #e0a63a,
+        0 0 26px 6px rgba(255, 209, 102, 0.95);
+    }
+    100% {
+      transform: translateX(var(--wave, 0px)) scale(1.22) rotateY(180deg);
+      color: #ffe9ae;
+      box-shadow: 0 0 0 5px rgba(253, 247, 236, 0.95), 0 0 0 6px #d9a53c,
+        0 0 20px 4px rgba(255, 205, 96, 0.85);
+    }
+  }
+
+  .timeline-card {
+    position: relative;
+    border: 1px solid rgba(177, 146, 104, 0.5);
+    border-top: 3px solid var(--type-color, var(--brand-1));
+    border-radius: var(--radius-sm);
+    background: rgba(253, 247, 236, 0.62);
+    overflow: hidden;
+    transition: box-shadow 200ms ease, transform 200ms ease;
+  }
+
+  .timeline-item.is-near .timeline-card {
+    box-shadow: 0 10px 26px rgba(43, 25, 12, 0.16);
+  }
+
+  .side-left .timeline-card {
+    grid-column: 1;
+  }
+
+  .side-right .timeline-card {
+    grid-column: 3;
+  }
+
+  .entry-header {
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 0.75rem;
-    margin: 0.9rem 0 0.45rem !important;
-    color: var(--muted-ink) !important;
-    font: 700 0.78rem var(--font-ui);
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 0;
+    background: transparent;
+    color: var(--ink-0);
+    text-align: left;
+    cursor: pointer;
   }
 
-  .panel-meta span:last-child {
-    color: var(--type-color);
-    text-align: right;
+  .entry-header:hover,
+  .entry-header:focus-visible {
+    background: rgba(159, 72, 39, 0.08);
   }
 
-  .panel-title {
-    margin: 0 0 1rem !important;
-    padding: 0 0 0.8rem !important;
-    border-bottom: 1px solid rgba(76, 43, 24, 0.4);
-    font-size: clamp(1.45rem, 2.4vw, 2rem);
-    line-height: 1.05;
-    text-align: left !important;
+  .entry-heading {
+    display: grid;
+    gap: 0.25rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .entry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    color: var(--ink-2);
+    font-family: var(--font-ui);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .entry-type {
+    color: var(--type-color, var(--brand-1));
+    font-weight: 700;
+  }
+
+  .entry-title {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .entry-caret {
+    flex: 0 0 auto;
+    margin-top: 0.3rem;
+    width: 0.6rem;
+    aspect-ratio: 1;
+    border-right: 2px solid var(--ink-2);
+    border-bottom: 2px solid var(--ink-2);
+    rotate: 45deg;
+    transition: rotate 150ms ease;
+  }
+
+  .entry-header[aria-expanded='true'] .entry-caret {
+    rotate: 225deg;
+  }
+
+  .entry-body {
+    padding: 0 1.1rem 1.1rem;
   }
 
   .confirmed-facts {
     margin: 0;
-    padding-left: 1.25rem;
+    padding-left: 1.2rem;
   }
 
   .confirmed-facts li + li {
-    margin-top: 0.55rem;
+    margin-top: 0.5rem;
   }
 
   .confirmed-facts li::marker {
-    color: var(--seal);
+    color: var(--brand-1);
   }
 
   .original-report {
-    margin-top: 1rem;
-    border-block: 1px solid rgba(78, 45, 24, 0.48);
+    margin-top: 0.9rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(177, 146, 104, 0.4);
   }
 
-  .original-report summary {
-    position: relative;
-    padding: 0.78rem 2rem 0.78rem 0;
-    color: #4b2c19;
-    cursor: pointer;
+  .original-label {
+    margin: 0 0 0.35rem !important;
+    color: var(--brand-1) !important;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
     font-weight: 700;
-    list-style: none;
-  }
-
-  .original-report summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .original-report summary::after {
-    content: '+';
-    position: absolute;
-    top: 50%;
-    right: 0.3rem;
-    translate: 0 -50%;
-    font: 400 1.35rem Georgia, serif;
-  }
-
-  .original-report[open] summary::after {
-    content: '−';
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
   .original-copy {
-    padding: 0.4rem 0.25rem 1rem;
-    border-top: 1px solid rgba(78, 45, 24, 0.24);
+    padding: 0 0 0.3rem;
   }
 
   .original-copy p {
@@ -851,10 +857,18 @@ const yearNumber = (year: string) => year.split(' ')[0];
     font-weight: 700;
   }
 
+  .no-results {
+    margin: 1.5rem 0 0 !important;
+    padding: 1rem;
+    border: 1px dashed rgba(177, 146, 104, 0.5);
+    border-radius: var(--radius-sm);
+    text-align: center;
+  }
+
   .reports-closing {
-    margin-top: 2.2rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(92, 55, 31, 0.45);
+    margin-top: var(--space-5);
+    padding-top: var(--space-3);
+    border-top: 1px solid rgba(177, 146, 104, 0.4);
     font-style: italic;
   }
 
@@ -862,155 +876,65 @@ const yearNumber = (year: string) => year.split(' ')[0];
     display: none !important;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .event-node:not([hidden]) {
-      animation: reveal-node 360ms both;
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-item {
+      transition: none;
     }
 
-    .event-node:not([hidden]):nth-child(2n) {
-      animation-delay: 45ms;
+    .timeline-dot,
+    .timeline-card,
+    .timeline-path-progress {
+      transition: none;
     }
 
-    .report-panel:not([hidden]) {
-      animation: reveal-panel 260ms both;
-    }
-  }
-
-  @keyframes reveal-node {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-  }
-
-  @keyframes reveal-panel {
-    from {
-      opacity: 0;
-      transform: translateX(8px);
-    }
-  }
-
-  @media (max-width: 980px) {
-    .chronicle-workspace {
-      grid-template-columns: minmax(360px, 1fr) minmax(300px, 0.8fr);
-      gap: 1rem;
-    }
-
-    .chronicle-map {
-      padding-inline: 0.4rem;
-    }
-
-    .event-node {
-      width: calc(50% - 1.25rem);
-    }
-
-    .event-connector {
-      width: 1.35rem;
-    }
-
-    [data-lane='left'] .event-pin {
-      left: calc(100% + 1.35rem - 6px);
-    }
-
-    [data-lane='right'] .event-pin {
-      right: calc(100% + 1.35rem - 6px);
+    .timeline-item.is-near .timeline-dot {
+      animation: none;
+      transform: translateX(var(--wave, 0px)) scale(1.2);
+      color: #ffe9ae;
+      box-shadow: 0 0 0 5px rgba(253, 247, 236, 0.95), 0 0 0 6px #d9a53c,
+        0 0 20px 4px rgba(255, 205, 96, 0.85);
     }
   }
 
   @media (max-width: 820px) {
-    .chronicle-intro {
-      grid-template-columns: 1fr;
-      gap: 1rem;
+    .timeline-item {
+      grid-template-columns: 2rem 1fr;
+      gap: 0.5rem;
     }
 
-    .chronicle {
-      padding: 1rem;
+    .timeline-dot {
+      grid-column: 1;
+      justify-self: start;
+      margin-left: 0.15rem;
+      --wave: 0px;
     }
 
-    .chronicle-workspace {
-      display: flex;
-      flex-direction: column;
+    .side-left .timeline-card,
+    .side-right .timeline-card {
+      grid-column: 2;
     }
 
-    .chronicle-map {
-      width: 100%;
-      min-height: 0;
-      border-right: 0;
-      border-bottom: 1px solid rgba(78, 46, 26, 0.28);
+    .entry-body {
+      padding-left: 0.9rem;
     }
 
-    .reading-desk {
-      position: relative;
-      top: auto;
-      width: 100%;
-      min-height: 0;
+    .entry-header {
+      padding: 0.75rem 0.85rem;
+    }
+
+    .filter-row {
+      gap: 0.4rem;
+    }
+
+    .filter-chip {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.78rem;
     }
   }
 
-  @media (max-width: 560px) {
-    .chronicle-controls {
-      align-items: stretch;
-      flex-direction: column;
-    }
-
-    .show-all {
-      min-width: 0;
-      width: 100%;
-    }
-
-    .year-track {
-      grid-template-columns: repeat(6, 86px);
-      margin-inline: -0.25rem;
-      padding-inline: 0.25rem;
-    }
-
-    .year-line {
-      left: 44px;
-      right: 44px;
-    }
-
-    .type-controls > span {
-      width: 100%;
-    }
-
-    .result-status {
-      text-align: left;
-    }
-
-    .chronicle-map {
-      padding-left: 1.5rem;
-    }
-
-    .path-spine {
-      left: 0.55rem;
-    }
-
-    .event-node,
-    .event-node[data-lane='left'],
-    .event-node[data-lane='right'] {
-      align-self: stretch;
-      width: calc(100% - 1.5rem);
-      margin-left: 1.5rem;
-      rotate: 0deg;
-    }
-
-    .event-connector,
-    [data-lane='left'] .event-connector,
-    [data-lane='right'] .event-connector {
-      top: 50%;
-      right: 100%;
-      left: auto;
-      width: 1.55rem;
-    }
-
-    [data-lane='left'] .event-pin,
-    [data-lane='right'] .event-pin {
-      right: calc(100% + 1.55rem - 6px);
-      left: auto;
-    }
-
-    .reading-desk {
-      padding-inline: 0.9rem;
+  @media (max-width: 480px) {
+    .timeline-track {
+      gap: 1.5rem;
     }
   }
 </style>
