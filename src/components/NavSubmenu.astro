@@ -1,0 +1,75 @@
+---
+import type { NavSubItem } from '../data/site';
+
+interface Props {
+  items: NavSubItem[];
+  pathname: string;
+  parentLabel: string;
+  parentHref: string;
+}
+
+const { items, pathname, parentLabel, parentHref } = Astro.props;
+
+const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(href));
+
+function hasActiveDescendant(children?: NavSubItem[]): boolean {
+  if (!children) return false;
+  return children.some((child) => isActive(child.href) || hasActiveDescendant(child.children));
+}
+
+const toId = (href: string) => `submenu-${href.replace(/[^a-zA-Z0-9]+/g, '-')}`;
+const submenuId = toId(parentHref);
+---
+
+<ul id={submenuId} class="submenu" aria-label={`${parentLabel} Unterpunkte`}>
+  <li class="submenu-overview">
+    <a href={parentHref}>Übersicht: {parentLabel}</a>
+  </li>
+  {
+    items.map((child) => {
+      const childHasChildren = Array.isArray(child.children) && child.children.length > 0;
+      const childActive = isActive(child.href);
+      const childHasActiveChild = hasActiveDescendant(child.children);
+      const childSubmenuId = toId(child.href);
+
+      return (
+        <li
+          class:list={{
+            'has-children': childHasChildren,
+            'has-active-child': childHasActiveChild,
+            'is-submenu-open': childHasActiveChild,
+          }}
+        >
+          <div class="nav-item-row">
+            <a
+              href={child.href}
+              aria-current={pathname === child.href ? 'page' : undefined}
+              class={childActive ? 'active' : ''}
+            >
+              {child.label}
+            </a>
+            {childHasChildren && (
+              <button
+                class="submenu-toggle"
+                type="button"
+                aria-expanded={childHasActiveChild ? 'true' : 'false'}
+                aria-controls={childSubmenuId}
+                aria-label={`Untermenü ${child.label} ${childHasActiveChild ? 'schließen' : 'öffnen'}`}
+              >
+                <span aria-hidden="true" />
+              </button>
+            )}
+          </div>
+          {childHasChildren && (
+            <Astro.self
+              items={child.children!}
+              pathname={pathname}
+              parentLabel={child.label}
+              parentHref={child.href}
+            />
+          )}
+        </li>
+      );
+    })
+  }
+</ul>

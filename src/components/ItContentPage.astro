@@ -28,7 +28,7 @@ const {
 
 // Abschnitts-Root erkennen: passt die aktuelle URL auf einen IT-Navigationspunkt
 // mit Unterseiten, zeigen wir automatisch Karten zu diesen Unterseiten.
-// Funktioniert auch für verschachtelte Navigation, z. B. Söldner → Haubentaucher → Charaktere.
+// Funktioniert auch für verschachtelte Navigation, z. B. Söldner → 84. Banner, 1. Lanze → Charaktere.
 
 type NavNode = {
   label: string;
@@ -72,14 +72,11 @@ const dropCapExcludedPaths = new Set([
   '/it/berichte',
   '/it/vorrede',
   '/it/akademie/vier-zweige',
-  '/it/akademie/wissenschaft-magie',
+  '/it/akademie/wissenschaft-gelehrsamkeit',
   '/it/glaube/weitere-gottheiten',
-  '/it/glaube/gebete-segenssprueche',
   '/it/recht',
 ]);
-const isHaubentaucherPage =
-  pathname === '/it/soeldner/haubentaucher' ||
-  pathname.startsWith('/it/soeldner/haubentaucher/');
+const isHaubentaucherPage = pathname.startsWith('/it/soeldner/84-banner-1-lanze/');
 const useAutomaticDropCap =
   dropCap &&
   !dropCapExcludedPaths.has(pathname) &&

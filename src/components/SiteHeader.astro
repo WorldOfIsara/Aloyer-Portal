@@ -56,7 +56,7 @@ const isIt = pathname.startsWith('/it');
               item.children!.some(
                 (child) => pathname === child.href || (child.href !== '/' && pathname.startsWith(child.href)),
               );
-            const submenuId = `site-submenu-${index}`;
+            const submenuId = `submenu-${item.href.replace(/[^a-zA-Z0-9]+/g, '-')}`;
             return (
               <li
                 class:list={{
@@ -93,15 +93,76 @@ const isIt = pathname.startsWith('/it');
                         const childCurrent = pathname === child.href;
                         const childActive =
                           pathname === child.href || (child.href !== '/' && pathname.startsWith(child.href));
+                        const grandchildren = child.children ?? [];
+                        const childHasChildren = grandchildren.length > 0;
+
+                        if (!childHasChildren) {
+                          return (
+                            <li>
+                              <a
+                                href={child.href}
+                                aria-current={childCurrent ? 'page' : undefined}
+                                class={childActive ? 'active' : ''}
+                              >
+                                {child.label}
+                              </a>
+                            </li>
+                          );
+                        }
+
+                        const childHasActiveGrandchild = grandchildren.some(
+                          (gc) => pathname === gc.href || (gc.href !== '/' && pathname.startsWith(gc.href)),
+                        );
+                        const childSubmenuId = `submenu-${child.href.replace(/[^a-zA-Z0-9]+/g, '-')}`;
+
                         return (
-                          <li>
-                            <a
-                              href={child.href}
-                              aria-current={childCurrent ? 'page' : undefined}
-                              class={childActive ? 'active' : ''}
-                            >
-                              {child.label}
-                            </a>
+                          <li
+                            class:list={{
+                              'has-children': true,
+                              'has-active-child': childHasActiveGrandchild,
+                              'is-submenu-open': childHasActiveGrandchild,
+                            }}
+                          >
+                            <div class="nav-item-row">
+                              <a
+                                href={child.href}
+                                aria-current={childCurrent ? 'page' : undefined}
+                                class={childActive ? 'active' : ''}
+                              >
+                                {child.label}
+                              </a>
+                              <button
+                                class="submenu-toggle"
+                                type="button"
+                                aria-expanded={childHasActiveGrandchild ? 'true' : 'false'}
+                                aria-controls={childSubmenuId}
+                                aria-label={`Untermenü ${child.label} ${childHasActiveGrandchild ? 'schließen' : 'öffnen'}`}
+                              >
+                                <span aria-hidden="true" />
+                              </button>
+                            </div>
+                            <ul id={childSubmenuId} class="submenu submenu-level2" aria-label={`${child.label} Unterpunkte`}>
+                              <li class="submenu-overview">
+                                <a href={child.href}>Übersicht: {child.label}</a>
+                              </li>
+                              {grandchildren.map((grandchild) => {
+                                const gcCurrent = pathname === grandchild.href;
+                                const gcActive =
+                                  pathname === grandchild.href ||
+                                  (grandchild.href !== '/' && pathname.startsWith(grandchild.href));
+                                return (
+                                  <li>
+                                    <a
+                                      href={grandchild.href}
+                                      aria-current={gcCurrent ? 'page' : undefined}
+                                      class={gcActive ? 'active' : ''}
+                                    >
+                                      {grandchild.label}
+                                    </a>
+                                  </li>
+                                );
+                              })}
+                            </ul>
                           </li>
                         );
                       })}
@@ -226,9 +287,20 @@ const isIt = pathname.startsWith('/it');
         const willOpen = !listItem.classList.contains('is-submenu-open');
 
         if (willOpen) {
-          header.querySelectorAll('.submenu-toggle').forEach((otherButton) => {
-            if (otherButton !== button) setSubmenuState(otherButton, false);
-          });
+          // Nur Geschwister-Einträge auf derselben Ebene schließen (gleiche
+          // Eltern-<ul>), NICHT alle .submenu-toggle im Header. Sonst würde
+          // das Öffnen eines verschachtelten Untermenüs (Ebene 2) sein
+          // eigenes übergeordnetes Untermenü (Ebene 1) gleich wieder
+          // schließen, da dessen Toggle-Button ebenfalls unter
+          // header.querySelectorAll('.submenu-toggle') fällt.
+          const parentList = listItem.parentElement;
+          if (parentList) {
+            Array.from(parentList.children).forEach((sibling) => {
+              if (sibling === listItem || !(sibling instanceof HTMLElement)) return;
+              const siblingButton = sibling.querySelector(':scope > .nav-item-row > .submenu-toggle');
+              if (siblingButton instanceof HTMLButtonElement) setSubmenuState(siblingButton, false);
+            });
+          }
         }
 
         setSubmenuState(button, willOpen);
@@ -681,6 +753,66 @@ const isIt = pathname.startsWith('/it');
     display: block;
   }
 
+  /* Ebene 2 (z. B. die Söldner-Charaktere unter 84. Banner, 1. Lanze):
+     genau EINE zusätzliche, fest kodierte Verschachtelungsstufe - kein
+     rekursiver Aufbau. Auf dem Desktop ein eigenes seitliches Flyout
+     (öffnet nach rechts neben dem Elternpunkt), auf Mobile weiterhin
+     eine eingerückte Inline-Liste (Flyouts ergeben auf Touch/kleinen
+     Screens keinen Sinn - dafür sorgt der @media-Block weiter unten). */
+  nav .submenu li.has-children {
+    position: relative;
+  }
+
+  /* Auf Desktop öffnet sich Ebene 2 per Hover/Fokus/Klick auf den
+     Elternpunkt selbst (Flyout) - der Pfeil-Button wird dort nicht
+     gebraucht und bliebe sonst als funktionsloses Extra-Element stehen.
+     Erst im Mobile-Media-Query weiter unten wird er sichtbar, weil dort
+     der Klick auf den Button die einzige Möglichkeit ist, die Liste
+     auf-/zuzuklappen. */
+  nav .submenu .submenu-toggle {
+    display: none;
+  }
+
+  nav .submenu .submenu-toggle span {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-0.12rem) rotate(45deg);
+    transition: transform 160ms ease;
+  }
+
+  nav .submenu li.has-children.is-submenu-open > .nav-item-row .submenu-toggle span {
+    transform: translateY(0.12rem) rotate(225deg);
+  }
+
+  nav .submenu-level2 {
+    position: absolute;
+    left: 100%;
+    top: -0.36rem;
+    z-index: 40;
+    display: none;
+    min-width: 260px;
+    margin: 0;
+    padding: 0.36rem;
+    border-radius: 10px;
+    border: 1px solid rgba(244, 233, 215, 0.22);
+    background: rgba(10, 7, 5, 0.97);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
+  }
+
+  nav .submenu li.has-children:hover > .submenu-level2,
+  nav .submenu li.has-children:focus-within > .submenu-level2,
+  nav .submenu li.has-children.is-submenu-open > .submenu-level2 {
+    display: block;
+  }
+
+  nav .submenu-level2 a {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.86rem;
+    opacity: 0.95;
+  }
+
   nav a:hover,
   nav a.active {
     text-decoration: none;
@@ -874,6 +1006,14 @@ const isIt = pathname.startsWith('/it');
       cursor: pointer;
     }
 
+    /* Überschreibt `nav .submenu .submenu-toggle { display: none; }` (Desktop-
+       Flyout braucht den Button nicht) - auf Mobile ist er wieder die einzige
+       Möglichkeit, Ebene 2 auf-/zuzuklappen. Gleiche Selektor-Spezifität wie
+       die Desktop-Regel, gewinnt aber durch spätere Position im Media-Query. */
+    nav .submenu .submenu-toggle {
+      display: inline-flex;
+    }
+
     .submenu-toggle span {
       width: 0.62rem;
       height: 0.62rem;
@@ -929,6 +1069,18 @@ const isIt = pathname.startsWith('/it');
       color: var(--header-ink);
       font-size: 0.95rem;
       line-height: 1.3;
+    }
+
+    nav .submenu-level2 {
+      margin: 0.1rem 0 0.35rem;
+      padding: 0.1rem 0 0.1rem 0.9rem;
+    }
+
+    nav .submenu-level2 a {
+      min-height: 40px;
+      padding: 0.5rem 0.6rem;
+      font-size: 0.88rem;
+      opacity: 0.88;
     }
   }
 

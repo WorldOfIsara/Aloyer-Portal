@@ -1,0 +1,33 @@
+---
+import ItContentPage from '@components/ItContentPage.astro';
+import ItCharacterArticle from '@components/ItCharacterArticle.astro';
+import { haubentaucherCharacters } from '@/data/haubentaucher';
+
+export function getStaticPaths() {
+  return haubentaucherCharacters.map((character) => ({
+    params: { slug: character.slug },
+    props: { character },
+  }));
+}
+
+const { character } = Astro.props;
+---
+
+<ItContentPage title={character.name}>
+  <ItCharacterArticle
+    name={character.name}
+    imageSrc={character.imageSrc}
+    imageAlt={character.imageAlt}
+    imagePosition={character.imagePosition}
+    rank={character.rank}
+    deploymentArea={character.deploymentArea}
+    origin={character.origin}
+    role={character.role}
+    formerLife={character.formerLife}
+    weapons={character.weapons}
+    summary={character.summary}
+    notes={character.notes}
+  >
+    {character.body.map((paragraph) => <p>{paragraph}</p>)}
+  </ItCharacterArticle>
+</ItContentPage>

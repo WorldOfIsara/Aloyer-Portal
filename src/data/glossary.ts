@@ -35,8 +35,8 @@ export const glossaryEntries: GlossaryEntry[] = [
       { href: '/it/akademie/geschichte', title: 'Geschichte der Akademie' },
       { href: '/it/akademie/vier-zweige', title: 'Die vier Zweige der Akademie' },
       {
-        href: '/it/akademie/gelehrte-schreiber-meister',
-        title: 'Gelehrte, Schreiber und Meister',
+        href: '/it/akademie/wissenschaft-gelehrsamkeit',
+        title: 'Wissenschaft und Gelehrsamkeit',
       },
     ],
   },
@@ -64,7 +64,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       { href: '/it/rat/aloyer-rat', title: 'Der Aloyer Rat' },
       { href: '/it/rat/staedte-zuenfte-stimmen', title: 'Städte, Zünfte und Stimmen' },
       { href: '/it/rat/wahlen-aemter', title: 'Wahlen und Ämter' },
-      { href: '/it/rat/beschluesse', title: 'Beschlüsse und Verlautbarungen' },
+      { href: '/it/rat/ratsarbeit-heute', title: 'Ratsarbeit heute' },
     ],
   },
   {
@@ -74,9 +74,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Der politische Umbruch, mit dem die alte Adelsherrschaft endete und die Grundlage der freien Republik entstand.',
     links: [
-      { href: '/it/rat/befreiung', title: 'Die Befreiung Aloys' },
-      { href: '/it/rat/freiheitserklaerung', title: 'Die Freiheitserklärung' },
-      { href: '/it/rat/fehlender-adel', title: 'Vom fehlenden Adel' },
+      { href: '/it/rat/geschichte-der-republik', title: 'Geschichte der Republik' },
       { href: '/it/akademie/geschichte', title: 'Geschichte der Akademie' },
     ],
   },
@@ -98,7 +96,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Amtspersonen, die richterliche und obrigkeitliche Anordnungen vollziehen und die öffentliche Ordnung unterstützen.',
     links: [
-      { href: '/it/recht/buettel-wachen-schreiber', title: 'Büttel, Wachen und Schreiber' },
+      { href: '/it/recht/traeger-der-rechtsordnung', title: 'Träger der Rechtsordnung' },
       { href: '/it/recht/gerichtsordnung', title: 'Aloyer Gerichtsordnung' },
       { href: '/it/recht/strafen-bussen', title: 'Strafen und Bußen' },
     ],
@@ -134,9 +132,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Grundlegende Erklärung der neuen republikanischen Ordnung nach der Befreiung Aloys.',
     links: [
-      { href: '/it/rat/freiheitserklaerung', title: 'Die Freiheitserklärung' },
-      { href: '/it/rat/befreiung', title: 'Die Befreiung Aloys' },
-      { href: '/it/rat/fehlender-adel', title: 'Vom fehlenden Adel' },
+      { href: '/it/rat/geschichte-der-republik', title: 'Geschichte der Republik' },
     ],
   },
   {
@@ -158,7 +154,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Beiname einer reisenden Gemeinschaft aloyischer Söldner, Trossleute und Begleiter, die unter dem 84. Banner in den Splitterlanden auftritt.',
     links: [
-      { href: '/it/soeldner/haubentaucher', title: 'Haubentaucher' },
+      { href: '/it/soeldner/84-banner-1-lanze', title: '84. Banner, 1. Lanze' },
       { href: '/it/soeldner', title: 'Söldner' },
       { href: '/ot/willkommen#wer-wir-sind', title: 'Wer wir sind' },
     ],
@@ -172,7 +168,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/glaube/die-drei#hortum', title: 'Die Drei: Hortum' },
       { href: '/it/glaube/bestattung-seelenurteil', title: 'Bestattung, Tod und Seelenurteil' },
-      { href: '/it/glaube/glaube-feldlager', title: 'Glaube im Feldlager' },
+      { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
     ],
   },
   {
@@ -194,7 +190,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Seltene und schwer zugängliche Kraft, die in Aloy mit Vorsicht gelehrt, geprüft und erforscht wird.',
     links: [
-      { href: '/it/akademie/wissenschaft-magie', title: 'Wissenschaft und Magie' },
+      { href: '/it/akademie/wissenschaft-gelehrsamkeit', title: 'Wissenschaft und Gelehrsamkeit' },
       { href: '/it/akademie/vier-zweige', title: 'Die vier Zweige der Akademie' },
       { href: '/ot/willkommen#hintergrund', title: 'Hintergrund' },
     ],
@@ -222,7 +218,6 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Eine der Drei und in der aloyischen Glaubensordnung mit Maß, Ausgleich und abwägender Urteilskraft verbunden.',
     links: [
       { href: '/it/glaube/die-drei#miram', title: 'Die Drei: Miram' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
       { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
     ],
   },
@@ -233,7 +228,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Aloyer Zeitangaben für Jahre nach beziehungsweise vor der Befreiung Aloys.',
     links: [
-      { href: '/it/rat/befreiung', title: 'Die Befreiung Aloys' },
+      { href: '/it/rat/geschichte-der-republik', title: 'Geschichte der Republik' },
       { href: '/it/akademie/geschichte', title: 'Geschichte der Akademie' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
@@ -247,7 +242,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/aloy/ohm-akademie', title: 'Ohm und die rote Akademie' },
       { href: '/it/akademie/rote-akademie-ohm', title: 'Die rote Akademie zu Ohm' },
-      { href: '/it/akademie/ausbildung-soldaten', title: 'Ausbildung der Soldaten' },
+      { href: '/it/akademie/ausbildung-kriegswesen', title: 'Ausbildung und Kriegswesen' },
     ],
   },
   {
@@ -259,7 +254,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/glaube/priester-tempel', title: 'Priester und Tempel' },
       { href: '/it/akademie/religion-glaube', title: 'Religion und Glaube' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
+      { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
     ],
   },
   {
@@ -272,7 +267,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       { href: '/it/rat', title: 'Republik & Rat' },
       { href: '/it/rat/aloyer-rat', title: 'Der Aloyer Rat' },
       { href: '/it/rat/staedte-zuenfte-stimmen', title: 'Städte, Zünfte und Stimmen' },
-      { href: '/it/rat/fehlender-adel', title: 'Vom fehlenden Adel' },
+      { href: '/it/rat/geschichte-der-republik', title: 'Geschichte der Republik' },
     ],
   },
   {
@@ -297,8 +292,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/akademie/rote-akademie-ohm', title: 'Die rote Akademie zu Ohm' },
       { href: '/it/aloy/ohm-akademie', title: 'Ohm und die rote Akademie' },
-      { href: '/it/akademie/militaer-krieg', title: 'Militär und Krieg' },
-      { href: '/it/akademie/ausbildung-soldaten', title: 'Ausbildung der Soldaten' },
+      { href: '/it/akademie/ausbildung-kriegswesen', title: 'Ausbildung und Kriegswesen' },
     ],
   },
   {
@@ -308,9 +302,8 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Amtsträger der örtlichen Rechts- und Verwaltungsordnung mit richterlichen oder ordnenden Aufgaben.',
     links: [
-      { href: '/it/recht/richter-schultheiss', title: 'Vom Richter und Schultheiß' },
+      { href: '/it/recht/traeger-der-rechtsordnung', title: 'Träger der Rechtsordnung' },
       { href: '/it/recht/gerichtsordnung', title: 'Aloyer Gerichtsordnung' },
-      { href: '/it/recht/rat-oberste-ordnung', title: 'Vom Rat als oberster Ordnung' },
     ],
   },
   {
@@ -321,8 +314,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Akademisch geprägte Kämpfer, deren Ausbildung Kriegskunst mit Disziplin, Haltung und Verantwortung verbindet.',
     links: [
       { href: '/it/akademie', title: 'Die Akademie' },
-      { href: '/it/akademie/ausbildung-soldaten', title: 'Ausbildung der Soldaten' },
-      { href: '/it/akademie/militaer-krieg', title: 'Militär und Krieg' },
+      { href: '/it/akademie/ausbildung-kriegswesen', title: 'Ausbildung und Kriegswesen' },
     ],
   },
   {
@@ -464,9 +456,9 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Die farblich geordneten Hauptbereiche Wissenschaft und Magie, Religion und Glaube, Militär und Krieg sowie Handwerk und Handel.',
     links: [
       { href: '/it/akademie/vier-zweige', title: 'Die vier Zweige der Akademie' },
-      { href: '/it/akademie/wissenschaft-magie', title: 'Wissenschaft und Magie' },
+      { href: '/it/akademie/wissenschaft-gelehrsamkeit', title: 'Wissenschaft und Gelehrsamkeit' },
       { href: '/it/akademie/religion-glaube', title: 'Religion und Glaube' },
-      { href: '/it/akademie/militaer-krieg', title: 'Militär und Krieg' },
+      { href: '/it/akademie/ausbildung-kriegswesen', title: 'Ausbildung und Kriegswesen' },
       { href: '/it/akademie/handwerk-handel', title: 'Handwerk und Handel' },
     ],
   },
@@ -478,7 +470,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Unter diesem Namen führen die Register die aloyischen Seestreitkräfte, deren Schiffe, Vorräte und Einsätze vornehmlich mit Tiafunt verbunden sind.',
     links: [
       { href: '/it/aloy/tiafunt', title: 'Tiafunt, Hafen und Tor zur Welt' },
-      { href: '/it/akademie/militaer-krieg', title: 'Militär und Krieg' },
+      { href: '/it/akademie/ausbildung-kriegswesen', title: 'Ausbildung und Kriegswesen' },
       { href: '/it/soeldner/hauptleute-banner', title: 'Bekannte Hauptleute und Banner' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
@@ -503,7 +495,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Auswärtiger Herrschaftsbereich, mit dessen Abgesandten Aloy Gespräche über Handel und die Anlage eines Hafens führte.',
     links: [
       { href: '/it/umland/splitterlande', title: 'Aloy in den Splitterlanden' },
-      { href: '/it/umland/diplomatische-kontakte', title: 'Diplomatische Kontakte' },
+      { href: '/it/umland/diplomatie-beziehungen', title: 'Diplomatie und Beziehungen' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
   },
@@ -527,7 +519,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Seeliger der Zauberei und Magie. Der Akademie liegen zu seiner Herkunft und seiner Ordnung bislang nur wenige verlässliche Schriften vor.',
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
-      { href: '/it/akademie/wissenschaft-magie', title: 'Wissenschaft und Magie' },
+      { href: '/it/akademie/wissenschaft-gelehrsamkeit', title: 'Wissenschaft und Gelehrsamkeit' },
     ],
   },
   {
@@ -551,10 +543,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
       { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
-      { href: '/it/glaube/glaube-feldlager', title: 'Glaube im Feldlager' },
-      { href: '/it/volk/speis-trank-gelage', title: 'Speis, Trank und Gelage' },
-      { href: '/it/volk/lieder-spiele-geschichten', title: 'Lieder, Spiele und Geschichten' },
-      { href: '/it/volk/feste-feiertage', title: 'Feste und Feiertage' },
+      { href: '/it/volk/feste-lieder-gelage', title: 'Feste, Lieder und Gelage' },
     ],
   },
   {
@@ -565,8 +554,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Seeliger der Wissenschaften, Alchemie und Gelehrsamkeit, der Erkenntnis mit verantwortungsvoller Forschung verbindet.',
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
-      { href: '/it/akademie/wissenschaft-magie', title: 'Wissenschaft und Magie' },
-      { href: '/it/akademie/gelehrte-schreiber-meister', title: 'Gelehrte, Schreiber und Meister' },
+      { href: '/it/akademie/wissenschaft-gelehrsamkeit', title: 'Wissenschaft und Gelehrsamkeit' },
     ],
   },
   {
@@ -577,8 +565,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Bedeutendes Kontaktland der Splitterlande und wiederkehrender Schauplatz des Heinrichsfestes sowie aloyischer Heerlagerberichte.',
     links: [
       { href: '/it/umland/nachbarn', title: 'Bekannte Nachbarn' },
-      { href: '/it/umland/diplomatische-kontakte', title: 'Diplomatische Kontakte' },
-      { href: '/it/umland/offene-gesandtschaften', title: 'Offene Gesandtschaften' },
+      { href: '/it/umland/diplomatie-beziehungen', title: 'Diplomatie und Beziehungen' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
   },
@@ -605,8 +592,6 @@ export const glossaryEntries: GlossaryEntry[] = [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
       { href: '/it/glaube/bestattung-seelenurteil', title: 'Bestattung, Tod und Seelenurteil' },
       { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
-      { href: '/it/glaube/glaube-feldlager', title: 'Glaube im Feldlager' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
     ],
   },
   {
@@ -617,7 +602,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Für Wundversorgung und praktische Heilkunde ausgebildete Begleitperson von Heer, Banner und Feldlager.',
     links: [
       { href: '/it/akademie', title: 'Die Akademie' },
-      { href: '/it/akademie/militaer-krieg', title: 'Militär und Krieg' },
+      { href: '/it/akademie/ausbildung-kriegswesen', title: 'Ausbildung und Kriegswesen' },
       { href: '/it/soeldner/soeldnerwesen', title: 'Vom Söldnerwesen Aloys' },
       { href: '/it/soeldner/84-banner-1-lanze', title: '84. Banner, 1. Lanze' },
       { href: '/it/soeldner/reisende-banner', title: 'Die reisenden Banner' },
@@ -630,7 +615,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Während aloyischer Feierlichkeiten geltendes Gebot gegen Kampf, Raufhandel und mutwillige Gewalt.',
     links: [
-      { href: '/it/volk/feste-feiertage', title: 'Feste und Feiertage' },
+      { href: '/it/volk/feste-lieder-gelage', title: 'Feste, Lieder und Gelage' },
       { href: '/it/volk/sitten-fremde', title: 'Sitten im Umgang mit Fremden' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
@@ -652,7 +637,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Überlieferte Folge religiöser, republikanischer und jahreszeitlicher Feste und Gedenktage im aloyischen Jahr.',
     links: [
-      { href: '/it/volk/feste-feiertage', title: 'Feste und Feiertage' },
+      { href: '/it/volk/feste-lieder-gelage', title: 'Feste, Lieder und Gelage' },
       { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
@@ -664,9 +649,8 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Herbstliches Erinnerungsfest an die Entstehung der Republik und die Gleichstellung der freien Bürger Aloys.',
     links: [
-      { href: '/it/volk/feste-feiertage', title: 'Feste und Feiertage' },
-      { href: '/it/rat/freiheitserklaerung', title: 'Die Freiheitserklärung' },
-      { href: '/it/rat/befreiung', title: 'Die Befreiung Aloys' },
+      { href: '/it/volk/feste-lieder-gelage', title: 'Feste, Lieder und Gelage' },
+      { href: '/it/rat/geschichte-der-republik', title: 'Geschichte der Republik' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
   },
@@ -688,7 +672,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Dem Aloyer Rat unterstellte Gilde, welche vereidigte und zeitweise verpflichtete Wächter im In- und Ausland vertritt.',
     links: [
-      { href: '/it/recht/buettel-wachen-schreiber', title: 'Büttel, Wachen und Schreiber' },
+      { href: '/it/recht/traeger-der-rechtsordnung', title: 'Träger der Rechtsordnung' },
       { href: '/it/recht', title: 'Recht und Ordnung' },
       { href: '/it/rat/aloyer-rat', title: 'Der Aloyer Rat' },
     ],
@@ -713,9 +697,8 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Seelige von Heim und Feuer, deren Wärme Schutz und Handwerk ermöglicht, deren Macht aber ebenso Zerstörung bringen kann.',
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
       { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
-      { href: '/it/volk/speis-trank-gelage', title: 'Speis, Trank und Gelage' },
+      { href: '/it/volk/feste-lieder-gelage', title: 'Feste, Lieder und Gelage' },
     ],
   },
   {
@@ -774,8 +757,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Auswärtiges Königreich und wiederkehrender politischer Kontakt im Gefüge der Splitterlande.',
     links: [
       { href: '/it/umland/nachbarn', title: 'Bekannte Nachbarn' },
-      { href: '/it/umland/diplomatische-kontakte', title: 'Diplomatische Kontakte' },
-      { href: '/it/umland/offene-gesandtschaften', title: 'Offene Gesandtschaften' },
+      { href: '/it/umland/diplomatie-beziehungen', title: 'Diplomatie und Beziehungen' },
       { href: '/it/umland/splitterlande', title: 'Aloy in den Splitterlanden' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
@@ -813,8 +795,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Historisch benachbartes Land, zu dem Aloy erneut diplomatische, wirtschaftliche und kulturelle Beziehungen aufnimmt.',
     links: [
       { href: '/it/umland/nachbarn', title: 'Bekannte Nachbarn' },
-      { href: '/it/umland/diplomatische-kontakte', title: 'Diplomatische Kontakte' },
-      { href: '/it/umland/offene-gesandtschaften', title: 'Offene Gesandtschaften' },
+      { href: '/it/umland/diplomatie-beziehungen', title: 'Diplomatie und Beziehungen' },
       { href: '/it/umland/handel-soeldnervertraege', title: 'Handel und Söldnerverträge' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
@@ -851,7 +832,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     definition:
       'Hauptmann des 84. Banners, dessen Name in aloyischen Feld-, Reise- und Heerlagerberichten wiederkehrt.',
     links: [
-      { href: '/it/soeldner/haubentaucher/Lenz', title: 'Lenz' },
+      { href: '/it/soeldner/84-banner-1-lanze/Lenz', title: 'Lenz' },
       { href: '/it/soeldner/84-banner-1-lanze', title: '84. Banner, 1. Lanze' },
       { href: '/it/soeldner/hauptleute-banner', title: 'Bekannte Hauptleute und Banner' },
       { href: '/it/berichte', title: 'Berichte' },
@@ -865,8 +846,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Inselstaat der Splitterlande, dessen Fürstentum Aloy durch Feste, Bündnisse und gemeinsame Unternehmungen bekannt ist.',
     links: [
       { href: '/it/umland/nachbarn', title: 'Bekannte Nachbarn' },
-      { href: '/it/umland/diplomatische-kontakte', title: 'Diplomatische Kontakte' },
-      { href: '/it/umland/offene-gesandtschaften', title: 'Offene Gesandtschaften' },
+      { href: '/it/umland/diplomatie-beziehungen', title: 'Diplomatie und Beziehungen' },
       { href: '/it/umland/splitterlande', title: 'Aloy in den Splitterlanden' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
@@ -879,9 +859,8 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Seelige der Liebe, Lust, Fruchtbarkeit und Ekstase, die besonders bei Hochzeiten, Festen und Kinderwunsch angerufen wird.',
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
       { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
-      { href: '/it/volk/feste-feiertage', title: 'Feste und Feiertage' },
+      { href: '/it/volk/feste-lieder-gelage', title: 'Feste, Lieder und Gelage' },
     ],
   },
   {
@@ -894,7 +873,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       { href: '/it/soeldner/soeldnerwesen', title: 'Vom Söldnerwesen Aloys' },
       { href: '/it/soeldner/hauptleute-banner', title: 'Bekannte Hauptleute und Banner' },
       { href: '/it/aloy/ohm-akademie', title: 'Ohm und die rote Akademie' },
-      { href: '/it/akademie/militaer-krieg', title: 'Militär und Krieg' },
+      { href: '/it/akademie/ausbildung-kriegswesen', title: 'Ausbildung und Kriegswesen' },
     ],
   },
   {
@@ -930,7 +909,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Seelige von Wetter, Wasser, Meer und Gezeiten, die besonders von Seefahrern, Fischern und Bauern angerufen wird.',
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
+      { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
       { href: '/it/aloy/tiafunt', title: 'Tiafunt, Hafen und Tor zur Welt' },
       { href: '/it/aloy/handel', title: 'Handel, Münze und Waren' },
     ],
@@ -943,7 +922,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Seeliger von Handwerk, Kunst, Ackerbau und praktischem Fortschritt, der eng mit Zünften und Ausbildung verbunden ist.',
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
+      { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
       { href: '/it/akademie/handwerk-handel', title: 'Handwerk und Handel' },
       { href: '/it/volk/zunefte-gewerbe', title: 'Zünfte und ehrbare Gewerbe' },
       { href: '/it/volk/bauern-handwerker-buerger', title: 'Bauern, Handwerker und Bürger' },
@@ -958,8 +937,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
       { href: '/it/glaube/bestattung-seelenurteil', title: 'Bestattung, Tod und Seelenurteil' },
-      { href: '/it/glaube/glaube-feldlager', title: 'Glaube im Feldlager' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
+      { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
       { href: '/it/soeldner/kriegsbrauch-feld', title: 'Kriegsbrauch und Verhalten im Feld' },
     ],
   },
@@ -971,7 +949,7 @@ export const glossaryEntries: GlossaryEntry[] = [
       'Geeigneter und unparteiischer Beisitzer eines aloyischen Gerichts, der gemeinsam mit Richter oder Schultheiß an Verfahren mitwirkt.',
     links: [
       { href: '/it/recht/gerichtsordnung', title: 'Aloyer Gerichtsordnung' },
-      { href: '/it/recht/richter-schultheiss', title: 'Vom Richter und Schultheiß' },
+      { href: '/it/recht/traeger-der-rechtsordnung', title: 'Träger der Rechtsordnung' },
       { href: '/it/recht/malefizgericht-vergehen', title: 'Malefizgericht und schwere Vergehen' },
     ],
   },
@@ -985,7 +963,6 @@ export const glossaryEntries: GlossaryEntry[] = [
       { href: '/it/glaube', title: 'Glaube und Götter' },
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
       { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
     ],
   },
   {
@@ -997,7 +974,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
       { href: '/it/recht/malefizgericht-vergehen', title: 'Malefizgericht und schwere Vergehen' },
-      { href: '/it/akademie/wissenschaft-magie', title: 'Wissenschaft und Magie' },
+      { href: '/it/akademie/wissenschaft-gelehrsamkeit', title: 'Wissenschaft und Gelehrsamkeit' },
     ],
   },
   {
@@ -1035,9 +1012,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/glaube/weitere-gottheiten', title: 'Die Seelingen Aloys' },
       { href: '/it/glaube/glaube-alltag', title: 'Glaube im Alltag' },
-      { href: '/it/glaube/glaube-feldlager', title: 'Glaube im Feldlager' },
       { href: '/it/glaube/priester-tempel', title: 'Priester und Tempel' },
-      { href: '/it/glaube/gebete-segenssprueche', title: 'Gebete und Segenssprüche' },
     ],
   },
   {
@@ -1049,7 +1024,7 @@ export const glossaryEntries: GlossaryEntry[] = [
     links: [
       { href: '/it/soeldner/lagerordnung', title: 'Lagerordnung' },
       { href: '/it/soeldner/84-banner-1-lanze', title: '84. Banner, 1. Lanze' },
-      { href: '/it/soeldner/haubentaucher/Lars', title: 'Lars Spalter' },
+      { href: '/it/soeldner/84-banner-1-lanze/Lars', title: 'Lars Spalter' },
       { href: '/it/berichte', title: 'Berichte' },
     ],
   },
