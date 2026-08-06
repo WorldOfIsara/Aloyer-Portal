@@ -61,7 +61,7 @@ export const friendGroups: PartnerGroup[] = [
     description:
       'Willkommen in der Inselgruppe Arcogne, einem Hort von Schönheit, Mut und Innovation. Seit mehreren Jahrhunderten existieren hier drei Länder in Frieden und Zwist.',
     url: 'https://www.facebook.com/people/Die-Arcogne/100064555397896/',
-    logoSrc: '/images/ot/partner/argogne.png',
+    logoSrc: '/images/ot/partner/arcogne.png',
   },
 
 ];
