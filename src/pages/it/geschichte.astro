@@ -1,0 +1,954 @@
+---
+import ItContentPage from '../../components/ItContentPage.astro';
+import {
+  itHistoryEntries,
+  itHistoryPeriods,
+  type ItHistoryType,
+} from '../../data/itHistory';
+
+const initialPeriod = 'all';
+const initialEntry = itHistoryEntries[0];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const withBase = (href: string) => `${base}${href}`;
+
+const typeLabels: ItHistoryType[] = [
+  'Grundlegende Geschichte',
+  'Landesgeschichte',
+  '84. Banner',
+  'Registervermerk',
+];
+
+const typeKey = (type: ItHistoryType) => {
+  if (type === 'Grundlegende Geschichte') return 'bericht';
+  if (type === 'Landesgeschichte') return 'meldung';
+  if (type === '84. Banner') return 'ausschreibung';
+  return 'kurzmeldung';
+};
+
+const typeIcons: Record<string, string> = {
+  bericht:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M15 3v4h4"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="15.5" x2="16" y2="15.5"/><line x1="8" y1="19" x2="13" y2="19"/></svg>',
+  meldung:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5h16v14Z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
+  ausschreibung:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v18"/><path d="M5 4h11l-2.5 3.5L16 11H5"/></svg>',
+  kurzmeldung:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>',
+};
+
+const waveOffset = (index: number) => Math.round(Math.sin(index * 1.15) * 24);
+---
+
+<ItContentPage
+  title="Geschichte Aloys"
+  description="Die erschlossene Geschichte Aloys von der alten Monarchie bis zur jüngeren Chronik der Republik."
+  wide
+  dropCap={false}
+>
+  <div class="chronicle-intro">
+    <p>Die Register der Akademie führen die Geschichte Aloys von der alten Königsherrschaft über Befreiung und republikanische Neuordnung bis zur jüngeren Chronik. Wählet eine Epoche und eine Registerart, um den Geschichtspfad einzugrenzen.</p>
+    <p class="transmission-note">Wo die Quellen schweigen, bleibt das Register offen. Landesgeschichte und Unternehmungen des 84. Banners werden getrennt verzeichnet, damit Bericht und Staatschronik einander nicht verdecken.</p>
+  </div>
+
+  <section class="chronicle" data-chronicle data-initial-year={initialPeriod} data-initial-entry={initialEntry?.id}>
+    <div class="filter-row" aria-label="Epochen der Geschichte Aloys">
+      <span class="filter-label">Epoche</span>
+      <button class="filter-chip is-active" type="button" data-year-filter="all" aria-pressed="true">
+        Alle
+      </button>
+      {itHistoryPeriods.map((period) => (
+        <button
+          class="filter-chip"
+          type="button"
+          data-year-filter={period}
+          aria-pressed="false"
+        >
+          {period}
+        </button>
+      ))}
+    </div>
+
+    <div class="filter-row" aria-label="Arten der Chronikeinträge">
+      <span class="filter-label">Art</span>
+      <button class="filter-chip is-active" type="button" data-type-filter="all" aria-pressed="true">
+        Alle
+      </button>
+      {typeLabels.map((type) => (
+        <button
+          class:list={['filter-chip', `type-${typeKey(type)}`]}
+          type="button"
+          data-type-filter={type}
+          aria-pressed="false"
+        >
+          <i aria-hidden="true" set:html={typeIcons[typeKey(type)]} />
+          {type}
+        </button>
+      ))}
+    </div>
+
+    <p class="result-status" data-result-status aria-live="polite"></p>
+
+    <div class="timeline" data-timeline>
+      <svg class="timeline-svg" data-timeline-svg aria-hidden="true" preserveAspectRatio="none">
+        <path class="timeline-path-bg" data-timeline-path-bg />
+        <path class="timeline-path-progress" data-timeline-path-progress />
+      </svg>
+
+      <div class="timeline-track" data-entry-list>
+        {itHistoryEntries.map((entry, index) => {
+          const entryType = typeKey(entry.type);
+
+          return (
+            <article
+              class:list={['timeline-item', `type-${entryType}`, index % 2 === 0 ? 'side-left' : 'side-right']}
+              data-entry
+              data-entry-id={entry.id}
+              data-entry-year={entry.period}
+              data-entry-type={entry.type}
+            >
+              <button
+                type="button"
+                class="timeline-dot"
+                data-timeline-dot
+                data-timeline-jump
+                style={`--wave: ${waveOffset(index)}px`}
+                aria-label={`Zu „${entry.title}“ springen`}
+                set:html={typeIcons[entryType]}
+              ></button>
+
+              <div class="timeline-card">
+                <button
+                  class="entry-header"
+                  type="button"
+                  data-entry-toggle
+                  aria-expanded="false"
+                  aria-controls={`geschichte-body-${entry.id}`}
+                  id={`geschichte-${entry.id}`}
+                >
+                  <span class="entry-heading">
+                    <span class="entry-meta">
+                      <span class="entry-year">{entry.date}</span>
+                      <span class="entry-type">{entry.type}</span>
+                    </span>
+                    <span class="entry-title">{entry.title}</span>
+                  </span>
+                  <span class="entry-caret" aria-hidden="true"></span>
+                </button>
+
+                <div
+                  class="entry-body"
+                  id={`geschichte-body-${entry.id}`}
+                  data-entry-body
+                  hidden
+                >
+                  <p class="history-summary">{entry.summary}</p>
+
+                  {entry.details && (
+                    <ul class="confirmed-facts">
+                      {entry.details.map((detail) => <li>{detail}</li>)}
+                    </ul>
+                  )}
+
+                  {entry.link && (
+                    <a class="record-link" href={withBase(entry.link.href)}>
+                      {entry.link.label}
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+
+    <p class="no-results" data-no-results hidden>Für diese Auswahl ist noch kein Eintrag im Register verzeichnet.</p>
+  </section>
+
+  <p class="reports-closing">Die Chronik wird ergänzt, sobald weitere datierte und belastbare Kunde erschlossen ist. Unbestätigte Zahlen, verworfene Altbestände und bloße Planungen werden nicht als geschehene Geschichte geführt.</p>
+</ItContentPage>
+<script>
+  const chronicle = document.querySelector<HTMLElement>('[data-chronicle]');
+
+  if (chronicle) {
+    const yearButtons = [...chronicle.querySelectorAll<HTMLButtonElement>('[data-year-filter]')];
+    const typeButtons = [...chronicle.querySelectorAll<HTMLButtonElement>('[data-type-filter]')];
+    const entries = [...chronicle.querySelectorAll<HTMLElement>('[data-entry]')];
+    const resultStatus = chronicle.querySelector<HTMLElement>('[data-result-status]');
+    const noResults = chronicle.querySelector<HTMLElement>('[data-no-results]');
+    const timeline = chronicle.querySelector<HTMLElement>('[data-timeline]');
+    const svg = chronicle.querySelector<SVGSVGElement>('[data-timeline-svg]');
+    const pathBg = chronicle.querySelector<SVGPathElement>('[data-timeline-path-bg]');
+    const pathProgress = chronicle.querySelector<SVGPathElement>('[data-timeline-path-progress]');
+
+    let selectedYear = chronicle.dataset.initialYear ?? 'all';
+    let selectedType = 'all';
+    let pathLength = 0;
+
+    // Für jeden sichtbaren Eintrag die Pfadlänge bis zu seinem Punkt (siehe
+    // recomputePath). So kann updateProgress erkennen, ob die wachsende Linie
+    // eine Kugel schon "erreicht" hat.
+    const entryPathLength = new Map<HTMLElement, number>();
+    const scratchPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const setExpanded = (entry: HTMLElement, expanded: boolean, moveFocus = false) => {
+      const toggle = entry.querySelector<HTMLButtonElement>('[data-entry-toggle]');
+      const body = entry.querySelector<HTMLElement>('[data-entry-body]');
+      toggle?.setAttribute('aria-expanded', String(expanded));
+      if (body) body.hidden = !expanded;
+      if (expanded && moveFocus) {
+        entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    // Baut aus einer Liste von Punkten einen sanft geschwungenen Pfad
+    // (quadratische Kurven durch die Punktmitten) statt einer geraden Linie.
+    const buildWindingPath = (points: { x: number; y: number }[]) => {
+      if (points.length === 0) return '';
+      if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+
+      let d = `M ${points[0].x} ${points[0].y}`;
+
+      for (let i = 1; i < points.length - 1; i += 1) {
+        const current = points[i];
+        const next = points[i + 1];
+        const midX = (current.x + next.x) / 2;
+        const midY = (current.y + next.y) / 2;
+        d += ` Q ${current.x} ${current.y} ${midX} ${midY}`;
+      }
+
+      const last = points[points.length - 1];
+      d += ` L ${last.x} ${last.y}`;
+      return d;
+    };
+
+    // Die Füllung des Pfads wächst passend zum Lesefortschritt: sobald die
+    // Bildschirmmitte einen Punkt erreicht, ist der Pfad bis dorthin "bereist".
+    const updateProgress = () => {
+      if (!timeline || !pathProgress || pathLength === 0) return;
+
+      const trackRect = timeline.getBoundingClientRect();
+      const trackHeight = trackRect.height || 1;
+      const viewportHalf = window.innerHeight * 0.5;
+
+      // Absolute Dokumentposition von Anfang/Ende der Linie sowie die
+      // Bildschirmmitte, an der die Linie "vorbeizieht".
+      const trackTopAbs = trackRect.top + window.scrollY;
+      const trackBottomAbs = trackTopAbs + trackHeight;
+
+      // Rechnerisches Ende (Bildschirmmitte erreicht das Linienende) kann
+      // weiter unten liegen, als sich die Seite tatsächlich scrollen lässt
+      // (z. B. wenn nach dem Zeitstrahl nur noch ein kurzer Schlusstext und
+      // der Footer folgen). Deshalb wird der Endpunkt auf das tatsächlich
+      // erreichbare Scroll-Maximum begrenzt - so füllt sich die Linie stetig
+      // und ist am Seitenende immer exakt bei 100%, ohne Sprung.
+      const maxScrollY = Math.max(
+        0,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+
+      const start = trackTopAbs - viewportHalf;
+      const naturalEnd = trackBottomAbs - viewportHalf;
+      const end = Math.min(naturalEnd, maxScrollY);
+
+      const span = Math.max(end - start, 1);
+      let raw = (window.scrollY - start) / span;
+      raw = Math.max(0, Math.min(1, raw));
+
+      pathProgress.style.strokeDashoffset = String(pathLength * (1 - raw));
+
+      // Aktiv ist immer genau die zuletzt erreichte Kugel (die mit der
+      // größten Pfadlänge <= aktuellem Füllstand) - nicht ein schmales
+      // Abstandsfenster. Ein Fenster kann bei größeren Scroll-Sprüngen
+      // (schnelles Mausrad-Scrollen) übersprungen werden, ein "zuletzt
+      // erreicht"-Vergleich dagegen nie, egal wie groß der Sprung ist. Ist
+      // die zugehörige Karte aufgeklappt, bleibt die Kugel unabhängig davon
+      // aktiviert - der Text gehört ja weiterhin zu dieser Kugel.
+      const filledLength = pathLength * raw;
+      let currentEntry: HTMLElement | null = null;
+      let currentLength = -Infinity;
+      entryPathLength.forEach((lengthAtEntry, entry) => {
+        if (lengthAtEntry <= filledLength && lengthAtEntry > currentLength) {
+          currentLength = lengthAtEntry;
+          currentEntry = entry;
+        }
+      });
+
+      entryPathLength.forEach((_lengthAtEntry, entry) => {
+        const toggle = entry.querySelector<HTMLButtonElement>('[data-entry-toggle]');
+        const isExpanded = toggle?.getAttribute('aria-expanded') === 'true';
+        entry.classList.toggle('is-near', isExpanded || entry === currentEntry);
+      });
+    };
+
+    // Liest die tatsächlichen (bereits durch CSS-Wellenversatz verschobenen)
+    // Punktpositionen aus und zeichnet den Pfad neu. Wird bei Filteränderung,
+    // Auf-/Zuklappen und Größenänderung erneut aufgerufen.
+    const recomputePath = () => {
+      if (!timeline || !svg || !pathBg || !pathProgress) return;
+
+      const trackRect = timeline.getBoundingClientRect();
+      const width = trackRect.width;
+      const height = trackRect.height;
+      if (width <= 0 || height <= 0) return;
+
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      svg.setAttribute('width', String(width));
+      svg.setAttribute('height', String(height));
+
+      const visibleWithPoints = entries
+        .filter((entry) => !entry.hidden)
+        .map((entry) => {
+          const dot = entry.querySelector<HTMLElement>('[data-timeline-dot]');
+          if (!dot) return null;
+          const dotRect = dot.getBoundingClientRect();
+          return {
+            entry,
+            point: {
+              x: dotRect.left - trackRect.left + dotRect.width / 2,
+              y: dotRect.top - trackRect.top + dotRect.height / 2,
+            },
+          };
+        })
+        .filter((item): item is { entry: HTMLElement; point: { x: number; y: number } } => item !== null);
+
+      const points = visibleWithPoints.map((item) => item.point);
+
+      const d = buildWindingPath(points);
+      pathBg.setAttribute('d', d);
+      pathProgress.setAttribute('d', d);
+
+      pathLength = pathProgress.getTotalLength();
+      pathProgress.style.strokeDasharray = String(pathLength);
+      pathProgress.style.strokeDashoffset = String(pathLength);
+
+      // Pfadlänge bis zu jedem einzelnen Punkt ermitteln (für den
+      // "Kugel-erreicht"-Effekt in updateProgress), indem der Pfad schrittweise
+      // um je einen weiteren Punkt verlängert und neu vermessen wird.
+      entryPathLength.clear();
+      entries.forEach((entry) => entry.classList.remove('is-near'));
+      for (let i = 0; i < visibleWithPoints.length; i += 1) {
+        scratchPath.setAttribute('d', buildWindingPath(points.slice(0, i + 1)));
+        entryPathLength.set(visibleWithPoints[i].entry, scratchPath.getTotalLength());
+      }
+
+      updateProgress();
+    };
+
+    let ticking = false;
+    const scheduleUpdate = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updateProgress();
+        ticking = false;
+      });
+    };
+
+    let recomputeTicking = false;
+    const scheduleRecompute = () => {
+      if (recomputeTicking) return;
+      recomputeTicking = true;
+      requestAnimationFrame(() => {
+        recomputePath();
+        recomputeTicking = false;
+      });
+    };
+
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleRecompute);
+    document.fonts?.ready?.then(scheduleRecompute).catch(() => {});
+
+    if ('ResizeObserver' in window && timeline) {
+      const resizeObserver = new ResizeObserver(scheduleRecompute);
+      resizeObserver.observe(timeline);
+    }
+
+    // Punkte und Karten blenden beim Erscheinen sanft ein. Das "erreicht"-
+    // Leuchten der Kugeln wird nicht hierüber, sondern direkt vom
+    // Linienfortschritt in updateProgress gesteuert (siehe entryPathLength).
+    let revealObserver: IntersectionObserver | undefined;
+
+    if ('IntersectionObserver' in window) {
+      revealObserver = new IntersectionObserver(
+        (records) => {
+          records.forEach((record) => {
+            if (record.isIntersecting) {
+              record.target.classList.add('is-revealed');
+              revealObserver?.unobserve(record.target);
+            }
+          });
+        },
+        { threshold: 0.2, rootMargin: '0px 0px -8% 0px' },
+      );
+    }
+
+    const observeEntry = (entry: HTMLElement) => {
+      if (prefersReducedMotion) {
+        entry.classList.add('is-revealed');
+      } else {
+        revealObserver?.observe(entry);
+      }
+    };
+
+    entries.forEach(observeEntry);
+
+    const applyFilters = () => {
+      const visible = entries.filter((entry) => {
+        const matchesYear = selectedYear === 'all' || entry.dataset.entryYear === selectedYear;
+        const matchesType = selectedType === 'all' || entry.dataset.entryType === selectedType;
+        const isVisible = matchesYear && matchesType;
+        entry.hidden = !isVisible;
+        return isVisible;
+      });
+
+      noResults?.toggleAttribute('hidden', visible.length > 0);
+
+      if (resultStatus) {
+        const yearText = selectedYear === 'all' ? 'der ganzen Chronik' : selectedYear;
+        const typeText = (() => {
+          if (selectedType === 'all') return '';
+          const stripped = selectedType.replace(/^Original/, '');
+          return ` · ${stripped.charAt(0).toUpperCase()}${stripped.slice(1)}`;
+        })();
+        resultStatus.textContent = `${visible.length} ${visible.length === 1 ? 'Akte' : 'Akten'} aus ${yearText}${typeText}`;
+      }
+
+      scheduleRecompute();
+    };
+
+    yearButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        selectedYear = button.dataset.yearFilter ?? 'all';
+        yearButtons.forEach((candidate) => {
+          const active = candidate === button;
+          candidate.classList.toggle('is-active', active);
+          candidate.setAttribute('aria-pressed', String(active));
+        });
+        applyFilters();
+      });
+    });
+
+    typeButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        selectedType = button.dataset.typeFilter ?? 'all';
+        typeButtons.forEach((candidate) => {
+          const active = candidate === button;
+          candidate.classList.toggle('is-active', active);
+          candidate.setAttribute('aria-pressed', String(active));
+        });
+        applyFilters();
+      });
+    });
+
+    entries.forEach((entry) => {
+      const toggle = entry.querySelector<HTMLButtonElement>('[data-entry-toggle]');
+      toggle?.addEventListener('click', () => {
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+        setExpanded(entry, !isExpanded);
+        scheduleRecompute();
+      });
+
+      // Klick auf die Kugel springt direkt zur zugehörigen Karte und klappt
+      // sie auf, statt nur dekorativ auf der Linie zu sitzen.
+      const jumpDot = entry.querySelector<HTMLButtonElement>('[data-timeline-jump]');
+      jumpDot?.addEventListener('click', () => {
+        setExpanded(entry, true, true);
+        scheduleRecompute();
+      });
+    });
+
+    const hashId = window.location.hash.replace('#geschichte-', '');
+    const hashEntry = hashId ? entries.find((entry) => entry.dataset.entryId === hashId) : undefined;
+
+    if (hashEntry) {
+      selectedYear = 'all';
+      const allYearsButton = yearButtons.find((button) => button.dataset.yearFilter === 'all');
+      allYearsButton?.click();
+      entries.forEach((entry) => setExpanded(entry, entry === hashEntry));
+      setExpanded(hashEntry, true, true);
+    } else {
+      applyFilters();
+    }
+
+    scheduleRecompute();
+  }
+</script>
+
+<style>
+  .chronicle-intro {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 760px;
+    margin-bottom: var(--space-5);
+  }
+
+  .chronicle-intro p {
+    margin: 0;
+  }
+
+  .transmission-note {
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid rgba(159, 72, 39, 0.45);
+    color: var(--ink-2);
+    font-size: 0.92rem;
+    font-style: italic;
+  }
+
+  .chronicle {
+    margin-top: var(--space-4);
+  }
+
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.5rem;
+  }
+
+  .filter-row + .filter-row {
+    border-top: 1px solid rgba(177, 146, 104, 0.35);
+  }
+
+  .filter-label {
+    margin-right: 0.25rem;
+    color: var(--ink-2);
+    font-family: var(--font-ui);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid rgba(159, 72, 39, 0.35);
+    border-radius: 999px;
+    color: var(--ink-1);
+    background: rgba(253, 247, 236, 0.5);
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+
+  .filter-chip i {
+    display: flex;
+    width: 0.95rem;
+    aspect-ratio: 1;
+    color: var(--type-color, var(--brand-1));
+  }
+
+  .filter-chip i :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .filter-chip:hover,
+  .filter-chip:focus-visible {
+    border-color: rgba(159, 72, 39, 0.6);
+    background: rgba(253, 247, 236, 0.85);
+  }
+
+  .filter-chip.is-active {
+    border-color: var(--brand-1);
+    color: #fff6ea;
+    background: var(--brand-1);
+  }
+
+  .filter-chip.is-active i {
+    color: #fff6ea;
+  }
+
+  .type-bericht {
+    --type-color: #8b2019;
+  }
+
+  .type-meldung {
+    --type-color: #274f55;
+  }
+
+  .type-ausschreibung {
+    --type-color: #7b5b17;
+  }
+
+  .type-kurzmeldung {
+    --type-color: #5c4b6b;
+  }
+
+  .result-status {
+    margin: 0.75rem 0 0 !important;
+    color: var(--ink-2) !important;
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+  }
+
+  /* ---------- Zeitstrahl ---------- */
+
+  .timeline {
+    position: relative;
+    margin-top: 1.5rem;
+  }
+
+  .timeline-svg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .timeline-path-bg {
+    fill: none;
+    stroke: rgba(159, 72, 39, 0.2);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .timeline-path-progress {
+    fill: none;
+    stroke: var(--brand-1);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 5px rgba(159, 72, 39, 0.5));
+    transition: stroke-dashoffset 120ms linear;
+  }
+
+  .timeline-track {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 1.9rem;
+  }
+
+  .timeline-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 2.75rem 1fr;
+    align-items: start;
+    opacity: 0;
+    translate: 0 16px;
+    perspective: 600px;
+    transition: opacity 480ms ease, translate 480ms ease;
+  }
+
+  .timeline-item.is-revealed {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .timeline-dot {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    justify-self: center;
+    margin-top: 0.1rem;
+    width: 1.85rem;
+    aspect-ratio: 1;
+    appearance: none;
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 50%;
+    color: rgba(253, 247, 236, 0.96);
+    background: var(--type-color, var(--brand-1));
+    box-shadow: 0 0 0 4px rgba(253, 247, 236, 0.9), 0 0 0 5px rgba(159, 72, 39, 0.25);
+    transform: translateX(var(--wave, 0px));
+    transition: transform 220ms ease, box-shadow 220ms ease, color 220ms ease;
+  }
+
+  .timeline-dot :global(svg) {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .timeline-dot:hover,
+  .timeline-dot:focus-visible {
+    transform: translateX(var(--wave, 0px)) scale(1.12);
+    box-shadow: 0 0 0 4px rgba(253, 247, 236, 0.9), 0 0 0 5px var(--type-color, var(--brand-1));
+  }
+
+  .timeline-dot:focus-visible {
+    outline: 2px solid var(--brand-1);
+    outline-offset: 3px;
+  }
+
+  .timeline-item.is-near .timeline-dot {
+    animation: coin-flip 700ms ease-out;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes coin-flip {
+    0% {
+      transform: translateX(var(--wave, 0px)) scale(1) rotateY(0deg);
+      color: rgba(253, 247, 236, 0.96);
+      box-shadow: 0 0 0 4px rgba(253, 247, 236, 0.9), 0 0 0 5px rgba(159, 72, 39, 0.25);
+    }
+    50% {
+      transform: translateX(var(--wave, 0px)) scale(1.32) rotateY(90deg);
+      color: #fff3d0;
+      box-shadow: 0 0 0 5px rgba(253, 247, 236, 0.95), 0 0 0 6px #e0a63a,
+        0 0 26px 6px rgba(255, 209, 102, 0.95);
+    }
+    100% {
+      transform: translateX(var(--wave, 0px)) scale(1.22) rotateY(180deg);
+      color: #ffe9ae;
+      box-shadow: 0 0 0 5px rgba(253, 247, 236, 0.95), 0 0 0 6px #d9a53c,
+        0 0 20px 4px rgba(255, 205, 96, 0.85);
+    }
+  }
+
+  .timeline-card {
+    position: relative;
+    border: 1px solid rgba(177, 146, 104, 0.5);
+    border-top: 3px solid var(--type-color, var(--brand-1));
+    border-radius: var(--radius-sm);
+    background: rgba(253, 247, 236, 0.62);
+    overflow: hidden;
+    transition: box-shadow 200ms ease, transform 200ms ease;
+  }
+
+  .timeline-item.is-near .timeline-card {
+    box-shadow: 0 10px 26px rgba(43, 25, 12, 0.16);
+  }
+
+  .side-left .timeline-card {
+    grid-column: 1;
+  }
+
+  .side-right .timeline-card {
+    grid-column: 3;
+  }
+
+  .entry-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 0;
+    background: transparent;
+    color: var(--ink-0);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .entry-header:hover,
+  .entry-header:focus-visible {
+    background: rgba(159, 72, 39, 0.08);
+  }
+
+  .entry-heading {
+    display: grid;
+    gap: 0.25rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .entry-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    color: var(--ink-2);
+    font-family: var(--font-ui);
+    font-size: 0.74rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .entry-type {
+    color: var(--type-color, var(--brand-1));
+    font-weight: 700;
+  }
+
+  .entry-title {
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .entry-caret {
+    flex: 0 0 auto;
+    margin-top: 0.3rem;
+    width: 0.6rem;
+    aspect-ratio: 1;
+    border-right: 2px solid var(--ink-2);
+    border-bottom: 2px solid var(--ink-2);
+    rotate: 45deg;
+    transition: rotate 150ms ease;
+  }
+
+  .entry-header[aria-expanded='true'] .entry-caret {
+    rotate: 225deg;
+  }
+
+  .entry-body {
+    padding: 0 1.1rem 1.1rem;
+  }
+
+  .confirmed-facts {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  .confirmed-facts li + li {
+    margin-top: 0.5rem;
+  }
+
+  .confirmed-facts li::marker {
+    color: var(--brand-1);
+  }
+
+  .original-report {
+    margin-top: 0.9rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(177, 146, 104, 0.4);
+  }
+
+  .original-label {
+    margin: 0 0 0.35rem !important;
+    color: var(--brand-1) !important;
+    font-family: var(--font-ui);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .original-copy {
+    padding: 0 0 0.3rem;
+  }
+
+  .original-copy p {
+    white-space: pre-line;
+  }
+
+  .original-copy p:first-child {
+    font-weight: 700;
+  }
+
+  .no-results {
+    margin: 1.5rem 0 0 !important;
+    padding: 1rem;
+    border: 1px dashed rgba(177, 146, 104, 0.5);
+    border-radius: var(--radius-sm);
+    text-align: center;
+  }
+
+  .reports-closing {
+    margin-top: var(--space-5);
+    padding-top: var(--space-3);
+    border-top: 1px solid rgba(177, 146, 104, 0.4);
+    font-style: italic;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-item {
+      transition: none;
+    }
+
+    .timeline-dot,
+    .timeline-card,
+    .timeline-path-progress {
+      transition: none;
+    }
+
+    .timeline-item.is-near .timeline-dot {
+      animation: none;
+      transform: translateX(var(--wave, 0px)) scale(1.2);
+      color: #ffe9ae;
+      box-shadow: 0 0 0 5px rgba(253, 247, 236, 0.95), 0 0 0 6px #d9a53c,
+        0 0 20px 4px rgba(255, 205, 96, 0.85);
+    }
+  }
+
+  @media (max-width: 820px) {
+    .timeline-item {
+      grid-template-columns: 2rem 1fr;
+      gap: 0.5rem;
+    }
+
+    .timeline-dot {
+      grid-column: 1;
+      justify-self: start;
+      margin-left: 0.15rem;
+      --wave: 0px;
+    }
+
+    .side-left .timeline-card,
+    .side-right .timeline-card {
+      grid-column: 2;
+    }
+
+    .entry-body {
+      padding-left: 0.9rem;
+    }
+
+    .entry-header {
+      padding: 0.75rem 0.85rem;
+    }
+
+    .filter-row {
+      gap: 0.4rem;
+    }
+
+    .filter-chip {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.78rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .timeline-track {
+      gap: 1.5rem;
+    }
+  }
+
+  .history-summary {
+    margin: 0 0 0.9rem !important;
+    color: var(--ink-1) !important;
+    text-align: left !important;
+  }
+
+  .record-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.95rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(159, 72, 39, 0.38);
+    border-radius: var(--radius-sm);
+    color: var(--brand-1);
+    background: rgba(253, 247, 236, 0.58);
+    font-family: var(--font-ui);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .record-link:hover,
+  .record-link:focus-visible {
+    border-color: var(--brand-1);
+    background: rgba(253, 247, 236, 0.9);
+  }</style>

@@ -4,7 +4,10 @@ export const itNav: NavItem[] = [
   {
     label: 'Vorrede',
     href: '/it/vorrede',
-    children: [{ label: 'Berichte', href: '/it/berichte' }],
+    children: [
+      { label: 'Berichte', href: '/it/berichte' },
+      { label: 'Geschichte Aloys', href: '/it/geschichte' },
+    ],
   },
   {
     label: 'Das Land Aloy',
