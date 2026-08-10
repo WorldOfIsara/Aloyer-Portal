@@ -18,6 +18,7 @@ export const portalNav: NavItem[] = [
   },
   { label: 'Freundesgruppen', href: '/ot/willkommen#partner' },
   { label: 'Packliste', href: '/ot/packliste' },
+  { label: 'Textadventure', href: '/ot/textadventure' },
   {
     label: 'Kontakt',
     href: '/ot/kontakt',

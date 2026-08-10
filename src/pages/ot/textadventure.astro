@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  portalNav,
+  portalBrandText,
+  portalBrandAlt,
+  portalFooterTitle,
+  portalFooterDescription,
+} from '../../data/portal';
+
+const pageDescription = 'Ein interaktives Textadventure aus der Welt Aloys - zum Selberspielen im Browser.';
+const gameUrl = 'https://stadler-tom.github.io/AnAloyGame/';
+---
+
+<BaseLayout
+  title="Textadventure"
+  description={pageDescription}
+  nav={portalNav}
+  headerBrandText={portalBrandText}
+  headerBrandLogoSrc="/logos/haubentaucher-wappen-transparent.png"
+  headerBrandLogoAlt={portalBrandAlt}
+  headerBrandLogoFreestanding={true}
+  footerTitle={portalFooterTitle}
+  footerDescription={portalFooterDescription}
+  bodyClass="portal-welcome ot-modern"
+>
+  <section class="surface adventure-intro">
+    <p class="kicker">Zum Selberspielen</p>
+    <h1>Textadventure aus Aloy</h1>
+    <p>
+      Neben dem Live-Spiel gibt es ein browserbasiertes Textadventure, das in der Welt Aloys spielt. Es wurde mit
+      Twine umgesetzt und lässt sich direkt im Browser spielen - kein Download, keine Anmeldung, einfach loslesen
+      und entscheiden.
+    </p>
+    <p>
+      Wer schon mal einen Vorgeschmack auf Aloy bekommen möchte, oder zwischen zwei Events noch etwas Lesestoff aus
+      der Welt sucht, ist hier richtig.
+    </p>
+    <a class="btn" href={gameUrl} target="_blank" rel="noopener noreferrer">
+      Zum Textadventure spielen
+    </a>
+    <p class="adventure-note">
+      Öffnet in einem neuen Tab. Das Spiel wird unabhängig von diesem Portal auf GitHub Pages gehostet.
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .adventure-intro {
+    text-align: center;
+    max-width: 760px;
+    margin-inline: auto;
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+  }
+
+  .adventure-intro p {
+    max-width: 60ch;
+  }
+
+  .adventure-note {
+    margin-top: -0.4rem;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+</style>
