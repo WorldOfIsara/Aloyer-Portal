@@ -35,7 +35,7 @@ export const events: AloyEvent[] = [
     dateEnd: '2026-09-20',
     location: 'Am Kugelbach 1, 94267 Prackenbach',
     description:
-      'Die letzte Bar de la Muerte ist nun ein Jahr her und vom letzten Portweinfrühstück fehlt wahrscheinlich eh die Erinnerung. Doch das ist noch lange kein Grund für DURSTSTRECKEN! Der Día de los Muertos wird erneut in Drachengard gefeiert. Ansonsten ändert sich nicht viel.',
+      'An den Kreuzwegen der Baronien, tief im Herzen des Waldes, steht sie seit Menschengedenken: Die Taverne zum Räudigen Rackelhahn. Kein Fürstenschloss, kein Ordenshaus – und genau das macht sie unersetzlich. Während draußen der Akrolyt der Zwietracht sein unheiliges Werk treibt, der Schwarze Prinz seinen Anspruch erhebt und alte Bündnisse zerbrechen – bleibt die Tür der Taverne offen. Für Templer und Söldner, Händler und Pilger, Edelleute und Geächtete gleichermaßen',
     status: 'bestätigt',
   },
   {
