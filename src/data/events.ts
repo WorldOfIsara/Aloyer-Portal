@@ -29,7 +29,27 @@ export const events: AloyEvent[] = [
     status: 'bestätigt',
   },
   {
-    id: 'kronmark2',
+    id: 'racklHahn26-2',
+    title: 'Der Räudige Rackelhahn',
+    dateStart: '2026-09-18',
+    dateEnd: '2026-09-20',
+    location: 'Am Kugelbach 1, 94267 Prackenbach',
+    description:
+      'Die letzte Bar de la Muerte ist nun ein Jahr her und vom letzten Portweinfrühstück fehlt wahrscheinlich eh die Erinnerung. Doch das ist noch lange kein Grund für DURSTSTRECKEN! Der Día de los Muertos wird erneut in Drachengard gefeiert. Ansonsten ändert sich nicht viel.',
+    status: 'bestätigt',
+  },
+  {
+    id: 'barDeLaMuerte',
+    title: 'Bar de la Muerte (feat. Drachengard)',
+    dateStart: '2026-09-26',
+    dateEnd: '2026-09-27',
+    location: 'Glockenstraße 5, 93092 Barbing',
+    description:
+      'Die letzte Bar de la Muerte ist nun ein Jahr her und vom letzten Portweinfrühstück fehlt wahrscheinlich eh die Erinnerung. Doch das ist noch lange kein Grund für DURSTSTRECKEN! Der Día de los Muertos wird erneut in Drachengard gefeiert. Ansonsten ändert sich nicht viel.',
+    status: 'geplant',
+  },
+  {
+    id: 'heerlager27',
     title: 'Heerlager XVII',
     dateStart: '2027-04-28',
     dateEnd: '2027-05-02',
