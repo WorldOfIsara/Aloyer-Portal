@@ -1,5 +1,5 @@
 ---
-import { glossaryEntries } from '../data/glossary';
+import { splitterlandeInfo } from '../data/splitterlandeInfo';
 
 interface MapLabel {
   name: string;
@@ -12,22 +12,6 @@ interface MapRegion {
   d: string;
   group?: string; // z.B. "Arcogne" – Länder, die als Gruppe gemeinsam hervorgehoben werden
 }
-
-// Ordnet Kartennamen den passenden Glossar-Einträgen zu, sofern vorhanden.
-// Otzlande gilt in den Aufzeichnungen als eine Region und deckt sowohl die
-// noerdlichen als auch die suedlichen Otzlande ab.
-const glossarySlugByRegion: Record<string, string> = {
-  Anruhn: 'anruhn',
-  Drachengard: 'drachengard',
-  'Kan Kuzgun': 'kan-kuzgun',
-  Komarn: 'komarn',
-  Kronmark: 'kronmark',
-  Kupferstein: 'kupferstein',
-  Boffeld: 'neu-boffeld',
-  Windmark: 'windmark',
-  'Noerdliche Otzlande': 'otzlande',
-  'Suedliche Otzlande': 'otzlande',
-};
 
 const fallbackInfoText =
   'Zu diesem Land liegen der Akademie bislang keine gesicherten Aufzeichnungen vor.';
@@ -112,14 +96,20 @@ const regions: MapRegion[] = [
   { name: 'Windmark', d: 'M732.403,522.181C731.874,521.019 731.357,520.299 731.357,520.299L731.078,517.999L730.102,517.511L728.987,516.953L727.941,515.768L727.384,514.514L727.035,512.423L727.035,510.819L727.453,509.634L728.638,508.17L728.569,507.125L727.732,506.428L726.617,505.731L725.641,505.034L723.689,502.943L722.713,501.479L721.738,499.527L721.319,497.645L721.877,495.554L721.389,492.835L717.487,495.757L716.706,498.88L716.427,501.557L716.148,505.46L715.647,509.252L714.754,511.706L712.748,514.717L711.687,517.505L711.13,520.294L711.185,522.078L709.457,524.197L709.847,525.034L713.583,525.591L717.32,526.874L719.494,528.324L720.721,529.272L723.286,527.989L724.68,528.268L725.508,529.383C725.508,529.383 726.353,527.822 726.855,526.985C727.357,526.149 728.361,523.584 728.361,523.584L729.699,521.911C729.699,521.911 732.931,523.344 732.403,522.181Z' },
 ];
 
-// Infotext pro Land für das Klick-Fenster: nutzt vorhandene Glossar-Einträge,
-// fällt sonst auf einen neutralen Platzhalter im Ton der Akademie zurück.
+// Infotext pro Land für das Klick-Fenster: nutzt Einträge aus
+// src/data/splitterlandeInfo.ts, fällt sonst auf einen neutralen
+// Platzhalter im Ton der Akademie zurück.
 interface CountryInfo {
   name: string;
   text: string;
+  ruler?: string;
   href?: string;
   crestCandidates: string[];
 }
+
+const splitterlandeInfoByName = new Map(
+  splitterlandeInfo.map((entry) => [entry.name, entry])
+);
 
 // Erzeugt einen URL-sicheren Dateinamen aus dem Ländernamen, z.B. für
 // "L'Est d'Arc" -> "lest-d-arc".
@@ -135,13 +125,13 @@ const slugify = (name: string) =>
 // ergänzte Wappen. Existiert keine der Dateien, zeigt das Klick-Fenster
 // automatisch den ⚜-Platzhalter.
 const countryInfo: CountryInfo[] = regions.map((region) => {
-  const slug = glossarySlugByRegion[region.name];
-  const entry = slug ? glossaryEntries.find((e) => e.slug === slug) : undefined;
+  const entry = splitterlandeInfoByName.get(region.name);
   const fileSlug = slugify(region.name);
   return {
     name: region.name,
-    text: entry?.definition ?? fallbackInfoText,
-    href: entry ? `/it/akademie/glossar#${entry.slug}` : undefined,
+    text: entry?.text ? entry.text : fallbackInfoText,
+    ruler: entry?.ruler,
+    href: entry?.href,
     crestCandidates: [
       `/images/ot/partner/${fileSlug}.png`,
       `/images/it/umland/wappen/${fileSlug}.webp`,
@@ -188,6 +178,7 @@ const {
               data-info={info?.text}
               data-info-href={info?.href}
               data-info-crest={info?.crestCandidates.join('|')}
+              data-info-ruler={info?.ruler}
               d={region.d}
               tabindex="0"
             />
@@ -255,6 +246,7 @@ const {
           </span>
         </div>
         <div class="splitterlande-map__modal-content">
+          <p class="splitterlande-map__modal-ruler" data-map-modal-ruler />
           <p class="splitterlande-map__modal-text" data-map-modal-text />
           <a class="splitterlande-map__modal-link" data-map-modal-link href="#">
             Mehr im Glossar
@@ -525,6 +517,19 @@ const {
     color: #2a1c10;
   }
 
+  .splitterlande-map__modal-ruler {
+    display: none;
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-style: italic;
+    color: #6b3a1f;
+  }
+
+  .splitterlande-map__modal-ruler.is-visible {
+    display: block;
+  }
+
   .splitterlande-map__modal-text {
     margin: 0 0 0.9rem;
     font-size: 0.95rem;
@@ -636,6 +641,9 @@ const {
         const modalText = map.querySelector<HTMLElement>(
           '[data-map-modal-text]'
         );
+        const modalRuler = map.querySelector<HTMLElement>(
+          '[data-map-modal-ruler]'
+        );
         const modalLink = map.querySelector<HTMLAnchorElement>(
           '[data-map-modal-link]'
         );
@@ -659,6 +667,17 @@ const {
           modalText.textContent =
             region.dataset.info ??
             'Zu diesem Land liegen der Akademie bislang keine gesicherten Aufzeichnungen vor.';
+
+          if (modalRuler) {
+            const ruler = region.dataset.infoRuler;
+            if (ruler) {
+              modalRuler.textContent = `Herrscher: ${ruler}`;
+              modalRuler.classList.add('is-visible');
+            } else {
+              modalRuler.textContent = '';
+              modalRuler.classList.remove('is-visible');
+            }
+          }
 
           const href = region.dataset.infoHref;
           if (href) {
